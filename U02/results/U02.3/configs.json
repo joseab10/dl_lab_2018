@@ -1,8 +1,0 @@
-[[0, 0, 0], {"learning_rate": 0.1, "filter_size": 3, "batch_size": 64, "num_filters": 16}, {}]
-[[1, 0, 0], {"learning_rate": 0.1, "filter_size": 5, "batch_size": 64, "num_filters": 16}, {}]
-[[2, 0, 0], {"learning_rate": 0.1, "filter_size": 1, "batch_size": 64, "num_filters": 16}, {}]
-[[3, 0, 0], {"learning_rate": 0.1, "filter_size": 7, "batch_size": 64, "num_filters": 16}, {}]
-[[4, 0, 0], {"learning_rate": 0.1, "filter_size": 5, "batch_size": 64, "num_filters": 16}, {}]
-[[5, 0, 0], {"learning_rate": 0.1, "filter_size": 1, "batch_size": 64, "num_filters": 16}, {}]
-[[6, 0, 0], {"learning_rate": 0.1, "filter_size": 7, "batch_size": 64, "num_filters": 16}, {}]
-[[7, 0, 0], {"learning_rate": 0.1, "filter_size": 3, "batch_size": 64, "num_filters": 16}, {}]
