@@ -43,6 +43,19 @@ def preprocessing(X_train, y_train, X_valid, y_valid, history_length=1):
     # History:
     # At first you should only use the current image as input to your network to learn the next action. Then the input states
     # have shape (96, 96,1). Later, add a history of the last N images to your state so that a state has shape (96, 96, N).
+
+    if DEBUG > 5:
+        figure = plt.figure(figsize=(10, 10))
+
+        for i in range(20):
+            image = rgb2gray(X_train[i])
+
+            subplot = figure.add_subplot(4, 5, i + 1)
+            subplot.xlabel = str(y_train[i])
+            subplot.imshow(image, cmap = 'gray')
+            subplot.grid(False)
+
+        figure.show()
     
     return X_train, y_train, X_valid, y_valid
 

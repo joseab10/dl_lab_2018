@@ -32,7 +32,22 @@ def store_data(data, datasets_dir="./data"):
     # save data
     if not os.path.exists(datasets_dir):
         os.mkdir(datasets_dir)
+
     data_file = os.path.join(datasets_dir, 'data.pkl.gzip')
+
+    # <JAB>
+    if os.path.exists(data_file):
+        f = gzip.open(data_file,'rb')
+        prev_data = pickle.load(f)
+
+        prev_data["state"]      += data["state"]  # state has shape (96, 96, 3)
+        prev_data["action"]     += data["action"]  # action has shape (1, 3)
+        prev_data["next_state"] += data["next_state"]
+        prev_data["reward"]     += data["reward"]
+        prev_data["terminal"]   += data["terminal"]
+
+        data = prev_data
+
     f = gzip.open(data_file,'wb')
     pickle.dump(data, f)
 
@@ -107,6 +122,18 @@ if __name__ == "__main__":
                 print('... saving data')
                 store_data(samples, "./data")
                 save_results(episode_rewards, "./results")
+
+                # <JAB>
+                # Instead of storing everything in memory, reset and reload from the saved file
+                # That way we can save Data in more than one session.
+                samples = {
+                    "state": [],
+                    "next_state": [],
+                    "reward": [],
+                    "action": [],
+                    "terminal": [],
+                }
+                # </JAB>
 
             env.render()
             if done: 

@@ -6,6 +6,9 @@ STRAIGHT = 0
 ACCELERATE =3
 BRAKE = 4
 
+
+DEBUG = 10
+
 def one_hot(labels):
     """
     this creates a one hot encoding from a flat vector:
