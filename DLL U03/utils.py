@@ -26,8 +26,13 @@ def one_hot(labels):
     i.e. given y = [0,2,1]
      it creates y_one_hot = [[1,0,0], [0,0,1], [0,1,0]]
     """
-    classes = np.unique(labels)
-    n_classes = classes.size
+    # <JAB>
+    #classes = np.unique(labels)
+    #n_classes = classes.size
+    n_classes = 5
+    classes = range(n_classes)
+    # </JAB>
+
     one_hot_labels = np.zeros(labels.shape + (n_classes,))
     for c in classes:
         one_hot_labels[labels == c, c] = 1.0
@@ -49,6 +54,9 @@ def action_to_id(a):
     if all(a == [-1.0, 0.0, 0.0]): return LEFT               # LEFT: 1
     elif all(a == [1.0, 0.0, 0.0]): return RIGHT             # RIGHT: 2
     elif all(a == [0.0, 1.0, 0.0]): return ACCELERATE        # ACCELERATE: 3
-    elif all(a == [0.0, 0.0, 0.8]): return BRAKE             # BRAKE: 4
+    # <JAB>
+    #elif all(a == [0.0, 0.0, 0.8]): return BRAKE             # BRAKE: 4
+    # </JAB>
+    elif all(a == [0.0, 0.0, 0.2]): return BRAKE             # BRAKE: 4
     else:       
         return STRAIGHT                                      # STRAIGHT = 0

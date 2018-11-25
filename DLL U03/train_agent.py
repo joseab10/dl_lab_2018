@@ -94,7 +94,7 @@ def plot_data(x, y, history_length = 1, rows = 10, title = ''):
 # </JAB>
 
 
-def preprocessing(X_train, y_train, X_valid, y_valid, history_length=1):
+def preprocessing(X_train, y_train, X_valid, y_valid, history_length=1, onehot = True):
 
     # 1. convert the images in X_train/X_valid to gray scale. If you use rgb2gray() from utils.py, the output shape (96, 96, 1)
     # 2. you can either train your model with continous actions (as you get them from read_data) using regression
@@ -116,13 +116,30 @@ def preprocessing(X_train, y_train, X_valid, y_valid, history_length=1):
         X_train = resequence(X_train, history_length)
         X_valid = resequence(X_valid, history_length)
 
+    if onehot:
+        train_len = y_train.shape[0]
+        tmp_y = np.zeros(train_len, dtype=np.int8)
+
+        for i in range(train_len):
+            tmp_y[i] = action_to_id(y_train[i])
+
+        y_train = one_hot(tmp_y)
+
+        valid_len = y_valid.shape[0]
+        tmp_y = np.zeros(valid_len, dtype=np.int8)
+
+        for i in range(valid_len):
+            tmp_y[i] = action_to_id(y_valid[i])
+
+        y_valid = one_hot(tmp_y)
+
     # </JAB>
 
     
     return X_train, y_train, X_valid, y_valid
 
 
-def train_model(X_train, y_train, X_valid, n_minibatches, batch_size, lr, model_dir="./models", tensorboard_dir="./tensorboard"):
+def train_model(X_train, y_train, X_valid, y_valid, n_minibatches, batch_size, lr, model_dir="./models", tensorboard_dir="./tensorboard"):
     
     # create result and model folders
     if not os.path.exists(model_dir):
@@ -169,7 +186,7 @@ if __name__ == "__main__":
     history_length = 5
 
     # preprocess data
-    X_train, y_train, X_valid, y_valid = preprocessing(X_train[:max_train], y_train[:max_train], X_valid[:max_valid], y_valid[:max_valid], history_length=history_length)
+    X_train, y_train_onehot, X_valid, y_valid_onehot = preprocessing(X_train[:max_train], y_train[:max_train], X_valid[:max_valid], y_valid[:max_valid], history_length=history_length)
 
     # Plot preprocessed data for debugging
     if DEBUG > 5:
@@ -179,5 +196,5 @@ if __name__ == "__main__":
     # </JAB>
 
     # train model (you can change the parameters!)
-    train_model(X_train, y_train, X_valid, n_minibatches=100000, batch_size=64, lr=0.0001)
+    train_model(X_train, y_train_onehot, X_valid, y_valid_onehot, n_minibatches=100000, batch_size=64, lr=0.0001)
  
