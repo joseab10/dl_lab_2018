@@ -6,6 +6,20 @@ STRAIGHT = 0
 ACCELERATE =3
 BRAKE = 4
 
+# <JAB>
+
+DEBUG = 10
+
+ACTIONS = {
+    LEFT       : '[←] Left',
+    RIGHT      : '[→] Right',
+    STRAIGHT   : '[ ] Straight',
+    ACCELERATE : '[↑] Accelerate',
+    BRAKE      : '[↓] Break',
+}
+
+# </JAB>
+
 def one_hot(labels):
     """
     this creates a one hot encoding from a flat vector:

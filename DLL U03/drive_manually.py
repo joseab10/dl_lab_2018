@@ -35,6 +35,9 @@ def store_data(data, datasets_dir="./data"):
     data_file = os.path.join(datasets_dir, 'data.pkl.gzip')
 
     # <JAB>
+    # Read Data file contents, append current session's data, then save it.
+    # That way, we can store data from multiple playing sessions.
+
     if os.path.exists(data_file):
         f = gzip.open(data_file,'rb')
         prev_data = pickle.load(f)
