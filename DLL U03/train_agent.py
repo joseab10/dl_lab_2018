@@ -10,6 +10,10 @@ from model import Model
 from utils import *
 from tensorboard_evaluation import Evaluation
 
+# <JAB>
+from datetime import datetime
+# <JAB>
+
 
 def read_data(datasets_dir="./data", frac = 0.1, start_sample = 0, max_samples = 10000):
     """
@@ -195,7 +199,9 @@ def train_model(X_train, y_train, X_valid, y_valid, n_minibatches, batch_size, l
             loss_train, acc_train = agent.evaluate(X_train, y_train)
             loss_valid, acc_valid = agent.evaluate(X_valid, y_valid)
 
-            print("Minibatch: ", i + 1, " Train accuracy: ", acc_train, " Train Loss: ", loss_train, ", Test accuracy: ", acc_valid, " Test Loss: ", loss_valid)
+            print("Minibatch: ", i , " Train accuracy: ", acc_train, " Train Loss: ", loss_train, ", Test accuracy: ", acc_valid, " Test Loss: ", loss_valid)
+
+            agent.save(suffix='_' + datetime.now().strftime("%Y%m%d-%H%M%S") + '_i' + str(i) + '_TrAcc_' + "{:.4f}".format(acc_train * 100))
 
 
 

@@ -212,10 +212,10 @@ class Model:
 
         self.saver.restore(self.session, file_name)
 
-    def save(self, file_name=''):
+    def save(self, file_name='', suffix=''):
         # <JAB>
         if file_name == '':
-            file_name = self.savepath + self.name + '.ckpt'
+            file_name = self.savepath + self.name + suffix + '.ckpt'
         # </JAB>
 
         self.saver.save(self.session, file_name)
