@@ -220,7 +220,7 @@ if __name__ == "__main__":
     #    max_train = 1000
     #    max_valid = 100
 
-    history_length = 5
+    history_length = 1
 
     # preprocess data
     X_train, y_train_onehot, X_valid, y_valid_onehot = preprocessing(X_train[:max_train], y_train[:max_train], X_valid[:max_valid], y_valid[:max_valid], history_length=history_length)

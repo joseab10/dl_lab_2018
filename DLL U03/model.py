@@ -29,6 +29,20 @@ class Model:
                     'pool ksize'  : [1, 2, 2, 1],
                     'pool stride' : [1, 2, 2, 1],
                     'pool padding': 'VALID'
+                },
+
+                {
+                    'name'       : 'conv2',
+                    'filters'    : 24,
+                    'kernel size': 3,
+                    'padding'    : 'SAME',
+                    'stride'     : (1, 1),
+                    'activation' : tf.nn.relu,
+
+                    'pooling'     : 'max',
+                    'pool ksize'  : [1, 2, 2, 1],
+                    'pool stride' : [1, 2, 2, 1],
+                    'pool padding': 'VALID'
                 }
             ]
 
@@ -116,9 +130,14 @@ class Model:
         dense_input = lstm_input
 
         dense_input = tf.layers.dense(dense_input,
-                              30,
+                              100,
                               activation=tf.nn.relu,
                               name="fc1")
+
+        dense_input = tf.layers.dense(dense_input,
+                                      30,
+                                      activation=tf.nn.relu,
+                                      name="fc2")
 
 
         # Output Layer
