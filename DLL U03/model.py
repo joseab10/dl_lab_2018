@@ -150,6 +150,37 @@ class Model:
 
         self.saver = tf.train.Saver()
 
+    def evaluate(self, x, y, max_batch_size = 1000):
+
+        acc = 0
+        loss = 0
+
+        batch_size = x.shape[0]
+
+        for i in range(batch_size // max_batch_size):
+
+            if (i + 1) * max_batch_size > batch_size:
+                end = batch_size
+                count = batch_size - (i * max_batch_size)
+            else:
+                end = (i + 1) * max_batch_size
+                count = max_batch_size
+            
+            acc  += self.accuracy.eval(feed_dict={
+                self.X: x[i * max_batch_size: end],
+                self.y: y[i * max_batch_size: end]
+            },
+                session = self.session) * count
+            loss += self.loss.eval(feed_dict={
+                self.X: x[i * max_batch_size: end],
+                self.y: y[i * max_batch_size: end]
+            },
+                session=self.session) * count
+
+
+        return loss / batch_size, acc / batch_size
+
+
     def load(self, file_name=''):
         # <JAB>
         if file_name == '':

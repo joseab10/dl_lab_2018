@@ -192,11 +192,10 @@ def train_model(X_train, y_train, X_valid, y_valid, n_minibatches, batch_size, l
         agent.session.run(agent.trainer, feed_dict={agent.X: X_minibatch, agent.y: y_minibatch})
 
         if i % 1000 == 0:
-            acc_train  = agent.accuracy.eval(feed_dict={agent.X: X_train, agent.y: y_train}, session = agent.session)
-            acc_test   = agent.accuracy.eval(feed_dict={agent.X: X_valid,     agent.y: y_valid}, session = agent.session)
-            loss_train = agent.loss.eval(feed_dict={agent.X: X_train, agent.y: y_train}, session = agent.session)
-            loss_valid = agent.loss.eval(feed_dict={agent.X: X_valid, agent.y: y_valid}, session=agent.session)
-            print("Minibatch: ", i + 1, " Train accuracy: ", acc_train, " Train Loss: ", loss_train, ", Test accuracy: ", acc_test, " Test Loss: ", loss_valid)
+            loss_train, acc_train = agent.evaluate(X_train, y_train)
+            loss_valid, acc_valid = agent.evaluate(X_valid, y_valid)
+
+            print("Minibatch: ", i + 1, " Train accuracy: ", acc_train, " Train Loss: ", loss_train, ", Test accuracy: ", acc_valid, " Test Loss: ", loss_valid)
 
 
 
