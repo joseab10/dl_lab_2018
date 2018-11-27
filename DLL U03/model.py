@@ -156,7 +156,7 @@ class Model:
             file_name = self.savepath + self.name + '.ckpt'
         # </JAB>
 
-        self.saver.restore(self.sess, file_name)
+        self.saver.restore(self.session, file_name)
 
     def save(self, file_name=''):
         # <JAB>
@@ -164,5 +164,5 @@ class Model:
             file_name = self.savepath + self.name + '.ckpt'
         # </JAB>
 
-        self.saver.save(self.sess, file_name)
+        self.saver.save(self.session, file_name)
         print("Model saved in file: %s" % file_name)

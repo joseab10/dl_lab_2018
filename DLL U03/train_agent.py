@@ -11,7 +11,7 @@ from utils import *
 from tensorboard_evaluation import Evaluation
 
 
-def read_data(datasets_dir="./data", frac = 0.1, start_sample = 0, max_samples = 20000):
+def read_data(datasets_dir="./data", frac = 0.1, start_sample = 0, max_samples = 10000):
     """
     This method reads the states and actions recorded in drive_manually.py 
     and splits it into training/ validation set.
@@ -230,7 +230,7 @@ if __name__ == "__main__":
         plot_data(X_train, y_train, history_length, history_length + 5, 'Sample Validation Data')
 
     # train model (you can change the parameters!)
-    if DEBUG > 0:
+    if DEBUG > 10:
         train_model(X_train, y_train_onehot, X_valid, y_valid_onehot, history_length=history_length, n_minibatches=1000, batch_size=64, lr=0.0001)
     else:
         train_model(X_train, y_train_onehot, X_valid, y_valid_onehot, history_length=history_length, n_minibatches=100000, batch_size=64, lr=0.0001)
