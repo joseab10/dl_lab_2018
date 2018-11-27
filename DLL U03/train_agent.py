@@ -104,7 +104,7 @@ def plot_data(x, y, history_length = 1, rows = 10, title = ''):
             subplot.set_yticks([])
 
             if j == columns - 1:
-                subplot.set(xlabel='A: ' + ACTIONS[action_to_id(y[i])])
+                subplot.set(xlabel='A: ' + ACTIONS[action_to_id(y[i])]['log'])
 
             spi += 1
 

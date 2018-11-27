@@ -20,15 +20,21 @@ def run_episode(env, agent, rendering=True, max_timesteps=1000):
         
         # TODO: preprocess the state in the same way than in in your preprocessing in train_agent.py
         #    state = ...
+        state = np.reshape(rgb2gray(state), (1, 96, 96, 1))
         
         # TODO: get the action from your agent! If you use discretized actions you need to transform them to continuous
         # actions again. a needs to have a shape like np.array([0.0, 0.0, 0.0])
-        # a = ...
+        a = agent.Y_proba.eval(feed_dict={agent.X: state}, session=agent.session)
+        a_text = ACTIONS[np.argmax(a)]['log']
+        a = ACTIONS[np.argmax(a)]['value']
 
         next_state, r, done, info = env.step(a)   
         episode_reward += r       
         state = next_state
         step += 1
+
+        if DEBUG > 1:
+            print('Step: ', step, ' Action: ', a_text)
         
         if rendering:
             env.render()
@@ -47,8 +53,8 @@ if __name__ == "__main__":
     n_test_episodes = 15                  # number of episodes to test
 
     # TODO: load agent
-    # agent = Model(...)
-    # agent.load("models/agent.ckpt")
+    agent = Model(lstm_layers=[], name='net1')
+    agent.load()
 
     env = gym.make('CarRacing-v0').unwrapped
 
