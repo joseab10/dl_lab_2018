@@ -11,7 +11,7 @@ from utils import *
 from tensorboard_evaluation import Evaluation
 
 
-def read_data(datasets_dir="./data", frac = 0.1):
+def read_data(datasets_dir="./data", frac = 0.1, start_sample = 0, max_samples = 20000):
     """
     This method reads the states and actions recorded in drive_manually.py 
     and splits it into training/ validation set.
@@ -27,9 +27,21 @@ def read_data(datasets_dir="./data", frac = 0.1):
     y = np.array(data["action"]).astype('float32')
 
     # split data into training and validation set
-    n_samples = len(data["state"])
-    X_train, y_train = X[:int((1-frac) * n_samples)], y[:int((1-frac) * n_samples)]
-    X_valid, y_valid = X[int((1-frac) * n_samples):], y[int((1-frac) * n_samples):]
+
+    #<JAB>
+    # Added more data splitting due to memory constraints
+    if max_samples <= len(data["state"]):
+        n_samples = max_samples
+    else:
+        n_samples = len(data["state"])
+
+    end_train_sample = start_sample + int((1-frac) * n_samples)
+    end_valid_sample = end_train_sample + int(frac * n_samples)
+
+    X_train, y_train = X[start_sample:end_train_sample], y[start_sample:end_train_sample]
+    X_valid, y_valid = X[end_train_sample:end_valid_sample], y[end_train_sample:end_valid_sample]
+    # </JAB>
+
     return X_train, y_train, X_valid, y_valid
 
 
