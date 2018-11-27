@@ -156,8 +156,12 @@ class Model:
         loss = 0
 
         batch_size = x.shape[0]
+        num_iter = batch_size // max_batch_size
 
-        for i in range(batch_size // max_batch_size):
+        if batch_size % max_batch_size != 0:
+            num_iter += 1
+
+        for i in range(num_iter):
 
             if (i + 1) * max_batch_size > batch_size:
                 end = batch_size
@@ -165,7 +169,7 @@ class Model:
             else:
                 end = (i + 1) * max_batch_size
                 count = max_batch_size
-            
+
             acc  += self.accuracy.eval(feed_dict={
                 self.X: x[i * max_batch_size: end],
                 self.y: y[i * max_batch_size: end]

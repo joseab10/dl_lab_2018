@@ -216,9 +216,9 @@ if __name__ == "__main__":
     max_train = X_train.shape[0]
     max_valid = X_valid.shape[0]
 
-    if DEBUG > 10:
-        max_train = 1000
-        max_valid = 100
+    #if DEBUG > 10:
+    #    max_train = 1000
+    #    max_valid = 100
 
     history_length = 5
 
