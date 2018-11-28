@@ -21,7 +21,7 @@ def read_data(datasets_dir="./data", frac = 0.1, start_sample = 0, max_samples =
     and splits it into training/ validation set.
     """
     print("... read data")
-    data_file = os.path.join(datasets_dir, 'data.pkl.gzip')
+    data_file = os.path.join(datasets_dir, 'data_ln.pkl.gzip')
   
     f = gzip.open(data_file,'rb')
     data = pickle.load(f)
@@ -34,17 +34,22 @@ def read_data(datasets_dir="./data", frac = 0.1, start_sample = 0, max_samples =
 
     #<JAB>
     # Added more data splitting due to memory constraints
-    if max_samples <= len(data["state"]):
-        n_samples = max_samples
-    else:
-        n_samples = len(data["state"])
+    #if max_samples <= len(data["state"]):
+    #    n_samples = max_samples
+    #else:
+    #    n_samples = len(data["state"])
 
-    end_train_sample = start_sample + int((1-frac) * n_samples)
-    end_valid_sample = end_train_sample + int(frac * n_samples)
+    #end_train_sample = start_sample + int((1-frac) * n_samples)
+    #end_valid_sample = end_train_sample + int(frac * n_samples)
 
-    X_train, y_train = X[start_sample:end_train_sample], y[start_sample:end_train_sample]
-    X_valid, y_valid = X[end_train_sample:end_valid_sample], y[end_train_sample:end_valid_sample]
+    #X_train, y_train = X[start_sample:end_train_sample], y[start_sample:end_train_sample]
+    #X_valid, y_valid = X[end_train_sample:end_valid_sample], y[end_train_sample:end_valid_sample]
     # </JAB>
+
+    # split data into training and validation set
+    n_samples = len(data["state"])
+    X_train, y_train = X[:int((1 - frac) * n_samples)], y[:int((1 - frac) * n_samples)]
+    X_valid, y_valid = X[int((1 - frac) * n_samples):], y[int((1 - frac) * n_samples):]
 
     return X_train, y_train, X_valid, y_valid
 
@@ -127,9 +132,11 @@ def preprocessing(X_train, y_train, X_valid, y_valid, history_length=1, onehot =
     # have shape (96, 96,1). Later, add a history of the last N images to your state so that a state has shape (96, 96, N).
 
     # <JAB>
-    X_train = rgb2gray(X_train)
+    # Preprocessing now done in drive_manually before storing data
+
+    #X_train = rgb2gray(X_train)
     X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], X_train.shape[2], 1))
-    X_valid = rgb2gray(X_valid)
+    #X_valid = rgb2gray(X_valid)
     X_valid = np.reshape(X_valid, (X_valid.shape[0], X_valid.shape[1], X_valid.shape[2], 1))
 
     if history_length > 1:
@@ -139,22 +146,22 @@ def preprocessing(X_train, y_train, X_valid, y_valid, history_length=1, onehot =
         X_valid = resequence(X_valid, history_length)
         y_valid = y_valid[history_length - 1 :]
 
-    if onehot:
-        train_len = y_train.shape[0]
-        tmp_y = np.zeros(train_len, dtype=np.int8)
-
-        for i in range(train_len):
-            tmp_y[i] = action_to_id(y_train[i])
-
-        y_train = one_hot(tmp_y)
-
-        valid_len = y_valid.shape[0]
-        tmp_y = np.zeros(valid_len, dtype=np.int8)
-
-        for i in range(valid_len):
-            tmp_y[i] = action_to_id(y_valid[i])
-
-        y_valid = one_hot(tmp_y)
+    #if onehot:
+    #    train_len = y_train.shape[0]
+    #    tmp_y = np.zeros(train_len, dtype=np.int8)
+#
+    #    for i in range(train_len):
+    #        tmp_y[i] = action_to_id(y_train[i])
+#
+    #    y_train = one_hot(tmp_y)
+#
+    #    valid_len = y_valid.shape[0]
+    #    tmp_y = np.zeros(valid_len, dtype=np.int8)
+#
+    #    for i in range(valid_len):
+    #        tmp_y[i] = action_to_id(y_valid[i])
+#
+    #    y_valid = one_hot(tmp_y)
 
     # </JAB>
 
@@ -172,7 +179,7 @@ def train_model(X_train, y_train, X_valid, y_valid, n_minibatches, batch_size, l
 
 
     # TODO: specify your neural network in model.py 
-    agent = Model(history_length=history_length, lstm_layers=[], name = 'net1', learning_rate=lr)
+    agent = Model(history_length=history_length, lstm_layers=[], name = 'net1_40k', learning_rate=lr)
     
     tensorboard_eval = Evaluation(tensorboard_dir)
 

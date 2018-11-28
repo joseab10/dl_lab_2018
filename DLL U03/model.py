@@ -203,6 +203,8 @@ class Model:
 
         return loss / batch_size, acc / batch_size
 
+    def predict(self, x):
+        return self.Y_proba.eval(feed_dict={self.X: x}, session=self.session)
 
     def load(self, file_name=''):
         # <JAB>

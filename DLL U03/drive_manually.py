@@ -12,6 +12,10 @@ from datetime import datetime
 import gzip
 import json
 
+# <JAB>
+from utils import rgb2gray, one_hot, action_to_id
+# </JAB>
+
 
 def key_press(k, mod):
     global restart
@@ -45,8 +49,8 @@ def store_data(data, datasets_dir="./data"):
         prev_data["state"]      += data["state"]  # state has shape (96, 96, 3)
         prev_data["action"]     += data["action"]  # action has shape (1, 3)
         prev_data["next_state"] += data["next_state"]
-        prev_data["reward"]     += data["reward"]
-        prev_data["terminal"]   += data["terminal"]
+        #prev_data["reward"]     += data["reward"]
+        #prev_data["terminal"]   += data["terminal"]
 
         data = prev_data
 
@@ -78,16 +82,16 @@ def save_results(episode_rewards, results_dir="./results"):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--collect_data", action="store_true", default=False, help="Collect the data in a pickle file.")
+    parser.add_argument("--collect_data", action="store_true", default=True, help="Collect the data in a pickle file.")
 
     args = parser.parse_args()
 
     samples = {
         "state": [],
         "next_state": [],
-        "reward": [],
+    #    "reward": [],
         "action": [],
-        "terminal" : [],
+    #    "terminal" : [],
     }
 
     env = gym.make('CarRacing-v0').unwrapped
@@ -109,11 +113,12 @@ if __name__ == "__main__":
             next_state, r, done, info = env.step(a)
             episode_reward += r
 
-            samples["state"].append(state)            # state has shape (96, 96, 3)
-            samples["action"].append(np.array(a))     # action has shape (1, 3)
-            samples["next_state"].append(next_state)
-            samples["reward"].append(r)
-            samples["terminal"].append(done)
+            # Added the preprocessing here
+            samples["state"].append(rgb2gray(state.astype('float32')).astype('uint8'))            # state has shape (96, 96, 3)
+            samples["action"].append(np.array(one_hot(np.array([action_to_id(a)]))).astype('uint8')[0])     # action has shape (1, 3)
+            samples["next_state"].append(rgb2gray(next_state.astype('float32')).astype('uint8'))
+            #samples["reward"].append(r)
+            #samples["terminal"].append(done)
             
             state = next_state
             steps += 1
@@ -133,9 +138,9 @@ if __name__ == "__main__":
                 samples = {
                     "state": [],
                     "next_state": [],
-                    "reward": [],
+                #    "reward": [],
                     "action": [],
-                    "terminal": [],
+                #    "terminal": [],
                 }
                 # </JAB>
 

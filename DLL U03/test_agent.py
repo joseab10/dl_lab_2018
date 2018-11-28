@@ -24,7 +24,7 @@ def run_episode(env, agent, rendering=True, max_timesteps=1000):
         
         # TODO: get the action from your agent! If you use discretized actions you need to transform them to continuous
         # actions again. a needs to have a shape like np.array([0.0, 0.0, 0.0])
-        a = agent.Y_proba.eval(feed_dict={agent.X: state}, session=agent.session)
+        a = agent.predict(state)
         a_text = ACTIONS[np.argmax(a)]['log']
         a = ACTIONS[np.argmax(a)]['value']
 

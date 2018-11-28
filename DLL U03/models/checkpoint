@@ -1,6 +1,2 @@
-model_checkpoint_path: "net1.ckpt"
-all_model_checkpoint_paths: "net1_20181127-221605_i96000_TrAcc_99.9111.ckpt"
-all_model_checkpoint_paths: "net1_20181127-221627_i97000_TrAcc_99.9222.ckpt"
-all_model_checkpoint_paths: "net1_20181127-221648_i98000_TrAcc_99.9111.ckpt"
-all_model_checkpoint_paths: "net1_20181127-221710_i99000_TrAcc_99.9111.ckpt"
-all_model_checkpoint_paths: "net1.ckpt"
+model_checkpoint_path: "net1_20181128-155546_i0_TrAcc_11.8694.ckpt"
+all_model_checkpoint_paths: "net1_20181128-155546_i0_TrAcc_11.8694.ckpt"
