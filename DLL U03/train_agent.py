@@ -179,7 +179,7 @@ def train_model(X_train, y_train, X_valid, y_valid, n_minibatches, batch_size, l
 
 
     # TODO: specify your neural network in model.py 
-    agent = Model(history_length=history_length, lstm_layers=[], name = 'net1_40k', learning_rate=lr)
+    agent = Model(history_length=history_length, lstm_layers=[], name = 'net2_40k', learning_rate=lr)
     
     tensorboard_eval = Evaluation(tensorboard_dir)
 

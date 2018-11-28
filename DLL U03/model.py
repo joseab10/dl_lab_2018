@@ -36,7 +36,7 @@ class Model:
                     'filters'    : 24,
                     'kernel size': 3,
                     'padding'    : 'SAME',
-                    'stride'     : (1, 1),
+                    'stride'     : (2, 2),
                     'activation' : tf.nn.relu,
 
                     'pooling'     : 'max',
@@ -130,14 +130,14 @@ class Model:
         dense_input = lstm_input
 
         dense_input = tf.layers.dense(dense_input,
-                              100,
+                              30,
                               activation=tf.nn.relu,
                               name="fc1")
 
-        dense_input = tf.layers.dense(dense_input,
-                                      30,
-                                      activation=tf.nn.relu,
-                                      name="fc2")
+        #dense_input = tf.layers.dense(dense_input,
+                                      #30,
+                                      #activation=tf.nn.relu,
+                                      #name="fc2")
 
 
         # Output Layer
