@@ -41,26 +41,26 @@ def read_data(datasets_dir="./data", data_file = 'data_ln.pkl.gzip', frac = 0.1,
 
 
 # <JAB>
-def resequence(x, y, history_length):
-    # This functions reshapes the data by adding <history_length> - 1  empty images to the front of the sequence
-    # and then copy it into small sequence chunks to have a sliding window in time for the data.
-    # It will be used in many-to-one LSTMs so that the previous <history_length> - 1 frames are taken into
-    # consideration when predicting an action.
-
-    batch_len   = x.shape[0]
-    image_width = x.shape[1]
-    image_len   = x.shape[2]
-    image_chan  = x.shape[3]
-
-    tmp_x = np.empty((batch_len - history_length + 1, history_length, image_width, image_len, image_chan))
-
-    for i in range(batch_len - history_length + 1):
-
-        tmp_x[i, :, :, :, :] = np.array([x[i:i + history_length, :, :, :]])
-
-    tmp_y = y[history_length - 1 :]
-
-    return tmp_x, tmp_y
+#def resequence(x, y, history_length):
+#    # This functions reshapes the data by adding <history_length> - 1  empty images to the front of the sequence
+#    # and then copy it into small sequence chunks to have a sliding window in time for the data.
+#    # It will be used in many-to-one LSTMs so that the previous <history_length> - 1 frames are taken into
+#    # consideration when predicting an action.
+#
+#    batch_len   = x.shape[0]
+#    image_width = x.shape[1]
+#    image_len   = x.shape[2]
+#    image_chan  = x.shape[3]
+#
+#    tmp_x = np.empty((batch_len - history_length + 1, history_length, image_width, image_len, image_chan))
+#
+#    for i in range(batch_len - history_length + 1):
+#
+#        tmp_x[i, :, :, :, :] = np.array([x[i:i + history_length, :, :, :]])
+#
+#    tmp_y = y[history_length - 1 :]
+#
+#    return tmp_x, tmp_y
 
 
 
@@ -152,7 +152,7 @@ def train_model(X_train, y_train, X_valid, y_valid, n_minibatches, batch_size, l
         X_minibatch = X_train[minibatch_start : minibatch_end, :, :, :]
         y_minibatch = y_train[minibatch_start: minibatch_end, :]
 
-        agent.session.run(agent.trainer, feed_dict={agent.X: X_minibatch, agent.y: y_minibatch})
+        agent.train(X_minibatch, y_minibatch)
 
         if i % 1000 == 0:
             loss_train, acc_train = agent.evaluate(X_train, y_train)
@@ -198,8 +198,8 @@ if __name__ == "__main__":
     # preprocess data
     X_train, y_train_onehot, X_valid, y_valid_onehot = preprocessing(X_train[:max_train], y_train[:max_train],
                                                                      X_valid[:max_valid], y_valid[:max_valid])
-    X_train, y_train_onehot = resequence(X_train, y_train_onehot, history_length)
-    X_valid, y_valid_onehot = resequence(X_valid, y_valid_onehot, history_length)
+    #X_train, y_train_onehot = resequence(X_train, y_train_onehot, history_length)
+    #X_valid, y_valid_onehot = resequence(X_valid, y_valid_onehot, history_length)
 
     # Plot preprocessed data for debugging
     if DEBUG > 20:
