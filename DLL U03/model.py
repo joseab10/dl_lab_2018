@@ -10,7 +10,7 @@ class Model:
     def __init__(self, from_file='',  name = 'JABnet', path = './models/',
                  conv_layers_conf = None, lstm_layers_conf = None, fc_layers_conf = None,
                  learning_rate = 0.1, history_length = 1,
-                 in_image_width = 96, in_image_heigth = 96, in_channels = 1, out_classes = 5):
+                 in_image_width = 96, in_image_height = 96, in_channels = 1, out_classes = 5):
 
         # <JAB>
         self.name = name
@@ -43,7 +43,7 @@ class Model:
             self.learning_rate = learning_rate
 
             self.in_image_width  = in_image_width
-            self.in_image_height = in_image_heigth
+            self.in_image_height = in_image_height
             self.in_channels     = in_channels
             self.out_classes     = out_classes
 
@@ -265,7 +265,7 @@ class Model:
         with tf.name_scope("train"):
             xentropy = tf.nn.softmax_cross_entropy_with_logits(logits=self.logits, labels=self.y)
             self.loss = tf.reduce_mean(xentropy)
-            self.optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate)
+            self.optimizer = tf.train.AdamOptimizer(learning_rate=self.learning_rate)
             self.trainer = self.optimizer.minimize(self.loss)
 
 
