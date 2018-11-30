@@ -133,8 +133,16 @@ def train_model(X_train, y_train, X_valid, y_valid, n_minibatches, batch_size, l
     # TODO: specify your neural network in model.py 
     agent = Model(history_length=history_length, name = net_name, learning_rate=lr, from_file=arq_file)
 
+
+
     if ckpt_file != '':
         agent.load(ckpt_file)
+
+    model_name = agent.name
+    tensorboard_dir = tensorboard_dir + '/' + model_name
+
+    if not os.path.exists(tensorboard_dir):
+        os.mkdir(tensorboard_dir)
     
     tensorboard_eval = Evaluation(tensorboard_dir, agent.session)
 
@@ -172,8 +180,8 @@ def train_model(X_train, y_train, X_valid, y_valid, n_minibatches, batch_size, l
                        dump_architecture=False)
 
             eval_dict = {
-                'loss': loss_train,
-                'acc' : acc_train,
+                'loss'  : loss_train,
+                'acc'   : acc_train,
                 'vloss' : loss_valid,
                 'vacc'  : acc_valid
             }
@@ -188,15 +196,16 @@ if __name__ == "__main__":
     # <JAB>
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--arq_file' , action="store", default='./models/net5_40k_CNN.narq.json',                 help='Load Architecture from file.')
-    parser.add_argument('--ckpt_file', action="store", default='',                 help='Load Parameters from file.')
-    parser.add_argument('--data_file', action="store", default='data_ln.pkl.gzip', help='Training data file.')
-    parser.add_argument('--net_name' , action="store", default='net5_40k_CNN',           help='Model Name.')
-    parser.add_argument('--lr'       , action="store", default=0.0001,             help='Learning Rate.')
-    parser.add_argument('--bs'       , action="store", default=64,                 help='Batch Size.')
-    parser.add_argument('--n_batch'  , action="store", default=100000,             help='Number of training batches.')
-    parser.add_argument('--his_len'  , action="store", default=5,                  help='History Length for RNN.')
-    parser.add_argument('--debug'    , action='store', default=0,                  help='Debug verbosity level [0-100].', type=int)
+    parser.add_argument('--arq_file' , action="store"     , default='',                 help='Load Architecture from file.')
+    parser.add_argument('--ckpt_file', action="store"     , default='',                 help='Load Parameters from file.')
+    parser.add_argument('--data_file', action="store"     , default='data_ln.pkl.gzip', help='Training data file.')
+    parser.add_argument('--net_name' , action="store"     , default='JABnet',           help='Model Name.')
+    parser.add_argument('--lr'       , action="store"     , default=0.0001,             help='Learning Rate.'                , type=float)
+    parser.add_argument('--bs'       , action="store"     , default=64,                 help='Batch Size.'                   , type=int)
+    parser.add_argument('--n_batch'  , action="store"     , default=100000,             help='Number of training batches.'   , type=int)
+    parser.add_argument('--his_len'  , action="store"     , default=5,                  help='History Length for RNN.'       , type=int)
+    parser.add_argument('--debug'    , action='store'     , default=0,                  help='Debug verbosity level [0-100].', type=int)
+    parser.add_argument('--resample' , action='store_true', default=False,              help='Uniformly resample data.')
 
 
     args = parser.parse_args()
@@ -206,6 +215,8 @@ if __name__ == "__main__":
     n_batches = args.n_batch
     lr = args.lr
     DEBUG = args.debug
+
+    resample = args.resample
 
     arq_file  = args.arq_file
     ckpt_file = args.ckpt_file
@@ -224,13 +235,15 @@ if __name__ == "__main__":
                                                                      X_valid[:max_valid], y_valid[:max_valid])
 
     # Better distribute the data
-    sample_percent = 0.75
-    data_len = y_train_onehot.shape[0]
+    if resample:
+        sample_percent = 0.75
+        data_len = y_train_onehot.shape[0]
 
-    dist_index = resampling(X_train, y_train_onehot, int(sample_percent * data_len))
+        dist_index = resampling(X_train, y_train_onehot, int(sample_percent * data_len))
 
-    X_train = X_train[dist_index]
-    y_train_onehot = y_train_onehot[dist_index]
+        X_train = X_train[dist_index]
+        y_train_onehot = y_train_onehot[dist_index]
+
 
     # Plot preprocessed data for debugging
     if DEBUG > 20:
