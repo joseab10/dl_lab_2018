@@ -185,10 +185,10 @@ if __name__ == "__main__":
     # <JAB>
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--arq_file' , action="store", default='',                 help='Load Architecture from file.')
+    parser.add_argument('--arq_file' , action="store", default='./models/net5_40k_CNN.narq.json',                 help='Load Architecture from file.')
     parser.add_argument('--ckpt_file', action="store", default='',                 help='Load Parameters from file.')
     parser.add_argument('--data_file', action="store", default='data_ln.pkl.gzip', help='Training data file.')
-    parser.add_argument('--net_name' , action="store", default='JABnet',           help='Model Name.')
+    parser.add_argument('--net_name' , action="store", default='net5_40k_CNN',           help='Model Name.')
     parser.add_argument('--lr'       , action="store", default=0.0001,             help='Learning Rate.')
     parser.add_argument('--bs'       , action="store", default=64,                 help='Batch Size.')
     parser.add_argument('--n_batch'  , action="store", default=100000,             help='Number of training batches.')

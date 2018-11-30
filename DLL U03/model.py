@@ -165,7 +165,7 @@ class Model:
 
                 last_outputs = tf.unstack(last_output, axis=1)
 
-                for h in range(history_length):
+                for h in range(self.history_length):
 
                     # Slice across temporal dimension
                     tmp_conv_4Dinput = last_outputs[h]
@@ -213,7 +213,7 @@ class Model:
             '''
             last_shape = last_output.get_shape().as_list()
             flat_size = last_shape[2] * last_shape[3] * last_shape[4]
-            last_output = tf.reshape(last_output, shape=[-1, history_length,  flat_size])
+            last_output = tf.reshape(last_output, shape=[-1, self.history_length,  flat_size])
 
         # Recurrent Layers
         if self.lstm_layers_conf != []:
@@ -233,6 +233,10 @@ class Model:
                 rnn_outputs, new_states = tf.nn.static_rnn(rnn_cells, last_output, dtype='float32')
 
                 last_output = rnn_outputs[-1]
+        else:
+            last_shape = last_output.get_shape().as_list()
+            flat_size = last_shape[1] * last_shape[2]
+            last_output = tf.reshape(last_output, shape=[-1, flat_size])
 
 
         # Dense Layers
