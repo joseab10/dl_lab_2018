@@ -121,7 +121,7 @@ def preprocessing(X_train, y_train, X_valid, y_valid):
 
 def train_model(X_train, y_train, X_valid, y_valid, n_minibatches, batch_size, lr,
                 model_dir="./models", tensorboard_dir="./tensorboard", history_length = 1,
-                arq_file = '', ckpt_file=''):
+                arq_file = '', ckpt_file='', net_name='JABnet'):
     
     # create result and model folders
     if not os.path.exists(model_dir):
@@ -131,7 +131,7 @@ def train_model(X_train, y_train, X_valid, y_valid, n_minibatches, batch_size, l
 
 
     # TODO: specify your neural network in model.py 
-    agent = Model(history_length=history_length, name = 'net3_40k_5D_Conv', learning_rate=lr, from_file=arq_file)
+    agent = Model(history_length=history_length, name = net_name, learning_rate=lr, from_file=arq_file)
 
     if ckpt_file != '':
         agent.load(ckpt_file)
@@ -188,6 +188,7 @@ if __name__ == "__main__":
     parser.add_argument('--arq_file' , action="store", default='',                 help='Load Architecture from file.')
     parser.add_argument('--ckpt_file', action="store", default='',                 help='Load Parameters from file.')
     parser.add_argument('--data_file', action="store", default='data_ln.pkl.gzip', help='Training data file.')
+    parser.add_argument('--net_name' , action="store", default='JABnet',           help='Model Name.')
     parser.add_argument('--lr'       , action="store", default=0.0001,             help='Learning Rate.')
     parser.add_argument('--bs'       , action="store", default=64,                 help='Batch Size.')
     parser.add_argument('--n_batch'  , action="store", default=100000,             help='Number of training batches.')
@@ -203,9 +204,10 @@ if __name__ == "__main__":
     lr = args.lr
     DEBUG = args.debug
 
-    arq_file = args.arq_file
+    arq_file  = args.arq_file
     ckpt_file = args.ckpt_file
     data_file = args.data_file
+    net_name  = args.net_name
 
     X_train, y_train, X_valid, y_valid = read_data("./data", data_file=data_file)
 
@@ -226,6 +228,6 @@ if __name__ == "__main__":
     # train model (you can change the parameters!)
     train_model(X_train, y_train_onehot, X_valid, y_valid_onehot,
                 history_length=history_length, n_minibatches=n_batches, batch_size=batch_size, lr=lr,
-                )
+                arq_file=arq_file, ckpt_file=ckpt_file, net_name=net_name)
 
     # </JAB>
