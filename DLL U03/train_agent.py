@@ -76,18 +76,21 @@ def plot_data(x, y, history_length = 1, rows = 10, title = ''):
 # </JAB>
 
 def resampling(x, y, samples):
+
+    tmp_y = np.argmax(y, axis=1)
+
     batch_size = x.shape[0]
 
     probabilities = np.zeros(batch_size)
 
-    actions = [LEFT,
+    actions = [STRAIGHT,
+               LEFT,
                RIGHT,
                ACCELERATE,
-               BRAKE,
-               STRAIGHT]
+               BRAKE]
 
     for action in actions:
-        action_indexes = y == action
+        action_indexes = tmp_y == action
         probabilities[action_indexes] = batch_size / np.sum(action_indexes)
 
     # Normalize probabilities so that they sum 1
