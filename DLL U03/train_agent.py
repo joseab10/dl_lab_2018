@@ -171,13 +171,13 @@ def train_model(X_train, y_train, X_valid, y_valid, n_minibatches, batch_size, l
             agent.save(suffix='_' + datetime.now().strftime("%Y%m%d-%H%M%S") + '_i' + str(i) + '_TrAcc_' + "{:.4f}".format(acc_train * 100),
                        dump_architecture=False)
 
-        eval_dict = {
-            'loss': loss_train,
-            'acc' : acc_train,
-            'vloss' : loss_valid,
-            'vacc'  : acc_valid
-        }
-        tensorboard_eval.write_episode_data(i, eval_dict)
+            eval_dict = {
+                'loss': loss_train,
+                'acc' : acc_train,
+                'vloss' : loss_valid,
+                'vacc'  : acc_valid
+            }
+            tensorboard_eval.write_episode_data(i, eval_dict)
 
     agent.save(dump_architecture=False)
     # </JAB>
