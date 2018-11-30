@@ -190,6 +190,7 @@ class Model:
                                                             ksize   = layer['pool ksize'],
                                                             strides = layer['pool stride'],
                                                             padding = layer['pool padding'],
+                                                            name    = layer['name'] + '_pool' + '_seq' + str(h)
                                                            )
 
                     tmp_conv_4Doutputs.append(tmp_conv_4Dout)

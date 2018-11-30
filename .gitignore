@@ -1,0 +1,27 @@
+.gitignore~
+.idea
+Download/
+
+DLL U01/Excercise 01 Report.lyx
+DLL U01/img/i01 benchmark t55,lr0.1,e20,bs64,3l.pdf
+DLL U01/img/i02 lr0.15.pdf
+DLL U01/img/i03 lr0.30.pdf
+DLL U01/img/i04 lr0.45.pdf
+DLL U01/img/i05 t69,lr0.60.pdf
+DLL U01/img/nn_arq.pdf
+
+DLL U02/exercise2.pdf
+DLL U02/README.md
+DLL U02/.idea
+DLL U02/__pycache__
+DLL U02/mnist.pkl.gz
+DLL U02/tf tutorial/.idea
+
+DLL U03/carracing.png
+DLL U03/exercise3.pdf
+DLL U03/gym/
+DLL U03/model/
+DLL U03/tensorboard/
+DLL U03/.idea
+DLL U03/__pycache__
+DLL U03/*~
