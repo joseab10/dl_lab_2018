@@ -196,7 +196,7 @@ if __name__ == "__main__":
     parser.add_argument('--bs'       , action="store", default=64,                 help='Batch Size.')
     parser.add_argument('--n_batch'  , action="store", default=100000,             help='Number of training batches.')
     parser.add_argument('--his_len'  , action="store", default=5,                  help='History Length for RNN.')
-    parser.add_argument('--debug'    , action='store', default=0,                  help='Debug verbosity level [0-100].')
+    parser.add_argument('--debug'    , action='store', default=0,                  help='Debug verbosity level [0-100].', type=int)
 
 
     args = parser.parse_args()
