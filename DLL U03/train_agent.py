@@ -172,7 +172,10 @@ def train_model(X_train, y_train, X_valid, y_valid, n_minibatches, batch_size, l
                        dump_architecture=False)
 
         eval_dict = {
-            'loss': loss_train
+            'loss': loss_train,
+            'acc' : acc_train,
+            'vloss' : loss_valid,
+            'vacc'  : acc_valid
         }
         tensorboard_eval.write_episode_data(i, eval_dict)
 
