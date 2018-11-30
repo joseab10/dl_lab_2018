@@ -82,7 +82,7 @@ def save_results(episode_rewards, results_dir="./results"):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--collect_data", action="store_true", default=True, help="Collect the data in a pickle file.")
+    parser.add_argument("--collect_data", action="store_true", default=False, help="Collect the data in a pickle file.")
 
     args = parser.parse_args()
 

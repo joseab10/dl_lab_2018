@@ -12,6 +12,7 @@ from tensorboard_evaluation import Evaluation
 
 # <JAB>
 from datetime import datetime
+import argparse
 # <JAB>
 
 
@@ -118,7 +119,9 @@ def preprocessing(X_train, y_train, X_valid, y_valid):
     return X_train, y_train, X_valid, y_valid
 
 
-def train_model(X_train, y_train, X_valid, y_valid, n_minibatches, batch_size, lr, model_dir="./models", tensorboard_dir="./tensorboard", history_length = 1):
+def train_model(X_train, y_train, X_valid, y_valid, n_minibatches, batch_size, lr,
+                model_dir="./models", tensorboard_dir="./tensorboard", history_length = 1,
+                arq_file = '', ckpt_file=''):
     
     # create result and model folders
     if not os.path.exists(model_dir):
@@ -128,9 +131,12 @@ def train_model(X_train, y_train, X_valid, y_valid, n_minibatches, batch_size, l
 
 
     # TODO: specify your neural network in model.py 
-    agent = Model(history_length=history_length, name = 'net3_40k_5D_Conv', learning_rate=lr)
+    agent = Model(history_length=history_length, name = 'net3_40k_5D_Conv', learning_rate=lr, from_file=arq_file)
+
+    if ckpt_file != '':
+        agent.load(ckpt_file)
     
-    tensorboard_eval = Evaluation(tensorboard_dir)
+    tensorboard_eval = Evaluation(tensorboard_dir, agent.session)
 
     # 1. write a method sample_minibatch and perform an update step
     # 2. compute training/ validation accuracy and loss for the batch and visualize them with tensorboard. You can watch the progress of
@@ -141,8 +147,9 @@ def train_model(X_train, y_train, X_valid, y_valid, n_minibatches, batch_size, l
     # Initialize Parameters
     agent.session.run(agent.init)
 
-    # Save Architecture
-    agent.save_arq()
+    # Save Architecture (Only if the network was not loaded from one)
+    if arq_file == '':
+        agent.save_arq()
 
     for i in range(n_minibatches):
 
@@ -155,8 +162,8 @@ def train_model(X_train, y_train, X_valid, y_valid, n_minibatches, batch_size, l
         agent.train(X_minibatch, y_minibatch)
 
         if i % 1000 == 0:
-            loss_train, acc_train = agent.evaluate(X_train, y_train)
-            loss_valid, acc_valid = agent.evaluate(X_valid, y_valid)
+            loss_train, acc_train = agent.evaluate(X_train, y_train, max_batch_size=200)
+            loss_valid, acc_valid = agent.evaluate(X_valid, y_valid, max_batch_size=200)
 
             print("Minibatch: ", i , " Train accuracy: ", acc_train, " Train Loss: ", loss_train, ", Test accuracy: ", acc_valid, " Test Loss: ", loss_valid)
 
@@ -175,12 +182,30 @@ def train_model(X_train, y_train, X_valid, y_valid, n_minibatches, batch_size, l
 
 if __name__ == "__main__":
 
-    # read data
-    if DEBUG > 5:
-        data_file = 'data[5k]_pp.pkl.gzip'
-    else:
-        data_file = 'data[40k]_pp.pkl.gzip'
+    # <JAB>
+    parser = argparse.ArgumentParser()
 
+    parser.add_argument('--arq_file' , action="store", default='',                 help='Load Architecture from file.')
+    parser.add_argument('--ckpt_file', action="store", default='',                 help='Load Parameters from file.')
+    parser.add_argument('--data_file', action="store", default='data_ln.pkl.gzip', help='Training data file.')
+    parser.add_argument('--lr'       , action="store", default=0.0001,             help='Learning Rate.')
+    parser.add_argument('--bs'       , action="store", default=64,                 help='Batch Size.')
+    parser.add_argument('--n_batch'  , action="store", default=100000,             help='Number of training batches.')
+    parser.add_argument('--his_len'  , action="store", default=5,                  help='History Length for RNN.')
+    parser.add_argument('--debug'    , action='store', default=0,                  help='Debug verbosity level [0-100].')
+
+
+    args = parser.parse_args()
+
+    history_length = args.his_len
+    batch_size = args.bs
+    n_batches = args.n_batch
+    lr = args.lr
+    DEBUG = args.debug
+
+    arq_file = args.arq_file
+    ckpt_file = args.ckpt_file
+    data_file = args.data_file
 
     X_train, y_train, X_valid, y_valid = read_data("./data", data_file=data_file)
 
@@ -189,17 +214,9 @@ if __name__ == "__main__":
     max_train = X_train.shape[0]
     max_valid = X_valid.shape[0]
 
-    #if DEBUG > 10:
-    #    max_train = 1000
-    #    max_valid = 100
-
-    history_length = 5
-
     # preprocess data
     X_train, y_train_onehot, X_valid, y_valid_onehot = preprocessing(X_train[:max_train], y_train[:max_train],
                                                                      X_valid[:max_valid], y_valid[:max_valid])
-    #X_train, y_train_onehot = resequence(X_train, y_train_onehot, history_length)
-    #X_valid, y_valid_onehot = resequence(X_valid, y_valid_onehot, history_length)
 
     # Plot preprocessed data for debugging
     if DEBUG > 20:
@@ -207,9 +224,8 @@ if __name__ == "__main__":
         plot_data(X_train, y_train, history_length, history_length + 5, 'Sample Validation Data')
 
     # train model (you can change the parameters!)
-    if DEBUG > 10:
-        train_model(X_train, y_train_onehot, X_valid, y_valid_onehot, history_length=history_length, n_minibatches=1000, batch_size=64, lr=0.0001)
-    else:
-        train_model(X_train, y_train_onehot, X_valid, y_valid_onehot, history_length=history_length, n_minibatches=100000, batch_size=64, lr=0.0001)
+    train_model(X_train, y_train_onehot, X_valid, y_valid_onehot,
+                history_length=history_length, n_minibatches=n_batches, batch_size=batch_size, lr=lr,
+                )
 
     # </JAB>

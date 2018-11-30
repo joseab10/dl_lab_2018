@@ -2,15 +2,21 @@ import tensorflow as tf
 
 class Evaluation:
 
-    def __init__(self, store_dir):
+    def __init__(self, store_dir, session):
         tf.reset_default_graph()
-        self.sess = tf.Session()
-        self.tf_writer = tf.summary.FileWriter(store_dir)
+        self.sess = session #tf.Session()
+        self.tf_writer = tf.summary.FileWriter(store_dir, self.sess.graph)
 
         self.tf_loss = tf.placeholder(tf.float32, name="loss_summary")
-        tf.summary.scalar("loss", self.tf_loss)
+        tf.summary.scalar("train loss", self.tf_loss)
 
         # TODO: define more metrics you want to plot during training (e.g. training/validation accuracy)
+        self.tf_loss = tf.placeholder(tf.float32, name="loss_summary")
+        tf.summary.scalar("validation loss", self.tf_loss)
+
+        self.tf_loss = tf.placeholder(tf.float32, name="loss_summary")
+        tf.summary.scalar("train accuracy", self.tf_loss)
+        tf.summary.scalar("validation accuracy", self.tf_loss)
              
         self.performance_summaries = tf.summary.merge_all()
 
