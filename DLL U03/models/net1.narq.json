@@ -1,0 +1,58 @@
+{
+  "conv_layers": [
+    {
+                    "name"        : "conv1",
+                    "filters"     : 16     ,
+                    "kernel size" : 5      ,
+                    "padding"     : "SAME" ,
+                    "stride"      : [1,1,1,1]  ,
+                    "activation"  : "relu",
+
+                    "pooling"     : "max",
+                    "pool ksize"  : [1, 2, 2, 1],
+                    "pool stride" : [1, 2, 2, 1],
+                    "pool padding": "VALID"
+                },
+
+                {
+                    "name"       : "conv2",
+                    "filters"    : 24,
+                    "kernel size": 3,
+                    "padding"    : "SAME",
+                    "stride"     : [1,1,1,1],
+                    "activation" : "relu",
+
+                    "pooling"     : "max",
+                    "pool ksize"  : [1, 2, 2, 1],
+                    "pool stride" : [1, 2, 2, 1],
+                    "pool padding": "VALID"
+                }
+  ],
+  "name": "net1",
+  "out_classes": 5,
+  "lstm_layers": [
+    {
+      "name": "lstm1",
+      "units": 16
+    }
+  ],
+  "in_image_width": 96,
+  "in_channels": 1,
+  "path": "./models/",
+  "fc_layers": [
+    {
+      "activation": "relu",
+      "units": 100,
+      "name": "fc1"
+    },
+    {
+      "activation": "relu",
+      "units": 30,
+      "name": "fc2"
+    }
+  ],
+  "learning_rate": 0.0001,
+  "in_image_height": 96,
+  "history_length": 5
+}
+

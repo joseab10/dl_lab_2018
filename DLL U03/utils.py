@@ -11,11 +11,11 @@ BRAKE = 4
 DEBUG = 0
 
 ACTIONS = {
-    LEFT       : {'log': '[←] Left'      , 'value': [-1.0,  0.0, 0.0]},
-    RIGHT      : {'log': '[→] Right'     , 'value': [+1.0,  0.0, 0.0]},
-    STRAIGHT   : {'log': '[ ] Straight'  , 'value': [ 0.0,  0.0, 0.0]},
-    ACCELERATE : {'log': '[↑] Accelerate', 'value': [ 0.0, +1.0, 0.0]},
-    BRAKE      : {'log': '[↓] Break'     , 'value': [ 0.0,  0.0, +0.2]}
+    LEFT       : {'log': '[<- ] Left'      , 'value': [-1.0,  0.0, 0.0]},
+    RIGHT      : {'log': '[ ->] Right'     , 'value': [+1.0,  0.0, 0.0]},
+    STRAIGHT   : {'log': '[   ] Straight'  , 'value': [ 0.0,  0.0, 0.0]},
+    ACCELERATE : {'log': '[ ^ ] Accelerate', 'value': [ 0.0, +1.0, 0.0]},
+    BRAKE      : {'log': '[ _ ] Break'     , 'value': [ 0.0,  0.0, +0.2]}
 }
 
 # </JAB>

@@ -9,6 +9,10 @@ import json
 from model import Model
 from utils import *
 
+# <JAB>
+import argparse
+# </JAB>
+
 
 def run_episode(env, agent, rendering=True, max_timesteps=1000):
     
@@ -16,6 +20,19 @@ def run_episode(env, agent, rendering=True, max_timesteps=1000):
     step = 0
 
     state = env.reset()
+
+    # <JAB>
+    history_length = agent.history_length
+    h = history_length
+
+    # first action while the agent collects the first h samples
+    first_action = ACCELERATE
+
+    historical_states = []
+
+    # <JAB>
+
+
     while True:
         
         # TODO: preprocess the state in the same way than in in your preprocessing in train_agent.py
@@ -24,9 +41,19 @@ def run_episode(env, agent, rendering=True, max_timesteps=1000):
         
         # TODO: get the action from your agent! If you use discretized actions you need to transform them to continuous
         # actions again. a needs to have a shape like np.array([0.0, 0.0, 0.0])
-        a = agent.predict(state)
-        a_text = ACTIONS[np.argmax(a)]['log']
-        a = ACTIONS[np.argmax(a)]['value']
+        historical_states.append(state)
+
+        if h > 0:
+            a = ACTIONS[first_action]['value']
+            a_text = ACTIONS[first_action]['log']
+            h -= 1
+        else:
+            historical_states = historical_states[1:]
+            np_his_states = np.transpose(np.array(historical_states), axes=(1, 0, 2, 3, 4))
+
+            a = agent.predict(np_his_states)
+            a_text = ACTIONS[np.argmax(a)]['log']
+            a = ACTIONS[np.argmax(a)]['value']
 
         next_state, r, done, info = env.step(a)   
         episode_reward += r       
@@ -53,8 +80,23 @@ if __name__ == "__main__":
     n_test_episodes = 15                  # number of episodes to test
 
     # TODO: load agent
-    agent = Model(lstm_layers=[], name='net1')
-    agent.load()
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('--arq_file', action="store", default='models/net1.narq.json', help='Load Architecture from file.')
+    parser.add_argument('--ckpt_file', action="store", default='models/net1.ckpt', help='Load Parameters from file.')
+    parser.add_argument('--debug', action='store', default=10, help='Debug verbosity level [0-100].', type=int)
+
+    args = parser.parse_args()
+
+    DEBUG = args.debug
+
+    arq_file = args.arq_file
+    ckpt_file = args.ckpt_file
+
+
+    agent = Model(from_file=arq_file)
+    agent.load(file_name=ckpt_file)
+    # <JAB>
 
     env = gym.make('CarRacing-v0').unwrapped
 
