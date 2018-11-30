@@ -15,13 +15,13 @@ from datetime import datetime
 # <JAB>
 
 
-def read_data(datasets_dir="./data", frac = 0.1, start_sample = 0, max_samples = 10000):
+def read_data(datasets_dir="./data", data_file = 'data_ln.pkl.gzip', frac = 0.1, start_sample = 0, max_samples = 10000):
     """
     This method reads the states and actions recorded in drive_manually.py 
     and splits it into training/ validation set.
     """
     print("... read data")
-    data_file = os.path.join(datasets_dir, 'data_ln.pkl.gzip')
+    data_file = os.path.join(datasets_dir, data_file)
   
     f = gzip.open(data_file,'rb')
     data = pickle.load(f)
@@ -31,20 +31,6 @@ def read_data(datasets_dir="./data", frac = 0.1, start_sample = 0, max_samples =
     y = np.array(data["action"]).astype('float32')
 
     # split data into training and validation set
-
-    #<JAB>
-    # Added more data splitting due to memory constraints
-    #if max_samples <= len(data["state"]):
-    #    n_samples = max_samples
-    #else:
-    #    n_samples = len(data["state"])
-
-    #end_train_sample = start_sample + int((1-frac) * n_samples)
-    #end_valid_sample = end_train_sample + int(frac * n_samples)
-
-    #X_train, y_train = X[start_sample:end_train_sample], y[start_sample:end_train_sample]
-    #X_valid, y_valid = X[end_train_sample:end_valid_sample], y[end_train_sample:end_valid_sample]
-    # </JAB>
 
     # split data into training and validation set
     n_samples = len(data["state"])
@@ -65,22 +51,11 @@ def resequence(x, history_length):
     image_width = x.shape[1]
     image_len   = x.shape[2]
 
-
-    # Pad with empty frames
-    # pad = np.zeros((image_width, image_len))
-
-    #tmp_x = np.empty((batch_len, image_width, image_len, history_length))
-    tmp_x = np.empty((batch_len - history_length + 1, image_width, image_len, history_length))
+    tmp_x = np.empty((batch_len - history_length + 1, history_length, image_width, image_len, 1))
 
     for i in range(batch_len - history_length):
 
-        #p = 0
-        #while p < history_length - 1 - i:
-        #    tmp_x[i,:,:,p] = pad
-        #    p += 1
-
-        #tmp_x[i,:,:,p:] = np.transpose(x[i + p:i + history_length,:, :, 0], (1,2,0))
-        tmp_x[i,:,:,:] = np.transpose(x[i:i + history_length,:, :, 0], (1,2,0))
+        tmp_x[i, :, :, :, :] = np.array([x[i:i + history_length, :, :, :]])
 
     return tmp_x
 
@@ -133,38 +108,14 @@ def preprocessing(X_train, y_train, X_valid, y_valid, history_length=1, onehot =
 
     # <JAB>
     # Preprocessing now done in drive_manually before storing data
-
-    #X_train = rgb2gray(X_train)
     X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], X_train.shape[2], 1))
-    #X_valid = rgb2gray(X_valid)
     X_valid = np.reshape(X_valid, (X_valid.shape[0], X_valid.shape[1], X_valid.shape[2], 1))
 
-    if history_length > 1:
-
-        X_train = resequence(X_train, history_length)
-        y_train = y_train[history_length - 1:]
-        X_valid = resequence(X_valid, history_length)
-        y_valid = y_valid[history_length - 1 :]
-
-    #if onehot:
-    #    train_len = y_train.shape[0]
-    #    tmp_y = np.zeros(train_len, dtype=np.int8)
-#
-    #    for i in range(train_len):
-    #        tmp_y[i] = action_to_id(y_train[i])
-#
-    #    y_train = one_hot(tmp_y)
-#
-    #    valid_len = y_valid.shape[0]
-    #    tmp_y = np.zeros(valid_len, dtype=np.int8)
-#
-    #    for i in range(valid_len):
-    #        tmp_y[i] = action_to_id(y_valid[i])
-#
-    #    y_valid = one_hot(tmp_y)
-
+    X_train = resequence(X_train, history_length)
+    y_train = y_train[history_length - 1:]
+    X_valid = resequence(X_valid, history_length)
+    y_valid = y_valid[history_length - 1 :]
     # </JAB>
-
     
     return X_train, y_train, X_valid, y_valid
 
@@ -179,7 +130,7 @@ def train_model(X_train, y_train, X_valid, y_valid, n_minibatches, batch_size, l
 
 
     # TODO: specify your neural network in model.py 
-    agent = Model(history_length=history_length, lstm_layers=[], name = 'net2_40k', learning_rate=lr)
+    agent = Model(history_length=history_length, name = 'net3_40k_5D_Conv', learning_rate=lr)
     
     tensorboard_eval = Evaluation(tensorboard_dir)
 
@@ -191,6 +142,9 @@ def train_model(X_train, y_train, X_valid, y_valid, n_minibatches, batch_size, l
 
     # Initialize Parameters
     agent.session.run(agent.init)
+
+    # Save Architecture
+    agent.save_arq()
 
     for i in range(n_minibatches):
 
@@ -208,21 +162,29 @@ def train_model(X_train, y_train, X_valid, y_valid, n_minibatches, batch_size, l
 
             print("Minibatch: ", i , " Train accuracy: ", acc_train, " Train Loss: ", loss_train, ", Test accuracy: ", acc_valid, " Test Loss: ", loss_valid)
 
-            agent.save(suffix='_' + datetime.now().strftime("%Y%m%d-%H%M%S") + '_i' + str(i) + '_TrAcc_' + "{:.4f}".format(acc_train * 100))
+            # Save intermediate checkpoints in case training crashes or for Early Stop
+            agent.save(suffix='_' + datetime.now().strftime("%Y%m%d-%H%M%S") + '_i' + str(i) + '_TrAcc_' + "{:.4f}".format(acc_train * 100),
+                       dump_architecture=False)
 
+        eval_dict = {
+            'loss': loss_train
+        }
+        tensorboard_eval.write_episode_data(i, eval_dict)
 
-
-         # ...
-         # tensorboard_eval.write_episode_data(...)
-
-    agent.save()
+    agent.save(dump_architecture=False)
     # </JAB>
 
 
 if __name__ == "__main__":
 
-    # read data    
-    X_train, y_train, X_valid, y_valid = read_data("./data")
+    # read data
+    if DEBUG > 5:
+        data_file = 'data[5k]_pp.pkl.gzip'
+    else:
+        data_file = 'data[40k]_pp.pkl.gzip'
+
+
+    X_train, y_train, X_valid, y_valid = read_data("./data", data_file=data_file)
 
     # <JAB>
     # Used for quicker testing
@@ -233,7 +195,7 @@ if __name__ == "__main__":
     #    max_train = 1000
     #    max_valid = 100
 
-    history_length = 1
+    history_length = 5
 
     # preprocess data
     X_train, y_train_onehot, X_valid, y_valid_onehot = preprocessing(X_train[:max_train], y_train[:max_train], X_valid[:max_valid], y_valid[:max_valid], history_length=history_length)

@@ -8,7 +8,7 @@ BRAKE = 4
 
 # <JAB>
 
-DEBUG = 10
+DEBUG = 0
 
 ACTIONS = {
     LEFT       : {'log': '[←] Left'      , 'value': [-1.0,  0.0, 0.0]},
