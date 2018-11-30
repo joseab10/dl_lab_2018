@@ -31,10 +31,6 @@
   "name": "net1",
   "out_classes": 5,
   "lstm_layers": [
-    {
-      "name": "lstm1",
-      "units": 16
-    }
   ],
   "in_image_width": 96,
   "in_channels": 1,
@@ -53,6 +49,6 @@
   ],
   "learning_rate": 0.0001,
   "in_image_height": 96,
-  "history_length": 5
+  "history_length": 1
 }
 
