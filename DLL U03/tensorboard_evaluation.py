@@ -9,8 +9,9 @@ class Evaluation:
 
         self.tf_writer = tf.summary.FileWriter(store_dir, self.sess.graph)
 
-        self.tf_loss = tf.placeholder(tf.float32, name="loss_summary")
-        tf.summary.scalar("loss", self.tf_loss)
+        with self.sess.graph.as_default():
+            self.tf_loss = tf.placeholder(tf.float32, name="loss_summary")
+            tf.summary.scalar("loss", self.tf_loss)
 
         # TODO: define more metrics you want to plot during training (e.g. training/validation accuracy)
         #self.val_loss = tf.placeholder(tf.float32, name="validation_loss_summary")
