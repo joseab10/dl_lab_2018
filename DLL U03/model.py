@@ -220,7 +220,7 @@ class Model:
 
                 lstm_cells = []
                 for layer in self.lstm_layers_conf:
-                    lstm_cell = tf.nn.rnn_cell.LSTMCell(layer['units'], name=layer['name'])
+                    lstm_cell = tf.nn.rnn_cell.LSTMCell(layer['units'])
                     lstm_cells.append(lstm_cell)
 
                 rnn_cells = tf.nn.rnn_cell.MultiRNNCell(cells=lstm_cells)
