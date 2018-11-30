@@ -280,7 +280,7 @@ class Model:
         x, y = self.resequence(x, y)
         self.session.run(self.trainer, feed_dict={self.X: x, self.y: y})
 
-    def evaluate(self, x, y, max_batch_size = 1000):
+    def evaluate(self, x, y, max_batch_size = 100):
 
         acc = 0
         loss = 0

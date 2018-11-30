@@ -1,2 +1,6 @@
-model_checkpoint_path: "net3_40k_5D_Conv_20181130-013040_i0_TrAcc_12.5667.ckpt"
-all_model_checkpoint_paths: "net3_40k_5D_Conv_20181130-013040_i0_TrAcc_12.5667.ckpt"
+model_checkpoint_path: "net3_40k_5D_Conv.ckpt"
+all_model_checkpoint_paths: "net3_40k_5D_Conv_20181130-074515_i96000_TrAcc_58.3854.ckpt"
+all_model_checkpoint_paths: "net3_40k_5D_Conv_20181130-074743_i97000_TrAcc_58.3854.ckpt"
+all_model_checkpoint_paths: "net3_40k_5D_Conv_20181130-075015_i98000_TrAcc_58.3854.ckpt"
+all_model_checkpoint_paths: "net3_40k_5D_Conv_20181130-075233_i99000_TrAcc_58.3854.ckpt"
+all_model_checkpoint_paths: "net3_40k_5D_Conv.ckpt"
