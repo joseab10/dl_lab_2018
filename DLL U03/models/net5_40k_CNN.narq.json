@@ -1,5 +1,5 @@
 {
-  "history_length": 5,
+  "history_length": 1,
   "fc_layers": [
     {
       "activation": "relu",
