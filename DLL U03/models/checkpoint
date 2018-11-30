@@ -1,2 +1,6 @@
-model_checkpoint_path: "net4_40k_CRNN_20181130-120033_i0_TrAcc_10.1083.ckpt"
-all_model_checkpoint_paths: "net4_40k_CRNN_20181130-120033_i0_TrAcc_10.1083.ckpt"
+model_checkpoint_path: "net4_40k_CRNN.ckpt"
+all_model_checkpoint_paths: "net4_40k_CRNN_20181130-123106_i96000_TrAcc_80.2139.ckpt"
+all_model_checkpoint_paths: "net4_40k_CRNN_20181130-123124_i97000_TrAcc_80.7167.ckpt"
+all_model_checkpoint_paths: "net4_40k_CRNN_20181130-123141_i98000_TrAcc_80.0333.ckpt"
+all_model_checkpoint_paths: "net4_40k_CRNN_20181130-123159_i99000_TrAcc_79.0500.ckpt"
+all_model_checkpoint_paths: "net4_40k_CRNN.ckpt"
