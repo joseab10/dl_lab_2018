@@ -41,7 +41,7 @@ def read_data(datasets_dir="./data", data_file = 'data_ln.pkl.gzip', frac = 0.1,
 
 
 # <JAB>
-def resequence(x, history_length):
+def resequence(x, y, history_length):
     # This functions reshapes the data by adding <history_length> - 1  empty images to the front of the sequence
     # and then copy it into small sequence chunks to have a sliding window in time for the data.
     # It will be used in many-to-one LSTMs so that the previous <history_length> - 1 frames are taken into
@@ -50,14 +50,17 @@ def resequence(x, history_length):
     batch_len   = x.shape[0]
     image_width = x.shape[1]
     image_len   = x.shape[2]
+    image_chan  = x.shape[3]
 
-    tmp_x = np.empty((batch_len - history_length + 1, history_length, image_width, image_len, 1))
+    tmp_x = np.empty((batch_len - history_length + 1, history_length, image_width, image_len, image_chan))
 
-    for i in range(batch_len - history_length):
+    for i in range(batch_len - history_length + 1):
 
         tmp_x[i, :, :, :, :] = np.array([x[i:i + history_length, :, :, :]])
 
-    return tmp_x
+    tmp_y = y[history_length - 1 :]
+
+    return tmp_x, tmp_y
 
 
 
@@ -95,7 +98,7 @@ def plot_data(x, y, history_length = 1, rows = 10, title = ''):
 # </JAB>
 
 
-def preprocessing(X_train, y_train, X_valid, y_valid, history_length=1, onehot = True):
+def preprocessing(X_train, y_train, X_valid, y_valid):
 
     # 1. convert the images in X_train/X_valid to gray scale. If you use rgb2gray() from utils.py, the output shape (96, 96, 1)
     # 2. you can either train your model with continous actions (as you get them from read_data) using regression
@@ -110,11 +113,6 @@ def preprocessing(X_train, y_train, X_valid, y_valid, history_length=1, onehot =
     # Preprocessing now done in drive_manually before storing data
     X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], X_train.shape[2], 1))
     X_valid = np.reshape(X_valid, (X_valid.shape[0], X_valid.shape[1], X_valid.shape[2], 1))
-
-    X_train = resequence(X_train, history_length)
-    y_train = y_train[history_length - 1:]
-    X_valid = resequence(X_valid, history_length)
-    y_valid = y_valid[history_length - 1 :]
     # </JAB>
     
     return X_train, y_train, X_valid, y_valid
@@ -152,7 +150,7 @@ def train_model(X_train, y_train, X_valid, y_valid, n_minibatches, batch_size, l
         minibatch_end   = minibatch_start + batch_size
 
         X_minibatch = X_train[minibatch_start : minibatch_end, :, :, :]
-        y_minibatch = y_train[minibatch_start : minibatch_end, :]
+        y_minibatch = y_train[minibatch_start: minibatch_end, :]
 
         agent.session.run(agent.trainer, feed_dict={agent.X: X_minibatch, agent.y: y_minibatch})
 
@@ -198,7 +196,10 @@ if __name__ == "__main__":
     history_length = 5
 
     # preprocess data
-    X_train, y_train_onehot, X_valid, y_valid_onehot = preprocessing(X_train[:max_train], y_train[:max_train], X_valid[:max_valid], y_valid[:max_valid], history_length=history_length)
+    X_train, y_train_onehot, X_valid, y_valid_onehot = preprocessing(X_train[:max_train], y_train[:max_train],
+                                                                     X_valid[:max_valid], y_valid[:max_valid])
+    X_train, y_train_onehot = resequence(X_train, y_train_onehot, history_length)
+    X_valid, y_valid_onehot = resequence(X_valid, y_valid_onehot, history_length)
 
     # Plot preprocessed data for debugging
     if DEBUG > 20:
