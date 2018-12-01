@@ -230,9 +230,10 @@ class Model:
                 last_output = tf.transpose(last_output, [1, 0, 2])
                 last_output = tf.unstack(last_output)
 
-                rnn_outputs, new_states = tf.nn.static_rnn(rnn_cells, last_output, dtype='float32')
+                outputs, final_state = tf.nn.static_rnn(rnn_cells, last_output, dtype='float32')
 
-                last_output = rnn_outputs[-1]
+                #last_output = rnn_outputs[-1]
+                last_output = final_state.h
         else:
             last_shape = last_output.get_shape().as_list()
             flat_size = last_shape[1] * last_shape[2]
