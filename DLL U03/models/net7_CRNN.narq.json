@@ -1,5 +1,5 @@
 {
-  "history_length": 10,
+  "history_length": 5,
   "fc_layers": [
     {
       "activation": "relu",
@@ -7,20 +7,20 @@
       "name": "fc1"
     }
   ],
-  "name": "net6_40k_CRNN",
+  "name": "net7_CRNN",
   "in_image_width": 96,
   "path": "./models/",
-  "learning_rate": 0.01,
+  "learning_rate": 0.0001,
   "lstm_layers": [
     {
-      "units": 16,
+      "units": 20,
       "name": "lstm1"
     }
   ],
   "conv_layers": [
     {
       "pool padding": "VALID",
-      "padding": "SAME",
+      "padding": "VALID",
       "pool ksize": [1, 2, 2, 1],
       "name": "conv1",
       "activation": "relu",
@@ -32,7 +32,7 @@
     },
     {
       "pool padding": "VALID",
-      "padding": "SAME",
+      "padding": "VALID",
       "pool ksize": [1, 2, 2, 1],
       "name": "conv2",
       "activation": "relu",
@@ -44,7 +44,7 @@
     },
     {
       "pool padding": "VALID",
-      "padding": "SAME",
+      "padding": "VALID",
       "pool ksize": [1, 2, 2, 1],
       "name": "conv3",
       "activation": "relu",
@@ -53,11 +53,10 @@
       "pool stride": [1, 2, 2, 1],
       "pooling": "max",
       "filters": 10
-    }
-    ,
+    },
     {
       "pool padding": "VALID",
-      "padding": "SAME",
+      "padding": "VALID",
       "pool ksize": [1, 2, 2, 1],
       "name": "conv4",
       "activation": "relu",
@@ -65,7 +64,7 @@
       "kernel size": 3,
       "pool stride": [1, 2, 2, 1],
       "pooling": "max",
-      "filters": 15
+      "filters": 10
     }
   ],
   "out_classes": 5,
