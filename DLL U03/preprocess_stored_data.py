@@ -35,7 +35,7 @@ for file in files:
     preprocessed_data = {
         'state'      : [],
         'action'     : [],
-        'next_state' : [],
+     #   'next_state' : [],
      #   'reward'     : [],
      #   'terminal'   : []
     }
@@ -58,9 +58,9 @@ for file in files:
         tmp_state = rgb2gray(np.array(unprocessed_data['state'][start_sample:end_sample]).astype('float32'))
         preprocessed_data['state'][start_sample:end_sample] = tmp_state.astype('uint8')
 
-        print('        Preprocessing Next States')
-        tmp_state = rgb2gray(np.array(unprocessed_data['next_state'][start_sample:end_sample]).astype('float32'))
-        preprocessed_data['next_state'][start_sample:end_sample] = tmp_state.astype('uint8')
+        #print('        Preprocessing Next States')
+        #tmp_state = rgb2gray(np.array(unprocessed_data['next_state'][start_sample:end_sample]).astype('float32'))
+        #preprocessed_data['next_state'][start_sample:end_sample] = tmp_state.astype('uint8')
 
         print('        Preprocessing Actions')
         tmp_actions = []
@@ -70,7 +70,7 @@ for file in files:
         preprocessed_data['action'][start_sample:end_sample] = one_hot(np.array(tmp_actions).astype('uint8')).astype('uint8')
 
     preprocessed_data['state']      = np.array(preprocessed_data['state']).astype('uint8')
-    preprocessed_data['next_state'] = np.array(preprocessed_data['next_state']).astype('uint8')
+    #preprocessed_data['next_state'] = np.array(preprocessed_data['next_state']).astype('uint8')
     preprocessed_data['action'] = np.array(preprocessed_data['action']).astype('uint8')
 
 

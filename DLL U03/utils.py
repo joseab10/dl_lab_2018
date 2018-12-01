@@ -50,13 +50,36 @@ def rgb2gray(rgb):
 def action_to_id(a):
     """ 
     this method discretizes actions
+    JAB: not very well!!!
     """
-    if all(a == [-1.0, 0.0, 0.0]): return LEFT               # LEFT: 1
-    elif all(a == [1.0, 0.0, 0.0]): return RIGHT             # RIGHT: 2
-    elif all(a == [0.0, 1.0, 0.0]): return ACCELERATE        # ACCELERATE: 3
-    # <JAB>
-    #elif all(a == [0.0, 0.0, 0.8]): return BRAKE             # BRAKE: 4
-    # </JAB>
-    elif all(a == [0.0, 0.0, 0.2]): return BRAKE             # BRAKE: 4
-    else:       
-        return STRAIGHT                                      # STRAIGHT = 0
+    #if all(a == [-1.0, 0.0, 0.0]): return LEFT               # LEFT: 1
+    #elif all(a == [1.0, 0.0, 0.0]): return RIGHT             # RIGHT: 2
+    #elif all(a == [0.0, 1.0, 0.0]): return ACCELERATE        # ACCELERATE: 3
+    ## <JAB>
+    ##elif all(a == [0.0, 0.0, 0.8]): return BRAKE             # BRAKE: 4
+    ## </JAB>
+    #elif all(a == [0.0, 0.0, 0.2]): return BRAKE             # BRAKE: 4
+    #else:
+    #    return STRAIGHT                                      # STRAIGHT = 0
+
+    subactions = []
+    if a[0] == -1.0:
+        subactions.append(LEFT)
+    elif a[0] == 1.0:
+        subactions.append(RIGHT)
+
+    if a[1] == 1.0:
+        subactions.append(ACCELERATE)
+
+    if a[2] != 0.0:
+        subactions.append(BRAKE)
+
+    actions_per_step = len(subactions)
+    if actions_per_step == 0:
+        return STRAIGHT
+    elif actions_per_step == 1:
+        return subactions[0]
+    else:
+        # If more than one action took place in this step, choose one randomly.
+        rand_index = np.random.randint(0, actions_per_step - 1, dtype='int8')
+        return subactions[rand_index]

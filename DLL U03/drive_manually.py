@@ -32,11 +32,11 @@ def key_release(k, mod):
     if k == key.DOWN:  a[2] = 0.0
 
 
-def store_data(data, datasets_dir="./data"):
+def store_data(data, datasets_dir="./data", file_name='data.pkl.gzip'):
     # save data
     if not os.path.exists(datasets_dir):
         os.mkdir(datasets_dir)
-    data_file = os.path.join(datasets_dir, 'data.pkl.gzip')
+    data_file = os.path.join(datasets_dir, file_name)
 
     # <JAB>
     # Read Data file contents, append current session's data, then save it.
@@ -48,7 +48,7 @@ def store_data(data, datasets_dir="./data"):
 
         prev_data["state"]      += data["state"]  # state has shape (96, 96, 3)
         prev_data["action"]     += data["action"]  # action has shape (1, 3)
-        prev_data["next_state"] += data["next_state"]
+        #prev_data["next_state"] += data["next_state"]
         #prev_data["reward"]     += data["reward"]
         #prev_data["terminal"]   += data["terminal"]
 
@@ -82,7 +82,8 @@ def save_results(episode_rewards, results_dir="./results"):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--collect_data", action="store_true", default=False, help="Collect the data in a pickle file.")
+    parser.add_argument("--collect_data", action="store_true", default=False          , help="Collect the data in a pickle file.")
+    parser.add_argument("--data_file"   , action="store"     , default='data.pkl.gzip', help="Filename of pickle file.")
 
     args = parser.parse_args()
 
@@ -116,7 +117,7 @@ if __name__ == "__main__":
             # Added the preprocessing here
             samples["state"].append(rgb2gray(state.astype('float32')).astype('uint8'))            # state has shape (96, 96, 3)
             samples["action"].append(np.array(one_hot(np.array([action_to_id(a)]))).astype('uint8')[0])     # action has shape (1, 3)
-            samples["next_state"].append(rgb2gray(next_state.astype('float32')).astype('uint8'))
+            #samples["next_state"].append(rgb2gray(next_state.astype('float32')).astype('uint8'))
             #samples["reward"].append(r)
             #samples["terminal"].append(done)
             
@@ -129,7 +130,7 @@ if __name__ == "__main__":
 
             if args.collect_data and steps % 5000 == 0:
                 print('... saving data')
-                store_data(samples, "./data")
+                store_data(samples, "./data", file_name=args.file_name)
                 save_results(episode_rewards, "./results")
 
                 # <JAB>
@@ -137,7 +138,7 @@ if __name__ == "__main__":
                 # That way we can save Data in more than one session.
                 samples = {
                     "state": [],
-                    "next_state": [],
+                #    "next_state": [],
                 #    "reward": [],
                     "action": [],
                 #    "terminal": [],

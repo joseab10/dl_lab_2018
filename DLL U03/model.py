@@ -283,7 +283,6 @@ class Model:
         self.saver = tf.train.Saver()
 
     def train(self, x, y):
-        x, y = self.resequence(x, y)
         self.session.run(self.trainer, feed_dict={self.X: x, self.y: y})
 
     def evaluate(self, x, y, max_batch_size = 100):
@@ -307,7 +306,7 @@ class Model:
                 end = (i + 1) * max_batch_size
                 count = max_batch_size
 
-            x_in, y_in = self.resequence(x[start: end], y[start: end])
+            x_in, y_in = x[start: end], y[start: end]
 
 
             acc  += self.accuracy.eval(feed_dict={
@@ -376,26 +375,7 @@ class Model:
         json.dump(net_arq, f)
         f.close()
 
-    def resequence(self, x, y):
-        # This functions reshapes the data by adding <history_length> - 1  empty images to the front of the sequence
-        # and then copy it into small sequence chunks to have a sliding window in time for the data.
-        # It will be used in many-to-one LSTMs so that the previous <history_length> - 1 frames are taken into
-        # consideration when predicting an action
 
-        batch_len   = x.shape[0]
-        image_width = x.shape[1]
-        image_len   = x.shape[2]
-        image_chan  = x.shape[3]
-
-        h = self.history_length
-
-        tmp_x = np.empty((batch_len - h + 1, h, image_width, image_len, image_chan))
-
-        for i in range(batch_len - h + 1):
-            tmp_x[i, :, :, :, :] = np.array([x[i:i + h, :, :, :]])
-        tmp_y = y[h - 1:]
-
-        return tmp_x, tmp_y
 
     def activation_from_str(self, activation_string):
 

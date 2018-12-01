@@ -111,7 +111,7 @@ if __name__ == "__main__":
     results["mean"] = np.array(episode_rewards).mean()
     results["std"] = np.array(episode_rewards).std()
  
-    fname = "results/results_bc_agent-%s.json" % datetime.now().strftime("%Y%m%d-%H%M%S")
+    fname = "results/" + agent.name + "results_bc_agent-%s.json" % datetime.now().strftime("%Y%m%d-%H%M%S")
     fh = open(fname, "w")
     json.dump(results, fh)
             

@@ -74,8 +74,28 @@ def plot_data(x, y, history_length = 1, rows = 10, title = ''):
     fig.savefig(image_path + title + '.png', dpi=300)
 
 # </JAB>
+def resequence(x, y, history_length):
+    # This functions reshapes the data by adding <history_length> - 1  empty images to the front of the sequence
+    # and then copy it into small sequence chunks to have a sliding window in time for the data.
+    # It will be used in many-to-one LSTMs so that the previous <history_length> - 1 frames are taken into
+    # consideration when predicting an action
 
-def resampling(x, y, samples):
+    batch_len   = x.shape[0]
+    image_width = x.shape[1]
+    image_len   = x.shape[2]
+    image_chan  = x.shape[3]
+
+    h = history_length
+
+    tmp_x = np.empty((batch_len - h + 1, h, image_width, image_len, image_chan))
+
+    for i in range(batch_len - h + 1):
+        tmp_x[i, :, :, :, :] = np.array([x[i:i + h, :, :, :]])
+    tmp_y = y[h - 1:]
+
+    return tmp_x, tmp_y
+
+def resampling(x, y, percentage):
 
     tmp_y = np.argmax(y, axis=1)
 
@@ -91,13 +111,17 @@ def resampling(x, y, samples):
 
     for action in actions:
         action_indexes = tmp_y == action
-        probabilities[action_indexes] = batch_size / np.sum(action_indexes)
+        action_occurrence = np.sum(action_indexes)
+
+        if action_occurrence != 0:
+            probabilities[action_indexes] = batch_size / action_occurrence
 
     # Normalize probabilities so that they sum 1
+    samples = int(percentage * y.shape[0])
     probabilities = probabilities / np.sum(probabilities)
     index_list = np.random.choice(np.arange(batch_size), samples, replace=False, p=probabilities)
 
-    return index_list
+    return x[index_list], y[index_list]
 
 def preprocessing(X_train, y_train, X_valid, y_valid):
 
@@ -133,6 +157,11 @@ def train_model(X_train, y_train, X_valid, y_valid, n_minibatches, batch_size, l
     # TODO: specify your neural network in model.py 
     agent = Model(history_length=history_length, name = net_name, learning_rate=lr, from_file=arq_file)
 
+    # Get the history length from the actual model, whether it comes from a file or a parameter
+    history_length = agent.history_length
+
+    X_train, y_train = resequence(X_train, y_train, history_length)
+    X_valid, y_valid = resequence(X_valid, y_valid, history_length)
 
 
     if ckpt_file != '':
@@ -161,11 +190,10 @@ def train_model(X_train, y_train, X_valid, y_valid, n_minibatches, batch_size, l
 
     for i in range(n_minibatches):
 
-        minibatch_start = np.random.randint(0, X_train.shape[0] - batch_size - history_length - 1)
-        minibatch_end   = minibatch_start + batch_size
+        minibatch_indexes = np.random.randint(0, X_train.shape[0] - history_length - 1, batch_size)
 
-        X_minibatch = X_train[minibatch_start : minibatch_end, :, :, :]
-        y_minibatch = y_train[minibatch_start: minibatch_end, :]
+        X_minibatch = X_train[minibatch_indexes]
+        y_minibatch = y_train[minibatch_indexes]
 
         agent.train(X_minibatch, y_minibatch)
 
@@ -196,16 +224,16 @@ if __name__ == "__main__":
     # <JAB>
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--arq_file' , action="store"     , default='',                 help='Load Architecture from file.')
-    parser.add_argument('--ckpt_file', action="store"     , default='',                 help='Load Parameters from file.')
-    parser.add_argument('--data_file', action="store"     , default='data_ln.pkl.gzip', help='Training data file.')
-    parser.add_argument('--net_name' , action="store"     , default='JABnet',           help='Model Name.')
-    parser.add_argument('--lr'       , action="store"     , default=0.0001,             help='Learning Rate.'                , type=float)
-    parser.add_argument('--bs'       , action="store"     , default=64,                 help='Batch Size.'                   , type=int)
-    parser.add_argument('--n_batch'  , action="store"     , default=100000,             help='Number of training batches.'   , type=int)
-    parser.add_argument('--his_len'  , action="store"     , default=5,                  help='History Length for RNN.'       , type=int)
-    parser.add_argument('--debug'    , action='store'     , default=0,                  help='Debug verbosity level [0-100].', type=int)
-    parser.add_argument('--resample' , action='store_true', default=False,              help='Uniformly resample data.')
+    parser.add_argument('--arq_file' , action='store', default='',                 help='Load Architecture from file.')
+    parser.add_argument('--ckpt_file', action='store', default='',                 help='Load Parameters from file.')
+    parser.add_argument('--data_file', action='store', default='data_ln.pkl.gzip', help='Training data file.')
+    parser.add_argument('--net_name' , action='store', default='JABnet',           help='Model Name.')
+    parser.add_argument('--lr'       , action='store', default=0.0001,             help='Learning Rate.'                , type=float)
+    parser.add_argument('--bs'       , action='store', default=64,                 help='Batch Size.'                   , type=int)
+    parser.add_argument('--n_batch'  , action='store', default=100000,             help='Number of training batches.'   , type=int)
+    parser.add_argument('--his_len'  , action='store', default=5,                  help='History Length for RNN.'       , type=int)
+    parser.add_argument('--debug'    , action='store', default=10,                  help='Debug verbosity level [0-100].', type=int)
+    parser.add_argument('--resample' , action='store', default=0.6,                  help='Uniformly resample data.'      , type=float)
 
 
     args = parser.parse_args()
@@ -225,24 +253,49 @@ if __name__ == "__main__":
 
     X_train, y_train, X_valid, y_valid = read_data("./data", data_file=data_file)
 
-    # <JAB>
-    # Used for quicker testing
-    max_train = X_train.shape[0]
-    max_valid = X_valid.shape[0]
-
     # preprocess data
-    X_train, y_train_onehot, X_valid, y_valid_onehot = preprocessing(X_train[:max_train], y_train[:max_train],
-                                                                     X_valid[:max_valid], y_valid[:max_valid])
+    X_train, y_train_onehot, X_valid, y_valid_onehot = preprocessing(X_train, y_train,
+                                                                     X_valid, y_valid)
 
     # Better distribute the data
-    if resample:
-        sample_percent = 0.75
-        data_len = y_train_onehot.shape[0]
+    if resample > 0:
 
-        dist_index = resampling(X_train, y_train_onehot, int(sample_percent * data_len))
+        if DEBUG > 3:
+            print('Train      shapes: x: ', X_train.shape, ' y: ', y_train_onehot.shape)
+            print('Validation shapes: x: ', X_valid.shape, ' y: ', y_valid_onehot.shape)
 
-        X_train = X_train[dist_index]
-        y_train_onehot = y_train_onehot[dist_index]
+        if DEBUG > 5:
+            tmp_y = np.argmax(y_train_onehot, axis=1)
+            train_hist = np.histogram(tmp_y, bins=[0, 1, 2, 3, 4, 5])
+            train_hist = list(zip(train_hist[0], train_hist[1][:-1]))
+
+            tmp_y = np.argmax(y_valid_onehot, axis=1)
+            valid_hist = np.histogram(tmp_y, bins=[0, 1, 2, 3, 4, 5])
+            valid_hist = list((zip(valid_hist[0], valid_hist[1][:-1])))
+
+            print('Original   Training Action Distribution: ', train_hist)
+            print('Original Validation Action Distribution: ', valid_hist)
+
+        X_train, y_train_onehot = resampling(X_train, y_train_onehot, resample)
+        X_valid, y_valid_onehot = resampling(X_valid, y_valid_onehot, resample)
+
+        if DEBUG > 3:
+            print('Data resampled to ', 100 * resample, '%')
+            print('New      Train shapes: x: ', X_train.shape, ' y: ', y_train_onehot.shape)
+            print('New Validation shapes: x: ', X_valid.shape, ' y: ', y_valid_onehot.shape)
+
+        if DEBUG > 5:
+            tmp_y = np.argmax(y_train_onehot, axis=1)
+            train_hist = np.histogram(tmp_y, bins=[0, 1, 2, 3, 4, 5])
+            train_hist = list(zip(train_hist[0], train_hist[1][:-1]))
+
+            tmp_y = np.argmax(y_valid_onehot, axis=1)
+            valid_hist = np.histogram(tmp_y, bins=[0, 1, 2, 3, 4, 5])
+            valid_hist = list((zip(valid_hist[0], valid_hist[1][:-1])))
+
+            print('Original   Training Action Distribution: ', train_hist)
+            print('Original Validation Action Distribution: ', valid_hist)
+
 
 
     # Plot preprocessed data for debugging

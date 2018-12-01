@@ -47,9 +47,9 @@ def unhot_actions(y):
 
 
 
-file = './data/data[5k]_pp.pkl.gzip'
+file3 = './data/data[5k]_pp.pkl.gzip'
 file2 = './data/data[40k]_pp.pkl.gzip'
-file3 = './data/data[50k]_pp.pkl.gzip'
+file = './data/data.pkl.gzip'
 
 f = gzip.open(file, 'rb')
 data = pickle.load(f)
@@ -65,12 +65,14 @@ breaks = np.where(y1 > 3)
 y2 = unhot_actions(data2['action'])
 y3 = unhot_actions(data3['action'])
 
-y = np.concatenate((y1, y2, y3))
+#y = np.concatenate((y1, y2, y3))
+y = y3
 
 bins = [-.5, .5, 1.5, 2.5, 3.5, 4.5]
 bins = [0, 1, 2, 3, 4, 5]
 plt.hist(y, bins = bins)
-plt.savefig('./report/img/act_hist.png', dpi=300)
+plt.show()
+#plt.savefig('./report/img/act_hist.png', dpi=300)
 
 #plot_data(data2['state'], filename='sample_data_rgb_')
 #plot_data(data3['state'], filename='sample_data_pp_')
@@ -87,17 +89,17 @@ print(len(data2['state'])        , ', ', type(data2['state'])         , ', ',
           data2['state'][0][0][0], ', ', type(data2['state'][0][0][0])
     )
 
-print('\nNext States')
-print(len(data['next_state'])        , ', ', type(data['next_state'])         , ', ',
-      len(data['next_state'][0])     , ', ', type(data['next_state'][0])      , ', ',
-      len(data['next_state'][0][0])  , ', ', type(data['next_state'][0][0])   , ', ',
-          data['next_state'][0][0][0], ', ', type(data['next_state'][0][0][0])
-    )
-print(len(data2['next_state'])        , ', ', type(data2['next_state'])         , ', ',
-      len(data2['next_state'][0])     , ', ', type(data2['next_state'][0])      , ', ',
-      len(data2['next_state'][0][0])  , ', ', type(data2['next_state'][0][0])   , ', ',
-          data2['next_state'][0][0][0], ', ', type(data2['next_state'][0][0][0])
-    )
+#print('\nNext States')
+#print(len(data['next_state'])        , ', ', type(data['next_state'])         , ', ',
+#      len(data['next_state'][0])     , ', ', type(data['next_state'][0])      , ', ',
+#      len(data['next_state'][0][0])  , ', ', type(data['next_state'][0][0])   , ', ',
+#          data['next_state'][0][0][0], ', ', type(data['next_state'][0][0][0])
+#    )
+#print(len(data2['next_state'])        , ', ', type(data2['next_state'])         , ', ',
+#      len(data2['next_state'][0])     , ', ', type(data2['next_state'][0])      , ', ',
+#      len(data2['next_state'][0][0])  , ', ', type(data2['next_state'][0][0])   , ', ',
+#          data2['next_state'][0][0][0], ', ', type(data2['next_state'][0][0][0])
+#    )
 
 
 print('\nActions')
