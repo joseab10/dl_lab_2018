@@ -285,43 +285,14 @@ class Model:
     def train(self, x, y):
         self.session.run(self.trainer, feed_dict={self.X: x, self.y: y})
 
-    def evaluate(self, x, y, max_batch_size = 100):
+    def evaluate(self, x, y):
+        acc  = self.accuracy.eval(feed_dict={self.X: x, self.y: y},
+                session = self.session)
 
-        acc = 0
-        loss = 0
+        loss = self.loss.eval(feed_dict={self.X: x, self.y: y},
+                session=self.session)
 
-        batch_size = x.shape[0]
-        num_iter = batch_size // max_batch_size
-
-        if batch_size % max_batch_size != 0:
-            num_iter += 1
-
-        for i in range(num_iter):
-
-            start = i * max_batch_size
-            if (i + 1) * max_batch_size > batch_size:
-                end = batch_size
-                count = batch_size - (i * max_batch_size)
-            else:
-                end = (i + 1) * max_batch_size
-                count = max_batch_size
-
-            x_in, y_in = x[start: end], y[start: end]
-
-
-            acc  += self.accuracy.eval(feed_dict={
-                self.X: x_in,
-                self.y: y_in
-            },
-                session = self.session) * count
-            loss += self.loss.eval(feed_dict={
-                self.X: x_in,
-                self.y: y_in
-            },
-                session=self.session) * count
-
-
-        return loss / batch_size, acc / batch_size
+        return loss, acc
 
     def predict(self, x):
         return self.Y_proba.eval(feed_dict={self.X: x}, session=self.session)

@@ -74,24 +74,27 @@ def plot_data(x, y, history_length = 1, rows = 10, title = ''):
     fig.savefig(image_path + title + '.png', dpi=300)
 
 # </JAB>
-def resequence(x, y, history_length):
+def resequence(x, y, history_length, batch_indexes):
     # This functions reshapes the data by adding <history_length> - 1  empty images to the front of the sequence
     # and then copy it into small sequence chunks to have a sliding window in time for the data.
     # It will be used in many-to-one LSTMs so that the previous <history_length> - 1 frames are taken into
     # consideration when predicting an action
 
-    batch_len   = x.shape[0]
+    batch_len   = batch_indexes.shape[0]
     image_width = x.shape[1]
     image_len   = x.shape[2]
     image_chan  = x.shape[3]
 
     h = history_length
 
-    tmp_x = np.empty((batch_len - h + 1, h, image_width, image_len, image_chan))
+    #tmp_x = np.empty((batch_len - h + 1, h, image_width, image_len, image_chan))
+    tmp_x = []
+    for i in batch_indexes:
+        tmp_x.append(np.array([x[i-h+1:i+1, :, :, :]]))
 
-    for i in range(batch_len - h + 1):
-        tmp_x[i, :, :, :, :] = np.array([x[i:i + h, :, :, :]])
-    tmp_y = y[h - 1:]
+    tmp_x = np.array(tmp_x)
+
+    tmp_y = y[batch_indexes]
 
     return tmp_x, tmp_y
 
@@ -142,6 +145,38 @@ def preprocessing(X_train, y_train, X_valid, y_valid):
     
     return X_train, y_train, X_valid, y_valid
 
+def evaluate_model(x, y, agent, max_batch_size = 500):
+
+    acc = 0
+    loss = 0
+
+    batch_size = y.shape[0]
+    num_iter = batch_size // max_batch_size
+
+    if batch_size % max_batch_size != 0:
+        num_iter += 1
+
+    for i in range(num_iter):
+
+        start = i * max_batch_size
+        if (i + 1) * max_batch_size > batch_size:
+            end = batch_size
+            count = batch_size - (i * max_batch_size)
+        else:
+            end = (i + 1) * max_batch_size
+            count = max_batch_size
+
+        indexes = np.arange(start, end)
+        x_in, y_in = resequence(x, y, agent.history_length, indexes)
+
+
+        tmp_acc, tmp_loss  = agent.evaluate(x_in, y_in) * count
+
+        acc  += tmp_acc
+        loss += tmp_loss
+
+    return loss / batch_size, acc / batch_size
+
 
 def train_model(X_train, y_train, X_valid, y_valid, n_minibatches, batch_size, lr,
                 model_dir="./models", tensorboard_dir="./tensorboard", history_length = 1,
@@ -159,9 +194,6 @@ def train_model(X_train, y_train, X_valid, y_valid, n_minibatches, batch_size, l
 
     # Get the history length from the actual model, whether it comes from a file or a parameter
     history_length = agent.history_length
-
-    X_train, y_train = resequence(X_train, y_train, history_length)
-    X_valid, y_valid = resequence(X_valid, y_valid, history_length)
 
 
     if ckpt_file != '':
@@ -192,14 +224,14 @@ def train_model(X_train, y_train, X_valid, y_valid, n_minibatches, batch_size, l
 
         minibatch_indexes = np.random.randint(0, X_train.shape[0] - history_length - 1, batch_size)
 
-        X_minibatch = X_train[minibatch_indexes]
-        y_minibatch = y_train[minibatch_indexes]
+        X_minibatch = resequence(X_train, minibatch_indexes)
+        y_minibatch = resequence(y_train, minibatch_indexes)
 
         agent.train(X_minibatch, y_minibatch)
 
         if i % 1000 == 0:
-            loss_train, acc_train = agent.evaluate(X_train, y_train, max_batch_size=200)
-            loss_valid, acc_valid = agent.evaluate(X_valid, y_valid, max_batch_size=200)
+            loss_train, acc_train = evaluate_model(X_train, y_train)
+            loss_valid, acc_valid = evaluate_model(X_valid, y_valid)
 
             print("Minibatch: ", i , " Train accuracy: ", acc_train, " Train Loss: ", loss_train, ", Test accuracy: ", acc_valid, " Test Loss: ", loss_valid)
 
@@ -235,7 +267,6 @@ if __name__ == "__main__":
     parser.add_argument('--debug'    , action='store', default=10,                  help='Debug verbosity level [0-100].', type=int)
     parser.add_argument('--resample' , action='store', default=0.6,                  help='Uniformly resample data.'      , type=float)
 
-
     args = parser.parse_args()
 
     history_length = args.his_len
@@ -251,9 +282,10 @@ if __name__ == "__main__":
     data_file = args.data_file
     net_name  = args.net_name
 
+    # Read Data
     X_train, y_train, X_valid, y_valid = read_data("./data", data_file=data_file)
 
-    # preprocess data
+    # Pre-process Data
     X_train, y_train_onehot, X_valid, y_valid_onehot = preprocessing(X_train, y_train,
                                                                      X_valid, y_valid)
 
