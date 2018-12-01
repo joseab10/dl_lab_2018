@@ -1,0 +1,1435 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\begin_preamble
+%--------------------------------------------------------------------------------
+% Packages
+%--------------------------------------------------------------------------------
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage{ifthen}
+
+\usepackage{bm}
+
+\usepackage{fancyhdr}
+
+\usepackage[a4paper]{geometry}
+
+\usepackage{algpseudocode}
+
+\usepackage{lscape}
+
+\usepackage{fontawesome}
+
+\usepackage{halloweenmath}
+
+%--------------------------------------------------------------------------------
+% Layout
+%--------------------------------------------------------------------------------
+\setlength{\headheight}{12pt}
+
+\fancypagestyle{uni_freiburg_first}{
+	\fancyhead{}
+	\fancyhead[L]{
+		{\footnotesize{}Albert-Ludwigs Universität Freiburg}\\
+		Institut für Informatik\\
+		\textbf{\subject}\\
+		\myauthors}
+	\fancyhead[CO,CE]{
+		\textbf{\mytitle}\\
+		\duedate}
+	\fancyhead[RO,RE]{
+		\includegraphics[height=2cm]{\string"/Users/Jose/Documents/Homeworks/M.Sc. Informatik/General/Uni Freiburg Wappen\string".pdf}
+	}
+	\renewcommand{\headrulewidth}{0.4pt}
+	\fancyfoot{}
+	\fancyfoot[CE,CO]{\thepage}
+}
+
+\fancypagestyle{uni_freiburg}{
+	\fancyhead{}
+	\fancyhead[CO,CE]{
+		\mytitle
+	}
+	\renewcommand{\headrulewidth}{0pt}
+	\fancyfoot{}
+	\fancyfoot[CE,CO]{\thepage}
+}
+
+\pagestyle{uni_freiburg}
+
+
+
+%--------------------------------------------------------------------------------
+% Tikz Graphics
+%--------------------------------------------------------------------------------
+\usetikzlibrary{shapes.multipart}
+\usetikzlibrary{calc}
+\usetikzlibrary{patterns}
+\end_preamble
+\use_default_options true
+\begin_modules
+theorems-std
+theorems-sec
+\end_modules
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+newcommand{
+\backslash
+subject}{Deep Learning Lab}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+newcommand{
+\backslash
+mytitle}{Excercise Sheet 3}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+newcommand{
+\backslash
+myauthors}{José Arce y de la Borbolla}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+newcommand{
+\backslash
+duedate}{4.12.2018}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+setcounter{section}{3}
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+def
+\backslash
+thesubsection{
+\backslash
+arabic{section}}
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+def
+\backslash
+thesubsection{Exercise 
+\backslash
+arabic{section}.
+\backslash
+arabic{subsection}.}
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+def
+\backslash
+thesubsubsection{
+\backslash
+arabic{section}.
+\backslash
+arabic{subsection}.(
+\backslash
+alph{subsubsection})}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Date
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+duedate
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Title
+
+\size larger
+\begin_inset VSpace 0.5cm
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+subject
+\end_layout
+
+\end_inset
+
+
+\size default
+
+\begin_inset Newline linebreak
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+mytitle
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+thispagestyle{uni_freiburg_first}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+setlength{
+\backslash
+headheight}{12pt}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Abstract
+The purpose of this report is to present the reasoning behind the design
+ choices for solving the OpenAI Gym Car Racing Environment using a supervised
+ machine learning model through a combination of 2D convolutions and Long
+ Short-Term Memory Cells using the TensorFlow framework, and to show the
+ results obtained with this approach.
+\end_layout
+
+\begin_layout Section
+Environment Definition
+\end_layout
+
+\begin_layout Standard
+The environment in which the problem takes place consists of a random generated
+ track circuit with corners of varying difficulty.
+ The objective is to drive a racing car aroud the track, visiting every
+ section of the track in the least possible time to maximize the value of
+ the reward.
+ The observations of the environment include an eagle view of the portion
+ of the track the car is currently at, the accumulated reward value and
+ a couple of useful indicators such as the overall speed or the position
+ of the steering wheel, as can be seen in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:env"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ The reward function is calculated as follows: for every passing step, 0.1
+ is substracted from the reward, for every newly visited tile 
+\begin_inset Formula $1000/N$
+\end_inset
+
+ is added to the score, where 
+\begin_inset Formula $N$
+\end_inset
+
+ is the total number of tiles in the track.
+ The episode ends when all the track tiles have been visited, or after 1000
+ simulation steps have taken place.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/Environment Definition.png
+	lyxscale 20
+	width 50col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Environment Definition.
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:env"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Data.
+\end_layout
+
+\begin_layout Subsection
+Data Collection
+\end_layout
+
+\begin_layout Standard
+Gathering data is pretty simple: the user plays the game manually while
+ a process takes snapshots of the environment and records the user actions
+ for each simulation step.
+ The snapshots of the environment are downsampled 
+\begin_inset Formula $96\times96$
+\end_inset
+
+ pixel (originally RGB) images whereas the user actions were originally
+ encoded as a vector with three components, allowing superposition of actions,
+ as shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Sampled-Data."
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Box Frameless
+position "b"
+hor_pos "c"
+has_inner_box 1
+inner_pos "c"
+use_parbox 0
+use_makebox 0
+width "45col%"
+special "none"
+height "40mm"
+height_special "none"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/imgsample_data_rgb_4229.png
+	width 65col%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Sampled Observation.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset space \qquad{}
+\end_inset
+
+
+\begin_inset Box Frameless
+position "b"
+hor_pos "c"
+has_inner_box 1
+inner_pos "c"
+use_parbox 0
+use_makebox 0
+width "45col%"
+special "none"
+height "40mm"
+height_special "none"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="6" columns="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+User Action
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Key
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Stored Vector
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Go Straight
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\left[\begin{array}{ccc}
+0 & 0 & 0\end{array}\right]$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Turn Left
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+[
+\begin_inset Formula $\leftarrow$
+\end_inset
+
+]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\left[\begin{array}{ccc}
+-1 & 0 & 0\end{array}\right]$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Turn Right
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+[
+\begin_inset Formula $\rightarrow$
+\end_inset
+
+]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\left[\begin{array}{ccc}
+1 & 0 & 0\end{array}\right]$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Accelerate 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+[
+\begin_inset Formula $\uparrow$
+\end_inset
+
+]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\left[\begin{array}{ccc}
+0 & 1 & 0\end{array}\right]$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Break
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+[
+\begin_inset Formula $\downarrow$
+\end_inset
+
+]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\left[\begin{array}{ccc}
+0 & 0 & 0.2\end{array}\right]$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Sampled User Actions.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Sampled Data.
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Sampled-Data."
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The original code was modified to allow the user to play in multiple sessions
+ without rewriting the previous session's data, but rather to append the
+ new data to the previously stored one.
+ This allows a better collection of data, as it is easier to collect more
+ information, and in a more varied way due to changes in playing style over
+ different days.
+\end_layout
+
+\begin_layout Standard
+Though the original intention was to build a dataset with at least 100'000
+ samples, it soon became obvious that, due to memory limitations in the
+ computers, it would be impossible to load the entire dataset into RAM and
+ do any kind of preprocessing in the entirety of the data.
+ For that reason, the dataset is comprised of two larger data files with
+ 50'000 and 40'000 samples, and a couple with only 5'000 samples.
+ In order to save precious time and resources, because of the hardware limitatio
+ns, preprocessing of the data was also shifted to the collection pipeline,
+ instead of the training one.
+ 
+\end_layout
+
+\begin_layout Standard
+In a futile attempt to also save storage space, the rewards and terminals
+ were dropped from the saving process, while the images were stored as 8
+ bit grayscales and the actions as one hot vectors.
+ No matter how the data was stored, the resulting files were always larger
+ than if no preprocessing had been done, most likely due to making the gzip
+ compression process less efficient.
+ However, loading times for training were significantly improved.
+\end_layout
+
+\begin_layout Subsection
+Preprocessing
+\end_layout
+
+\begin_layout Standard
+As stated in the previous section, the preprocessing pipeline was shifted
+ to the collection one to improve performance, as preprocessing took place
+ on batches of only 1'000 samples at a time, instead of the whole 50'000
+ samples of a complete dataset, which proved to be undoable in the pool
+ machines due to crashing because of memory limitations.
+\end_layout
+
+\begin_layout Standard
+Because the colour information could be thought of as redundant or not providing
+ more insight to the state of the environment, image data was converted
+ to 8 bit grayscale to save training and processing power.
+ Due to the selection of Softmax as the activation function for the last
+ output layer, it restricted the model to taking a single discrete action
+ at each step.
+ For that reason, the user actions were encoded as one-hot vectors of length
+ 5 and stored as such in the dataset.
+ An example of the new preprocessed data can be seen in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Preprocessed-Data."
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Box Frameless
+position "b"
+hor_pos "c"
+has_inner_box 1
+inner_pos "c"
+use_parbox 0
+use_makebox 0
+width "45col%"
+special "none"
+height "40mm"
+height_special "none"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/imgsample_data_pp_2202.png
+	width 65col%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Preprocessed Observation.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset space \qquad{}
+\end_inset
+
+
+\begin_inset Box Frameless
+position "b"
+hor_pos "c"
+has_inner_box 1
+inner_pos "c"
+use_parbox 0
+use_makebox 0
+width "45col%"
+special "none"
+height "40mm"
+height_special "none"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="6" columns="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+User Action
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Key
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Stored Vector
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Go Straight
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\left[\begin{array}{ccccc}
+1 & 0 & 0 & 0 & 0\end{array}\right]$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Turn Left
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+[
+\begin_inset Formula $\leftarrow$
+\end_inset
+
+]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\left[\begin{array}{ccccc}
+0 & 1 & 0 & 0 & 0\end{array}\right]$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Turn Right
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+[
+\begin_inset Formula $\rightarrow$
+\end_inset
+
+]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\left[\begin{array}{ccccc}
+0 & 0 & 1 & 0 & 0\end{array}\right]$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Accelerate 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+[
+\begin_inset Formula $\uparrow$
+\end_inset
+
+]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\left[\begin{array}{ccccc}
+0 & 0 & 0 & 1 & 0\end{array}\right]$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Break
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+[
+\begin_inset Formula $\downarrow$
+\end_inset
+
+]
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\left[\begin{array}{ccccc}
+0 & 0 & 0 & 0 & 1\end{array}\right]$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Preprocessed User Actions.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Preprocessed Data.
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Preprocessed-Data."
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Resampling
+\end_layout
+
+\begin_layout Standard
+Due to the nature of the game, most of the time the player is not performing
+ any actions, but rather just going straight.
+ Also because the objective is to go around a circuit in a counter-clockwise
+ fashion, most of the turning take place to the left.
+ Given the greedy nature of the player, braking is seldomly used.
+ At the same time, a user might perform different actions to seemingly equal
+ looking situations, which makes a model have a hard time learning highly
+ non-deterministic labeling of samples.
+ The distribution of actions for all the recorded data samples can be seen
+ in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Action-Histogram."
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ It is worth noting that the braking action (5) never shows up in the dataset.
+ This is partly due to the greediness of the player, but also because it
+ was normally used in combination of another action, usually turning sharply
+ around u-turns.
+ The 
+\family typewriter
+action_to_id
+\family default
+ function only cares about single actions at any given step, and if one
+ were to take more than one, then it would encode it as going straight.
+\end_layout
+
+\begin_layout Standard
+Because of the reasons stated in the previous paragraph, a resampling function
+ was implemented before providing the model the data for training.
+ It's purpose: try to balance the distribution of labels more uniformly
+ across the training data.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Wrap figure
+lines 0
+placement o
+overhang 0col%
+width "50col%"
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/act_hist.png
+	lyxscale 20
+	width 40col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Action Histogram.
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Action-Histogram."
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+The resampling function does away with a lot of data, by assigning a probability
+ depending on an action's ocurrence in the dataset.
+ Thus, the more an action shows up in the original dataset, the less likely
+ is it going to appear in the resamoled one.
+ Given that resampling deletes frames randomly according to a probability
+ distribution to create a sampled dataset that is some percentage smaller
+ than the original one, it was only used to train purely convolutional models,
+ because doing so for models involving recurrence would mean breaking perfectly
+ reasonable sequences of data into nonsensical chunks of images and actions
+ which might not even be possible to happen in a real simulation.
+\end_layout
+
+\begin_layout Standard
+In order to select whether sampling is desired from the command line without
+ having to alter the code, the boolean flag 
+\family typewriter
+--resample
+\family default
+ was added to the train_model.py program.
+ An arbitrary value of 75% was chosen for the resampling rate, meaning that
+ only 75% of the original data will remain after randomly selecting samples
+ according to a probability inversely proportional to its occurrence in
+ the original dataset.
+\end_layout
+
+\begin_layout Subsection
+Data Augmentation
+\end_layout
+
+\begin_layout Standard
+The easiest way to augment the data would be to mirror images and actions
+ where a turning (either left or right) action was taken.
+ The problem with this approach would be the mirroring of the bottom indications
+, which in case the network used them to derive a feature, would then be
+ totally useless.
+ If they were useless in the first place, then it would even make sense
+ to crop the images and retain only the eagle view to make processing faster,
+ and then do the mirroring to augment the data.
+ If the information is usefull, then the mirroring of the eagle view could
+ take place, but then the steering wheel, ABS sensors and gyroscope indicators
+ would need to be mirrored in place.
+ The other issue issue is that it only helps in bridging the gap between
+ the turning operations, doing nothing for the other actions.
+\end_layout
+
+\begin_layout Standard
+The second reason, and perhaps the strongest reason, would be the placing
+ of that data within the data set.
+ Given that the sequencing operation groups consecutive images into fixed
+ length time steps for the training of the recurrent neural network to happen,
+ then the question remains of where to insert the new images, such that
+ they make sense when put together in a time sequence.
+\end_layout
+
+\begin_layout Standard
+Although technically feasible, it was opted not to use data augmentation
+ for training any of the models for the reasons stated in this section.
+ 
+\end_layout
+
+\begin_layout Section
+Models
+\end_layout
+
+\begin_layout Standard
+Thinking ahead, the design process of the model contemplated the recurrent
+ part of the network since the beginning, though always giving the posibility
+ of not using it.
+ The general architecture for all the models used was a succession of several
+ convolutional layers, followed by the recurrent portion of the network
+ comprised of LSTM cells and finally a couple of fully connected layers.
+ Models following this general architecture can be created at will by simply
+ defining their properties in a json file with extension 
+\family typewriter
+.narq.json
+\family default
+.
+ The purpose of this is to be able to reuse different models for training
+ and testing, without having to change any single bit of code.
+ Used in conjunction with TensorFlow's own checkpoint files made it a breeze
+ to change models on the fly.
+\end_layout
+
+\begin_layout Subsection
+net1
+\end_layout
+
+\begin_layout Standard
+The very first model to be used, called net1 was a purelly convolutional
+ network with only two layers.
+ It presented a lot of overfitting, as training accuracy rose to 99.99% while
+ the validation accuracy remained down to 75%.
+ Nevertheless, the model exhibited the right expected behaviour, attempting
+ to turn around corners, and actually achieving some scores, though with
+ sub-human performance.
+ Because of all the code changes after this first attempt, the only possible
+ way of testing this model is by reverting to that point in time using 
+\family typewriter
+git checkout U03_working_1
+\family default
+ and running the test_agent.py program.
+\end_layout
+
+\begin_layout Standard
+The network 
+\end_layout
+
+\end_body
+\end_document
