@@ -1396,7 +1396,11 @@ Thinking ahead, the design process of the model contemplated the recurrent
  convolutional layers, followed by the recurrent portion of the network
  comprised of LSTM cells and finally a couple of fully connected layers.
  Models following this general architecture can be created at will by simply
- defining their properties in a json file.
+ defining their properties in a json file with extension 
+\family typewriter
+.narq.json
+\family default
+.
  The purpose of this is to be able to reuse different models for training
  and testing, without having to change any single bit of code.
  Used in conjunction with TensorFlow's own checkpoint files made it a breeze
@@ -1413,7 +1417,18 @@ The very first model to be used, called net1 was a purelly convolutional
  It presented a lot of overfitting, as training accuracy rose to 99.99% while
  the validation accuracy remained down to 75%.
  Nevertheless, the model exhibited the right expected behaviour, attempting
- to turn around corners, and actually achieving some, though 
+ to turn around corners, and actually achieving some scores, though with
+ sub-human performance.
+ Because of all the code changes after this first attempt, the only possible
+ way of testing this model is by reverting to that point in time using 
+\family typewriter
+git checkout U03_working_1
+\family default
+ and running the test_agent.py program.
+\end_layout
+
+\begin_layout Standard
+The network 
 \end_layout
 
 \end_body

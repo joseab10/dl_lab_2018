@@ -328,7 +328,8 @@ headheight}{12pt}
 The purpose of this report is to present the reasoning behind the design
  choices for solving the OpenAI Gym Car Racing Environment using a supervised
  machine learning model through a combination of 2D convolutions and Long
- Short-Term Memory Cells, and show the results obtained with this approach.
+ Short-Term Memory Cells using the TensorFlow framework, and to show the
+ results obtained with this approach.
 \end_layout
 
 \begin_layout Section
@@ -355,6 +356,18 @@ noprefix "false"
 \end_inset
 
 .
+ The reward function is calculated as follows: for every passing step, 0.1
+ is substracted from the reward, for every newly visited tile 
+\begin_inset Formula $1000/N$
+\end_inset
+
+ is added to the score, where 
+\begin_inset Formula $N$
+\end_inset
+
+ is the total number of tiles in the track.
+ The episode ends when all the track tiles have been visited, or after 1000
+ simulation steps have taken place.
 \end_layout
 
 \begin_layout Standard
@@ -404,7 +417,7 @@ name "fig:env"
 \end_layout
 
 \begin_layout Section
-Data Collection, Preprocessing, Resampling and Augmentation.
+Data.
 \end_layout
 
 \begin_layout Subsection
@@ -1251,12 +1264,31 @@ noprefix "false"
 \end_inset
 
 .
+ It is worth noting that the braking action (5) never shows up in the dataset.
+ This is partly due to the greediness of the player, but also because it
+ was normally used in combination of another action, usually turning sharply
+ around u-turns.
+ The 
+\family typewriter
+action_to_id
+\family default
+ function only cares about single actions at any given step, and if one
+ were to take more than one, then it would encode it as going straight.
 \end_layout
 
 \begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
+Because of the reasons stated in the previous paragraph, a resampling function
+ was implemented before providing the model the data for training.
+ It's purpose: try to balance the distribution of labels more uniformly
+ across the training data.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Wrap figure
+lines 0
+placement o
+overhang 0col%
+width "50col%"
 status collapsed
 
 \begin_layout Plain Layout
@@ -1264,7 +1296,7 @@ status collapsed
 \begin_inset Graphics
 	filename img/act_hist.png
 	lyxscale 20
-	width 60col%
+	width 40col%
 
 \end_inset
 
@@ -1290,28 +1322,13 @@ name "fig:Action-Histogram."
 
 \end_layout
 
-\begin_layout Plain Layout
-
-\end_layout
-
 \end_inset
 
-
-\end_layout
-
-\begin_layout Standard
-Because of the reasons stated in the previous paragraph, a resampling function
- was implemented before providing the model the data for training.
- It's purpose: try to balance the distribution of labels more uniformly
- across the training data.
-\end_layout
-
-\begin_layout Standard
 The resampling function does away with a lot of data, by assigning a probability
  depending on an action's ocurrence in the dataset.
  Thus, the more an action shows up in the original dataset, the less likely
  is it going to appear in the resamoled one.
- Given that resampling deletes frames randomly according to a probaility
+ Given that resampling deletes frames randomly according to a probability
  distribution to create a sampled dataset that is some percentage smaller
  than the original one, it was only used to train purely convolutional models,
  because doing so for models involving recurrence would mean breaking perfectly
@@ -1365,6 +1382,53 @@ The second reason, and perhaps the strongest reason, would be the placing
 Although technically feasible, it was opted not to use data augmentation
  for training any of the models for the reasons stated in this section.
  
+\end_layout
+
+\begin_layout Section
+Models
+\end_layout
+
+\begin_layout Standard
+Thinking ahead, the design process of the model contemplated the recurrent
+ part of the network since the beginning, though always giving the posibility
+ of not using it.
+ The general architecture for all the models used was a succession of several
+ convolutional layers, followed by the recurrent portion of the network
+ comprised of LSTM cells and finally a couple of fully connected layers.
+ Models following this general architecture can be created at will by simply
+ defining their properties in a json file with extension 
+\family typewriter
+.narq.json
+\family default
+.
+ The purpose of this is to be able to reuse different models for training
+ and testing, without having to change any single bit of code.
+ Used in conjunction with TensorFlow's own checkpoint files made it a breeze
+ to change models on the fly.
+\end_layout
+
+\begin_layout Subsection
+net1
+\end_layout
+
+\begin_layout Standard
+The very first model to be used, called net1 was a purelly convolutional
+ network with only two layers.
+ It presented a lot of overfitting, as training accuracy rose to 99.99% while
+ the validation accuracy remained down to 75%.
+ Nevertheless, the model exhibited the right expected behaviour, attempting
+ to turn around corners, and actually achieving some scores, though with
+ sub-human performance.
+ Because of all the code changes after this first attempt, the only possible
+ way of testing this model is by reverting to that point in time using 
+\family typewriter
+git checkout U03_working_1
+\family default
+ and running the test_agent.py program.
+\end_layout
+
+\begin_layout Standard
+The network 
 \end_layout
 
 \end_body
