@@ -12,7 +12,7 @@
       "name": "fc2"
     }
   ],
-  "name": "net8_CNN",
+  "name": "net2_CNN",
   "in_image_width": 96,
   "path": "./models/",
   "learning_rate": 0.0001,

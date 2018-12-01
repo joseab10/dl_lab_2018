@@ -237,8 +237,8 @@ def train_model(X_train, y_train, X_valid, y_valid, n_minibatches, batch_size, l
             print("Minibatch: ", i ,
                   " Train accuracy: ", '{:.4f}%'.format(acc_train * 100),
                   " Train Loss: ", '{:.6f}'.format(loss_train),
-                  "  |   Test accuracy: ", '{:.4f}'.format(acc_valid * 100),
-                  " Test Loss: ", '{:.4f}%'.format(loss_valid))
+                  "  |   Test accuracy: ", '{:.4f}%'.format(acc_valid * 100),
+                  " Test Loss: ", '{:.6f}'.format(loss_valid))
 
             # Save intermediate checkpoints in case training crashes or for Early Stop
             agent.save(suffix='_' + datetime.now().strftime("%Y%m%d-%H%M%S") + '_i' + str(i) + '_TrAcc_' + "{:.4f}".format(acc_train * 100),
@@ -269,8 +269,8 @@ if __name__ == "__main__":
     parser.add_argument('--bs'       , action='store', default=64,                 help='Batch Size.'                   , type=int)
     parser.add_argument('--n_batch'  , action='store', default=100000,             help='Number of training batches.'   , type=int)
     parser.add_argument('--his_len'  , action='store', default=5,                  help='History Length for RNN.'       , type=int)
-    parser.add_argument('--debug'    , action='store', default=10,                  help='Debug verbosity level [0-100].', type=int)
-    parser.add_argument('--resample' , action='store', default=0.6,                  help='Uniformly resample data.'      , type=float)
+    parser.add_argument('--debug'    , action='store', default=10,                 help='Debug verbosity level [0-100].', type=int)
+    parser.add_argument('--resample' , action='store', default=0,                  help='"Uniformly" resample data.'    , type=float)
 
     args = parser.parse_args()
 

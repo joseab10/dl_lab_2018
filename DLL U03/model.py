@@ -3,6 +3,7 @@ import tensorflow as tf
 # <JAB>
 import json
 import numpy as np
+from utils import DEBUG
 # </JAB>
 
 class Model:
@@ -317,7 +318,9 @@ class Model:
         # </JAB>
 
         self.saver.save(self.session, file_name)
-        print("Model saved in file: %s" % file_name)
+
+        if DEBUG > 15:
+            print("Model saved in file: %s" % file_name)
 
 
     def save_arq(self, file_name='', suffix=''):

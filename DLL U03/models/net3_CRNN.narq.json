@@ -7,7 +7,7 @@
       "name": "fc1"
     }
   ],
-  "name": "net6_40k_CRNN",
+  "name": "net3_CRNN",
   "in_image_width": 96,
   "path": "./models/",
   "learning_rate": 0.01,
