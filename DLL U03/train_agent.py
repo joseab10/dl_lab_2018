@@ -172,7 +172,7 @@ def evaluate_model(x, y, agent, max_batch_size = 500):
         x_in, y_in = resequence(x, y, history_length, indexes)
 
 
-        tmp_acc, tmp_loss  = agent.evaluate(x_in, y_in)
+        tmp_loss, tmp_acc = agent.evaluate(x_in, y_in)
 
         acc  += tmp_acc  * count
         loss += tmp_loss * count
@@ -234,7 +234,11 @@ def train_model(X_train, y_train, X_valid, y_valid, n_minibatches, batch_size, l
             loss_train, acc_train = evaluate_model(X_train, y_train, agent)
             loss_valid, acc_valid = evaluate_model(X_valid, y_valid, agent)
 
-            print("Minibatch: ", i , " Train accuracy: ", acc_train, " Train Loss: ", loss_train, ", Test accuracy: ", acc_valid, " Test Loss: ", loss_valid)
+            print("Minibatch: ", i ,
+                  " Train accuracy: ", '{:.4f}%'.format(acc_train * 100),
+                  " Train Loss: ", '{:.6f}'.format(loss_train),
+                  "  |   Test accuracy: ", '{:.4f}'.format(acc_valid * 100),
+                  " Test Loss: ", '{:.4f}%'.format(loss_valid))
 
             # Save intermediate checkpoints in case training crashes or for Early Stop
             agent.save(suffix='_' + datetime.now().strftime("%Y%m%d-%H%M%S") + '_i' + str(i) + '_TrAcc_' + "{:.4f}".format(acc_train * 100),

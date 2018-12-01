@@ -271,8 +271,8 @@ class Model:
 
 
         with tf.name_scope("eval"):
-            correct = tf.equal(tf.argmax(self.y,1), tf.argmax(self.logits,1))
-            self.accuracy = tf.reduce_mean(tf.cast(correct, tf.float32))
+            self.correct = tf.equal(tf.argmax(self.y, axis=1), tf.argmax(self.Y_proba, axis=1))
+            self.accuracy = tf.reduce_mean(tf.cast(self.correct, tf.float32))
 
         # TENSORFLOW SESSION
         # ================================================================================
