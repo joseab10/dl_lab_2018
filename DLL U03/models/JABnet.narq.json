@@ -1,1 +1,111 @@
-{"in_image_height": 96, "name": "JABnet", "path": "./models/", "out_classes": 5, "history_length": 5, "in_image_width": 96, "learning_rate": 0.0001, "lstm_layers": [{"units": 16, "name": "lstm1"}], "fc_layers": [{"units": 100, "activation": "relu", "name": "fc1"}, {"units": 30, "activation": "relu", "name": "fc2"}], "in_channels": 1, "conv_layers": [{"filters": 16, "pooling": "max", "pool stride": [1, 2, 2, 1], "activation": "relu", "name": "conv1", "stride": [1, 1, 1, 1], "padding": "SAME", "pool padding": "VALID", "kernel size": 5, "pool ksize": [1, 2, 2, 1]}, {"filters": 24, "pooling": "max", "pool stride": [1, 2, 2, 1], "activation": "relu", "name": "conv2", "stride": [1, 1, 1, 1], "padding": "SAME", "pool padding": "VALID", "kernel size": 3, "pool ksize": [1, 2, 2, 1]}]}
+{
+  "in_image_height": 96,
+  "name": "JABnet",
+  "path": "./models/",
+  "out_classes": 5,
+  "history_length": 5,
+  "in_image_width": 96,
+  "learning_rate": 0.0001,
+  "lstm_layers": [
+    {
+      "units": 32,
+      "name": "lstm1"
+    }
+  ],
+  "fc_layers": [
+    {
+      "units": 32,
+      "activation": "relu",
+      "name": "fc1"
+    },
+    {
+      "units": 16,
+      "activation": "relu",
+      "name": "fc2"
+    }
+  ],
+  "in_channels": 1,
+  "conv_layers": [
+    {
+      "filters": 4,
+      "pooling": "max",
+      "pool stride": [
+        1,
+        2,
+        2,
+        1
+      ],
+      "activation": "relu",
+      "name": "conv1",
+      "stride": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "padding": "SAME",
+      "pool padding": "SAME",
+      "kernel size": 7,
+      "pool ksize": [
+        1,
+        2,
+        2,
+        1
+      ]
+    },
+    {
+      "filters": 8,
+      "pooling": "max",
+      "pool stride": [
+        1,
+        2,
+        2,
+        1
+      ],
+      "activation": "relu",
+      "name": "conv2",
+      "stride": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "padding": "SAME",
+      "pool padding": "SAME",
+      "kernel size": 5,
+      "pool ksize": [
+        1,
+        2,
+        2,
+        1
+      ]
+    },
+    {
+      "filters": 32,
+      "pooling": "max",
+      "pool stride": [
+        1,
+        2,
+        2,
+        1
+      ],
+      "activation": "relu",
+      "name": "conv3",
+      "stride": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "padding": "SAME",
+      "pool padding": "SAME",
+      "kernel size": 3,
+      "pool ksize": [
+        1,
+        2,
+        2,
+        1
+      ]
+    }
+  ]
+}

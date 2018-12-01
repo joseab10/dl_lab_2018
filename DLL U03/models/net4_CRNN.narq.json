@@ -53,18 +53,6 @@
       "pool stride": [1, 2, 2, 1],
       "pooling": "max",
       "filters": 10
-    },
-    {
-      "pool padding": "VALID",
-      "padding": "VALID",
-      "pool ksize": [1, 2, 2, 1],
-      "name": "conv4",
-      "activation": "relu",
-      "stride": [1, 1, 1, 1],
-      "kernel size": 3,
-      "pool stride": [1, 2, 2, 1],
-      "pooling": "max",
-      "filters": 10
     }
   ],
   "out_classes": 5,

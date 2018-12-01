@@ -1,6 +1,0 @@
-model_checkpoint_path: "net8_CNN_20181201-185815_i594000_TrAcc_85.8963.ckpt"
-all_model_checkpoint_paths: "net8_CNN_20181201-185716_i590000_TrAcc_84.8000.ckpt"
-all_model_checkpoint_paths: "net8_CNN_20181201-185730_i591000_TrAcc_85.7007.ckpt"
-all_model_checkpoint_paths: "net8_CNN_20181201-185745_i592000_TrAcc_84.2370.ckpt"
-all_model_checkpoint_paths: "net8_CNN_20181201-185800_i593000_TrAcc_84.8859.ckpt"
-all_model_checkpoint_paths: "net8_CNN_20181201-185815_i594000_TrAcc_85.8963.ckpt"
