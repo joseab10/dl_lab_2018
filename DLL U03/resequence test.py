@@ -20,5 +20,5 @@ batch_size = 5
 indexes = np.random.randint(his_len - 1, x.shape[0], batch_size)
 x_seq, y_seq = resequence(x, y, his_len, indexes)
 
-print('\n\nX sequence: ', x_seq)
-print('\nY sequence: ', y_seq)
+print('\n\nX sequence: shape:', x_seq.shape,' data: ', x_seq)
+print('\nY sequence: shape: ', y_seq.shape, ' data: ', y_seq)

@@ -90,9 +90,9 @@ def resequence(x, y, history_length, batch_indexes):
     #tmp_x = np.empty((batch_len - h + 1, h, image_width, image_len, image_chan))
     tmp_x = []
     for i in batch_indexes:
-        tmp_x.append(np.array([x[i-h+1:i+1, :, :, :]]))
+        tmp_x.append(x[i-h+1:i+1, :, :, :])
 
-    tmp_x = np.array(tmp_x)
+    tmp_x = np.stack(tmp_x)
 
     tmp_y = y[batch_indexes]
 
@@ -153,27 +153,29 @@ def evaluate_model(x, y, agent, max_batch_size = 500):
     batch_size = y.shape[0]
     num_iter = batch_size // max_batch_size
 
+    history_length = agent.history_length
+
     if batch_size % max_batch_size != 0:
         num_iter += 1
 
     for i in range(num_iter):
 
-        start = i * max_batch_size
-        if (i + 1) * max_batch_size > batch_size:
+        start = i * max_batch_size + history_length - 1
+        end   = start + max_batch_size
+
+        if end > batch_size:
             end = batch_size
-            count = batch_size - (i * max_batch_size)
-        else:
-            end = (i + 1) * max_batch_size
-            count = max_batch_size
+
+        count = end - start
 
         indexes = np.arange(start, end)
-        x_in, y_in = resequence(x, y, agent.history_length, indexes)
+        x_in, y_in = resequence(x, y, history_length, indexes)
 
 
-        tmp_acc, tmp_loss  = agent.evaluate(x_in, y_in) * count
+        tmp_acc, tmp_loss  = agent.evaluate(x_in, y_in)
 
-        acc  += tmp_acc
-        loss += tmp_loss
+        acc  += tmp_acc  * count
+        loss += tmp_loss * count
 
     return loss / batch_size, acc / batch_size
 
@@ -222,16 +224,15 @@ def train_model(X_train, y_train, X_valid, y_valid, n_minibatches, batch_size, l
 
     for i in range(n_minibatches):
 
-        minibatch_indexes = np.random.randint(0, X_train.shape[0] - history_length - 1, batch_size)
+        minibatch_indexes = np.random.randint(history_length - 1, X_train.shape[0], batch_size)
 
-        X_minibatch = resequence(X_train, minibatch_indexes)
-        y_minibatch = resequence(y_train, minibatch_indexes)
+        X_minibatch, y_minibatch = resequence(X_train, y_train, history_length, minibatch_indexes)
 
         agent.train(X_minibatch, y_minibatch)
 
         if i % 1000 == 0:
-            loss_train, acc_train = evaluate_model(X_train, y_train)
-            loss_valid, acc_valid = evaluate_model(X_valid, y_valid)
+            loss_train, acc_train = evaluate_model(X_train, y_train, agent)
+            loss_valid, acc_valid = evaluate_model(X_valid, y_valid, agent)
 
             print("Minibatch: ", i , " Train accuracy: ", acc_train, " Train Loss: ", loss_train, ", Test accuracy: ", acc_valid, " Test Loss: ", loss_valid)
 
