@@ -11,6 +11,7 @@ from utils import *
 
 # <JAB>
 import argparse
+import matplotlib.pyplot as plt
 # </JAB>
 
 
@@ -23,24 +24,34 @@ def run_episode(env, agent, rendering=True, max_timesteps=1000):
 
     # <JAB>
     history_length = agent.history_length
+    width = agent.in_image_width
+    height = agent.in_image_height
+    chans = agent.in_channels
     h = history_length
 
-    # first action while the agent collects the first h samples
+    # First action while the agent collects the first <history_length> samples in the queue (ACCELERATE!!!)
+    # After <history_length> samples have been gathered, then the agent takes control
     first_action = ACCELERATE
 
+    # FIFO Queue for recurrent models
     historical_states = []
 
-    # <JAB>
+    # </JAB>
 
 
     while True:
-        
-        # TODO: preprocess the state in the same way than in in your preprocessing in train_agent.py
-        #    state = ...
-        state = np.reshape(rgb2gray(state), (1, 96, 96, 1))
-        
-        # TODO: get the action from your agent! If you use discretized actions you need to transform them to continuous
-        # actions again. a needs to have a shape like np.array([0.0, 0.0, 0.0])
+
+        # <JAB>
+        state = rgb2gray(state.astype('float32'))
+        state = state.astype('uint8')
+        # TOOK ME 3 DAYS TO   ^
+        # FIND THAT NOTHING   |
+        # WORKED BECAUSE OF   |
+        # A MISSING "U" ------+
+        state = state.reshape((width, height, chans))
+        state = state.astype('float32')
+
+        # Add current step to the bottom of the queue
         historical_states.append(state)
 
         if h > 0:
@@ -48,12 +59,15 @@ def run_episode(env, agent, rendering=True, max_timesteps=1000):
             a_text = ACTIONS[first_action]['log']
             h -= 1
         else:
+            # Pop the first sample from the queue and discard it
             historical_states = historical_states[1:]
-            np_his_states = np.transpose(np.array(historical_states), axes=(1, 0, 2, 3, 4))
+            np_his_states = np.stack(historical_states)
+            np_his_states = np.reshape(np_his_states, (1, history_length, width, height, chans))
 
             a = agent.predict(np_his_states)
-            a_text = ACTIONS[np.argmax(a)]['log']
-            a = ACTIONS[np.argmax(a)]['value']
+            a = np.argmax(a)
+            a_text = ACTIONS[a]['log']
+            a = ACTIONS[a]['value']
 
         next_state, r, done, info = env.step(a)   
         episode_reward += r       
@@ -79,12 +93,12 @@ if __name__ == "__main__":
     
     n_test_episodes = 15                  # number of episodes to test
 
-    # TODO: load agent
+    #<JAB>
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--arq_file', action="store", default='models/net1.narq.json', help='Load Architecture from file.')
-    parser.add_argument('--ckpt_file', action="store", default='models/net1.ckpt', help='Load Parameters from file.')
-    parser.add_argument('--debug', action='store', default=10, help='Debug verbosity level [0-100].', type=int)
+    parser.add_argument('--arq_file', action="store", default='models/JABnet.narq.json', help='Load Architecture from file.')
+    parser.add_argument('--ckpt_file', action="store", default='models/early stop/JABnet_20181202-155353_i26000_TrAcc_82.5796.ckpt', help='Load Parameters from file.')
+    parser.add_argument('--debug', action='store', default=0, help='Debug verbosity level [0-100].', type=int)
 
     args = parser.parse_args()
 
@@ -96,7 +110,7 @@ if __name__ == "__main__":
 
     agent = Model(from_file=arq_file)
     agent.load(file_name=ckpt_file)
-    # <JAB>
+    # </JAB>
 
     env = gym.make('CarRacing-v0').unwrapped
 
@@ -111,7 +125,7 @@ if __name__ == "__main__":
     results["mean"] = np.array(episode_rewards).mean()
     results["std"] = np.array(episode_rewards).std()
  
-    fname = "results/" + agent.name + "results_bc_agent-%s.json" % datetime.now().strftime("%Y%m%d-%H%M%S")
+    fname = "results/" + agent.name + "_results_bc_agent-%s.json" % datetime.now().strftime("%Y%m%d-%H%M%S")
     fh = open(fname, "w")
     json.dump(results, fh)
             

@@ -826,8 +826,10 @@ Though the original intention was to build a dataset with at least 100'000
  samples, it soon became obvious that, due to memory limitations in the
  computers, it would be impossible to load the entire dataset into RAM and
  do any kind of preprocessing in the entirety of the data.
- For that reason, the dataset is comprised of two larger data files with
- 50'000 and 40'000 samples, and a couple with only 5'000 samples.
+ For that reason, the dataset was originally comprised of two larger data
+ files with 50'000 and 40'000 samples, and a couple with only 5'000 samples.
+ After rewriting the action_to_id function, a new dataset was created with
+ 60'000 samples.
  In order to save precious time and resources, because of the hardware limitatio
 ns, preprocessing of the data was also shifted to the collection pipeline,
  instead of the training one.
@@ -1559,8 +1561,7 @@ C are the Image Channels.
 \end_layout
 
 \begin_layout Standard
-Now for the magical part.
- The way the convolutional layers handle the 5D input is, simply put, that
+The way the convolutional layers handle the 5D input is, simply put, that
  they don't.
  Unless one uses 3D convolutions, which for this particular problem makes
  no sense, convolutional layers in TensorFlow don't like 5D inputs.
@@ -1727,6 +1728,67 @@ git checkout U03_working_1
 
 \begin_layout Standard
 The network 
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+setcounter{subsection}{0}
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+def
+\backslash
+thesubsection{
+\backslash
+arabic{section}}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+def
+\backslash
+thesubsection{
+\backslash
+Alph{subsection}}
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+def
+\backslash
+thesubsubsection{
+\backslash
+arabic{section}.
+\backslash
+arabic{subsection}.(
+\backslash
+alph{subsubsection})}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Appendices
+\end_layout
+
+\begin_layout Subsection
+Appendix A
 \end_layout
 
 \end_body
