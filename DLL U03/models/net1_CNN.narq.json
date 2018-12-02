@@ -4,7 +4,7 @@
                     "name"        : "conv1",
                     "filters"     : 16     ,
                     "kernel size" : 5      ,
-                    "padding"     : "SAME" ,
+                    "padding"     : "VALID" ,
                     "stride"      : [1,1,1,1]  ,
                     "activation"  : "relu",
 
@@ -18,7 +18,7 @@
                     "name"       : "conv2",
                     "filters"    : 24,
                     "kernel size": 3,
-                    "padding"    : "SAME",
+                    "padding"    : "VALID",
                     "stride"     : [1,1,1,1],
                     "activation" : "relu",
 
