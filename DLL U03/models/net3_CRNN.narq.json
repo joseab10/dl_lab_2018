@@ -11,6 +11,8 @@
   "in_image_width": 96,
   "path": "./models/",
   "learning_rate": 0.01,
+  "dropout_rate" : 0.8,
+  "l2_penalty" : 0.01,
   "lstm_layers": [
     {
       "units": 16,

@@ -10,8 +10,9 @@ class Model:
     
     def __init__(self, from_file='',  name = 'JABnet', path = './models/',
                  conv_layers_conf = None, lstm_layers_conf = None, fc_layers_conf = None,
-                 learning_rate = 0.1, history_length = 1,
-                 in_image_width = 96, in_image_height = 96, in_channels = 1, out_classes = 5):
+                 learning_rate = 0.1, history_length = 1, dropout_rate = 0.8,
+                 l2_penalty = 0.01,
+                 in_image_width = 96, in_image_height = 96, in_channels = 1, out_classes = 5, ):
 
         # <JAB>
         self.name = name
@@ -28,6 +29,8 @@ class Model:
 
             self.history_length = net_arq['history_length']
             self.learning_rate  = net_arq['learning_rate']
+            self.dropout_rate   = net_arq['dropout_rate']
+            self.l2_penalty     = net_arq['l2_penalty']
 
             self.in_image_width  = net_arq['in_image_width']
             self.in_image_height = net_arq['in_image_height']
@@ -38,10 +41,13 @@ class Model:
             self.lstm_layers_conf = net_arq['lstm_layers']
             self.fc_layers_conf   = net_arq['fc_layers']
 
+
         else:
             # Get architecture from parameters
             self.history_length = history_length
-            self.learning_rate = learning_rate
+            self.learning_rate  = learning_rate
+            self.dropout_rate   = dropout_rate
+            self.l2_penalty     = l2_penalty
 
             self.in_image_width  = in_image_width
             self.in_image_height = in_image_height
@@ -128,6 +134,7 @@ class Model:
                                name  = "y"
                               )
 
+        batch_size = tf.shape(self.X)[0]
 
         last_output = self.X
 
@@ -141,6 +148,8 @@ class Model:
             # allowing to use this architecture with multi-channel images.
 
             conv_filters = []
+            conv_bias    = []
+            l = 1
             for layer in self.conv_layers_conf:
 
                 if conv_filters == []:
@@ -151,11 +160,18 @@ class Model:
                 # Select the best initialization method for each activation function
                 initializer = self.init_from_activation_str(layer['activation'])
 
+                with tf.name_scope(layer['name']):
+                    new_filter = tf.get_variable('kernel_' + str(l),
+                                                 [layer['kernel size'], layer['kernel size'], last_shape[-1], layer['filters']],
+                                                 initializer=initializer)
 
-                new_filter = tf.get_variable('W_' + layer['name'],
-                                             [layer['kernel size'], layer['kernel size'], last_shape[-1], layer['filters']],
-                                             initializer=initializer)
+                    new_bias = tf.get_variable('bias_' + str(l),
+                                                 [layer['filters']],
+                                                 initializer=initializer)
+
                 conv_filters.append(new_filter)
+                conv_bias.append(new_bias)
+                l += 1
 
             conv_layer_count = len(self.conv_layers_conf)
             for i in range(conv_layer_count):
@@ -166,35 +182,34 @@ class Model:
 
                 last_outputs = tf.unstack(last_output, axis=1)
 
-                for h in range(self.history_length):
+                with tf.name_scope(layer['name']):
 
-                    # Slice across temporal dimension
-                    tmp_conv_4Dinput = last_outputs[h]
+                    for h in range(self.history_length):
 
-                    with tf.name_scope(layer['name']):
+                        # Slice across temporal dimension
+                        tmp_conv_4Dinput = last_outputs[h]
 
                         # Select the best initialization method for each activation function
                         activation = self.activation_from_str(layer['activation'])
-
                         tmp_conv_4Dout = tf.nn.conv2d(tmp_conv_4Dinput,
                                                    conv_filters[i],
                                                    layer['stride'],
                                                    layer['padding'],
                                                    name = layer['name'] + '_seq' + str(h))
-
+                        tmp_conv_4Dout = tf.nn.bias_add(tmp_conv_4Dout, conv_bias[i])
                         tmp_conv_4Dout = activation(tmp_conv_4Dout)
 
-                    if 'pooling' in layer:
-                        with tf.name_scope(layer['name'] + '_pool'):
-                            if layer['pooling'] == 'max':
-                                tmp_conv_4Dout = tf.nn.max_pool(tmp_conv_4Dout,
-                                                            ksize   = layer['pool ksize'],
-                                                            strides = layer['pool stride'],
-                                                            padding = layer['pool padding'],
-                                                            name    = layer['name'] + '_pool' + '_seq' + str(h)
-                                                           )
+                        if 'pooling' in layer:
+                            with tf.name_scope(layer['name'] + '_pool'):
+                                if layer['pooling'] == 'max':
+                                    tmp_conv_4Dout = tf.nn.max_pool(tmp_conv_4Dout,
+                                                                ksize   = layer['pool ksize'],
+                                                                strides = layer['pool stride'],
+                                                                padding = layer['pool padding'],
+                                                                name    = layer['name'] + '_pool' + '_seq' + str(h)
+                                                               )
 
-                    tmp_conv_4Doutputs.append(tmp_conv_4Dout)
+                        tmp_conv_4Doutputs.append(tmp_conv_4Dout)
 
                 # Restack the temporal dimension after convolving every image individually
                 last_output = tf.stack(tmp_conv_4Doutputs)
@@ -223,6 +238,7 @@ class Model:
                 lstm_cells = []
                 for layer in self.lstm_layers_conf:
                     lstm_cell = tf.nn.rnn_cell.LSTMCell(layer['units'])
+                    lstm_cell = tf.nn.rnn_cell.DropoutWrapper(lstm_cell, output_keep_prob=self.dropout_rate)
                     lstm_cells.append(lstm_cell)
 
                 rnn_cells = tf.nn.rnn_cell.MultiRNNCell(cells=lstm_cells)
@@ -253,6 +269,8 @@ class Model:
                                       activation=activation,
                                       name=layer['name'])
 
+                    last_output = tf.nn.dropout(last_output, self.dropout_rate, name=layer['name'] + '_dropout')
+
 
         # Output Layer
         with tf.name_scope("output"):
@@ -265,8 +283,20 @@ class Model:
         # LOSS AND OPTIMIZER
         # ================================================================================
         with tf.name_scope("train"):
-            xentropy = tf.nn.softmax_cross_entropy_with_logits(logits=self.logits, labels=self.y)
-            self.loss = tf.reduce_mean(xentropy)
+            self.x_entropy = tf.nn.softmax_cross_entropy_with_logits(logits=self.logits, labels=self.y, name='x_entropy')
+
+            # L2 Regularization
+            variables = tf.trainable_variables()
+            weights = []
+            self.l2_loss = tf.zeros([batch_size], name='l2_loss')
+            for variable in variables:
+                if 'bias' not in variable.name:
+                    weights.append(variable)
+                    self.l2_loss += tf.nn.l2_loss(variable)
+
+            self.loss = tf.reduce_mean(self.x_entropy + (self.l2_penalty * self.l2_loss))
+
+
             self.optimizer = tf.train.AdamOptimizer(learning_rate=self.learning_rate)
             self.trainer = self.optimizer.minimize(self.loss)
 
@@ -334,16 +364,18 @@ class Model:
         net_arq['path'] = self.savepath
 
         net_arq['history_length'] = self.history_length
-        net_arq['learning_rate'] = self.learning_rate
+        net_arq['learning_rate']  = self.learning_rate
+        net_arq['dropout_rate']   = self.dropout_rate
+        net_arq['l2_penalty']     = self.l2_penalty
 
-        net_arq['in_image_width'] = self.in_image_width
+        net_arq['in_image_width']  = self.in_image_width
         net_arq['in_image_height'] = self.in_image_height
-        net_arq['in_channels'] = self.in_channels
-        net_arq['out_classes'] = self.out_classes
+        net_arq['in_channels']     = self.in_channels
+        net_arq['out_classes']     = self.out_classes
 
         net_arq['conv_layers'] = self.conv_layers_conf
         net_arq['lstm_layers'] = self.lstm_layers_conf
-        net_arq['fc_layers'] = self.fc_layers_conf
+        net_arq['fc_layers']   = self.fc_layers_conf
 
         f = open(file_name, 'w')
         json.dump(net_arq, f)
