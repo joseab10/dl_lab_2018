@@ -47,7 +47,7 @@
       "name": "fc2"
     }
   ],
-  "learning_rate": 0.0001,
+  "learning_rate": 0.00001,
   "in_image_height": 96,
   "history_length": 1
 }

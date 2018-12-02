@@ -1,0 +1,6 @@
+model_checkpoint_path: "net3_CRNN.ckpt"
+all_model_checkpoint_paths: "net3_CRNN_20181202-082555_i196000_TrAcc_49.0630.ckpt"
+all_model_checkpoint_paths: "net3_CRNN_20181202-082832_i197000_TrAcc_49.0630.ckpt"
+all_model_checkpoint_paths: "net3_CRNN_20181202-083109_i198000_TrAcc_49.0630.ckpt"
+all_model_checkpoint_paths: "net3_CRNN_20181202-083346_i199000_TrAcc_49.0630.ckpt"
+all_model_checkpoint_paths: "net3_CRNN.ckpt"

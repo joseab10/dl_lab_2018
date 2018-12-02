@@ -15,7 +15,7 @@
   "name": "net2_CNN",
   "in_image_width": 96,
   "path": "./models/",
-  "learning_rate": 0.0001,
+  "learning_rate": 0.00001,
   "lstm_layers": [
   ],
   "conv_layers": [

@@ -1,0 +1,111 @@
+... read data
+Train      shapes: x:  (54000, 96, 96, 1)  y:  (54000, 5)
+Validation shapes: x:  (6000, 96, 96, 1)  y:  (6000, 5)
+Original   Training Action Distribution:  [(26503, 0), (10503, 1), (5658, 2), (11057, 3), (279, 4)]
+Original Validation Action Distribution:  [(2808, 0), (1338, 1), (603, 2), (1241, 3), (10, 4)]
+Data resampled to  75.0 %
+New      Train shapes: x:  (40500, 96, 96, 1)  y:  (40500, 5)
+New Validation shapes: x:  (4500, 96, 96, 1)  y:  (4500, 5)
+Original   Training Action Distribution:  [(15604, 0), (9338, 1), (5560, 2), (9719, 3), (279, 4)]
+Original Validation Action Distribution:  [(1640, 0), (1142, 1), (598, 2), (1110, 3), (10, 4)]
+... train model
+Minibatch:  0  Train accuracy:  31.3704%  Train Loss:  120.594384   |   Test accuracy:  32.7111%  Test Loss:  109.827521
+Minibatch:  1000  Train accuracy:  47.6815%  Train Loss:  2.890830   |   Test accuracy:  45.8444%  Test Loss:  2.836118
+Minibatch:  2000  Train accuracy:  50.2173%  Train Loss:  1.515963   |   Test accuracy:  49.2444%  Test Loss:  1.615573
+Minibatch:  3000  Train accuracy:  54.8914%  Train Loss:  1.208097   |   Test accuracy:  52.1778%  Test Loss:  1.300646
+Minibatch:  4000  Train accuracy:  57.5605%  Train Loss:  1.065869   |   Test accuracy:  54.5333%  Test Loss:  1.151242
+Minibatch:  5000  Train accuracy:  58.0617%  Train Loss:  1.012586   |   Test accuracy:  55.8222%  Test Loss:  1.088629
+Minibatch:  6000  Train accuracy:  56.8420%  Train Loss:  0.980789   |   Test accuracy:  55.6222%  Test Loss:  1.043145
+Minibatch:  7000  Train accuracy:  54.5531%  Train Loss:  0.974646   |   Test accuracy:  54.5111%  Test Loss:  1.026236
+Minibatch:  8000  Train accuracy:  60.9605%  Train Loss:  0.937398   |   Test accuracy:  57.6222%  Test Loss:  1.003959
+Minibatch:  9000  Train accuracy:  61.6370%  Train Loss:  0.912534   |   Test accuracy:  59.2667%  Test Loss:  0.982500
+Minibatch:  10000  Train accuracy:  52.5506%  Train Loss:  0.966981   |   Test accuracy:  53.5111%  Test Loss:  1.021820
+Minibatch:  11000  Train accuracy:  62.5111%  Train Loss:  0.898835   |   Test accuracy:  59.4000%  Test Loss:  0.987782
+Minibatch:  12000  Train accuracy:  60.7877%  Train Loss:  0.907398   |   Test accuracy:  57.4889%  Test Loss:  1.005624
+Minibatch:  13000  Train accuracy:  62.1333%  Train Loss:  0.896547   |   Test accuracy:  58.2667%  Test Loss:  0.995879
+Minibatch:  14000  Train accuracy:  62.6691%  Train Loss:  0.859122   |   Test accuracy:  59.1556%  Test Loss:  0.968503
+Minibatch:  15000  Train accuracy:  61.4765%  Train Loss:  0.856747   |   Test accuracy:  58.4000%  Test Loss:  0.948018
+Minibatch:  16000  Train accuracy:  63.4963%  Train Loss:  0.847403   |   Test accuracy:  59.5778%  Test Loss:  0.951776
+Minibatch:  17000  Train accuracy:  63.1753%  Train Loss:  0.839146   |   Test accuracy:  59.8667%  Test Loss:  0.946138
+Minibatch:  18000  Train accuracy:  63.7012%  Train Loss:  0.837373   |   Test accuracy:  59.7556%  Test Loss:  0.947874
+Minibatch:  19000  Train accuracy:  64.0296%  Train Loss:  0.836354   |   Test accuracy:  59.5778%  Test Loss:  0.955006
+Minibatch:  20000  Train accuracy:  64.4395%  Train Loss:  0.831123   |   Test accuracy:  59.7778%  Test Loss:  0.952655
+Minibatch:  21000  Train accuracy:  64.3951%  Train Loss:  0.828808   |   Test accuracy:  59.8667%  Test Loss:  0.956466
+Minibatch:  22000  Train accuracy:  61.5827%  Train Loss:  0.833491   |   Test accuracy:  58.3111%  Test Loss:  0.945269
+Minibatch:  23000  Train accuracy:  64.3012%  Train Loss:  0.824865   |   Test accuracy:  59.5111%  Test Loss:  0.955942
+Minibatch:  24000  Train accuracy:  64.7580%  Train Loss:  0.819602   |   Test accuracy:  59.2889%  Test Loss:  0.965432
+Minibatch:  25000  Train accuracy:  63.9259%  Train Loss:  0.832966   |   Test accuracy:  58.0667%  Test Loss:  0.977115
+Minibatch:  26000  Train accuracy:  63.7802%  Train Loss:  0.816780   |   Test accuracy:  58.9111%  Test Loss:  0.950190
+Minibatch:  27000  Train accuracy:  64.8988%  Train Loss:  0.805170   |   Test accuracy:  59.1333%  Test Loss:  0.934267
+Minibatch:  28000  Train accuracy:  65.2593%  Train Loss:  0.810960   |   Test accuracy:  58.8000%  Test Loss:  0.961145
+Minibatch:  29000  Train accuracy:  64.8741%  Train Loss:  0.814596   |   Test accuracy:  58.3333%  Test Loss:  0.976288
+Minibatch:  30000  Train accuracy:  65.3951%  Train Loss:  0.797494   |   Test accuracy:  59.5333%  Test Loss:  0.951325
+Minibatch:  31000  Train accuracy:  65.2469%  Train Loss:  0.805282   |   Test accuracy:  59.0444%  Test Loss:  0.965290
+Minibatch:  32000  Train accuracy:  64.9951%  Train Loss:  0.797731   |   Test accuracy:  59.0889%  Test Loss:  0.947545
+Minibatch:  33000  Train accuracy:  65.5481%  Train Loss:  0.793326   |   Test accuracy:  59.3111%  Test Loss:  0.951703
+Minibatch:  34000  Train accuracy:  65.2395%  Train Loss:  0.805084   |   Test accuracy:  59.2000%  Test Loss:  0.986625
+Minibatch:  35000  Train accuracy:  65.3358%  Train Loss:  0.794515   |   Test accuracy:  58.8667%  Test Loss:  0.957933
+Minibatch:  36000  Train accuracy:  65.5062%  Train Loss:  0.793536   |   Test accuracy:  58.8222%  Test Loss:  0.970972
+Minibatch:  37000  Train accuracy:  65.4494%  Train Loss:  0.784879   |   Test accuracy:  59.1111%  Test Loss:  0.953807
+Minibatch:  38000  Train accuracy:  64.8469%  Train Loss:  0.786198   |   Test accuracy:  59.2222%  Test Loss:  0.953534
+Minibatch:  39000  Train accuracy:  65.4889%  Train Loss:  0.805701   |   Test accuracy:  58.6000%  Test Loss:  1.006128
+Minibatch:  40000  Train accuracy:  65.9556%  Train Loss:  0.777204   |   Test accuracy:  58.9111%  Test Loss:  0.958801
+Minibatch:  41000  Train accuracy:  65.4074%  Train Loss:  0.781319   |   Test accuracy:  58.7333%  Test Loss:  0.956535
+Minibatch:  42000  Train accuracy:  65.8988%  Train Loss:  0.774169   |   Test accuracy:  59.1111%  Test Loss:  0.949625
+Minibatch:  43000  Train accuracy:  65.2691%  Train Loss:  0.796334   |   Test accuracy:  58.4889%  Test Loss:  0.995175
+Minibatch:  44000  Train accuracy:  66.6444%  Train Loss:  0.767850   |   Test accuracy:  59.3111%  Test Loss:  0.964037
+Minibatch:  45000  Train accuracy:  66.5951%  Train Loss:  0.770150   |   Test accuracy:  58.9111%  Test Loss:  0.979199
+Minibatch:  46000  Train accuracy:  66.2815%  Train Loss:  0.779853   |   Test accuracy:  58.6444%  Test Loss:  0.990201
+Minibatch:  47000  Train accuracy:  66.1185%  Train Loss:  0.777432   |   Test accuracy:  57.8000%  Test Loss:  0.999329
+Minibatch:  48000  Train accuracy:  63.8667%  Train Loss:  0.782482   |   Test accuracy:  57.5333%  Test Loss:  0.969275
+Minibatch:  49000  Train accuracy:  66.2864%  Train Loss:  0.789105   |   Test accuracy:  59.0889%  Test Loss:  1.021777
+Minibatch:  50000  Train accuracy:  66.7235%  Train Loss:  0.757221   |   Test accuracy:  58.6889%  Test Loss:  0.963933
+Minibatch:  51000  Train accuracy:  66.7802%  Train Loss:  0.766363   |   Test accuracy:  59.2000%  Test Loss:  0.999958
+Minibatch:  52000  Train accuracy:  66.9086%  Train Loss:  0.760533   |   Test accuracy:  59.3778%  Test Loss:  0.978081
+Minibatch:  53000  Train accuracy:  66.0346%  Train Loss:  0.777691   |   Test accuracy:  58.2889%  Test Loss:  1.018096
+Minibatch:  54000  Train accuracy:  66.7877%  Train Loss:  0.756051   |   Test accuracy:  58.9111%  Test Loss:  0.982249
+Minibatch:  55000  Train accuracy:  64.9951%  Train Loss:  0.774076   |   Test accuracy:  57.6000%  Test Loss:  1.002855
+Minibatch:  56000  Train accuracy:  67.0346%  Train Loss:  0.751820   |   Test accuracy:  59.0000%  Test Loss:  0.983761
+Minibatch:  57000  Train accuracy:  65.4938%  Train Loss:  0.774205   |   Test accuracy:  58.0889%  Test Loss:  1.011422
+Minibatch:  58000  Train accuracy:  67.0444%  Train Loss:  0.753436   |   Test accuracy:  58.6222%  Test Loss:  0.992569
+Minibatch:  59000  Train accuracy:  67.1358%  Train Loss:  0.746776   |   Test accuracy:  58.5778%  Test Loss:  0.985815
+Minibatch:  60000  Train accuracy:  67.1704%  Train Loss:  0.744942   |   Test accuracy:  58.9111%  Test Loss:  0.984376
+Minibatch:  61000  Train accuracy:  67.2963%  Train Loss:  0.753049   |   Test accuracy:  58.2444%  Test Loss:  1.022983
+Minibatch:  62000  Train accuracy:  65.9926%  Train Loss:  0.754039   |   Test accuracy:  58.4889%  Test Loss:  0.988859
+Minibatch:  63000  Train accuracy:  66.7506%  Train Loss:  0.749673   |   Test accuracy:  58.3556%  Test Loss:  1.002851
+Minibatch:  64000  Train accuracy:  67.1457%  Train Loss:  0.746287   |   Test accuracy:  58.3556%  Test Loss:  1.006403
+Minibatch:  65000  Train accuracy:  66.3901%  Train Loss:  0.746281   |   Test accuracy:  58.5556%  Test Loss:  0.977941
+Minibatch:  66000  Train accuracy:  66.1531%  Train Loss:  0.749336   |   Test accuracy:  58.2889%  Test Loss:  0.985756
+Minibatch:  67000  Train accuracy:  67.6148%  Train Loss:  0.734737   |   Test accuracy:  58.2889%  Test Loss:  1.007058
+Minibatch:  68000  Train accuracy:  66.4963%  Train Loss:  0.749213   |   Test accuracy:  58.0444%  Test Loss:  1.024219
+Minibatch:  69000  Train accuracy:  67.8444%  Train Loss:  0.728865   |   Test accuracy:  58.6222%  Test Loss:  1.004585
+Minibatch:  70000  Train accuracy:  68.0395%  Train Loss:  0.730391   |   Test accuracy:  58.5778%  Test Loss:  1.005764
+Minibatch:  71000  Train accuracy:  67.8716%  Train Loss:  0.730125   |   Test accuracy:  58.8000%  Test Loss:  1.030100
+Minibatch:  72000  Train accuracy:  68.0000%  Train Loss:  0.729453   |   Test accuracy:  58.6667%  Test Loss:  1.025003
+Minibatch:  73000  Train accuracy:  67.7111%  Train Loss:  0.728963   |   Test accuracy:  58.2000%  Test Loss:  1.015970
+Minibatch:  74000  Train accuracy:  68.0914%  Train Loss:  0.725642   |   Test accuracy:  58.9111%  Test Loss:  1.032972
+Minibatch:  75000  Train accuracy:  67.3728%  Train Loss:  0.726725   |   Test accuracy:  58.5111%  Test Loss:  1.011934
+Minibatch:  76000  Train accuracy:  67.2840%  Train Loss:  0.727344   |   Test accuracy:  57.5111%  Test Loss:  1.040447
+Minibatch:  77000  Train accuracy:  68.1975%  Train Loss:  0.722024   |   Test accuracy:  58.3333%  Test Loss:  1.027590
+Minibatch:  78000  Train accuracy:  68.0963%  Train Loss:  0.720951   |   Test accuracy:  58.6000%  Test Loss:  1.045947
+Minibatch:  79000  Train accuracy:  67.4914%  Train Loss:  0.741697   |   Test accuracy:  58.7111%  Test Loss:  1.064630
+Minibatch:  80000  Train accuracy:  67.8790%  Train Loss:  0.722789   |   Test accuracy:  58.2000%  Test Loss:  1.053394
+Minibatch:  81000  Train accuracy:  67.9901%  Train Loss:  0.726308   |   Test accuracy:  58.0667%  Test Loss:  1.053460
+Minibatch:  82000  Train accuracy:  68.1309%  Train Loss:  0.716833   |   Test accuracy:  58.5778%  Test Loss:  1.041811
+Minibatch:  83000  Train accuracy:  67.8864%  Train Loss:  0.717093   |   Test accuracy:  58.4222%  Test Loss:  1.041902
+Minibatch:  84000  Train accuracy:  68.2099%  Train Loss:  0.713977   |   Test accuracy:  58.0667%  Test Loss:  1.038455
+Minibatch:  85000  Train accuracy:  68.0741%  Train Loss:  0.712792   |   Test accuracy:  58.2222%  Test Loss:  1.051473
+Minibatch:  86000  Train accuracy:  68.5062%  Train Loss:  0.706511   |   Test accuracy:  57.8667%  Test Loss:  1.066177
+Minibatch:  87000  Train accuracy:  68.5284%  Train Loss:  0.708895   |   Test accuracy:  58.0667%  Test Loss:  1.048686
+Minibatch:  88000  Train accuracy:  68.5062%  Train Loss:  0.707377   |   Test accuracy:  57.5778%  Test Loss:  1.067895
+Minibatch:  89000  Train accuracy:  68.2667%  Train Loss:  0.709177   |   Test accuracy:  57.5333%  Test Loss:  1.072080
+Minibatch:  90000  Train accuracy:  68.6025%  Train Loss:  0.707738   |   Test accuracy:  58.2889%  Test Loss:  1.086886
+Minibatch:  91000  Train accuracy:  68.4790%  Train Loss:  0.710475   |   Test accuracy:  58.0889%  Test Loss:  1.079346
+Minibatch:  92000  Train accuracy:  68.1951%  Train Loss:  0.727060   |   Test accuracy:  58.5333%  Test Loss:  1.125285
+Minibatch:  93000  Train accuracy:  69.0469%  Train Loss:  0.697321   |   Test accuracy:  58.2667%  Test Loss:  1.065228
+Minibatch:  94000  Train accuracy:  68.6247%  Train Loss:  0.704434   |   Test accuracy:  57.6222%  Test Loss:  1.091873
+Minibatch:  95000  Train accuracy:  68.9111%  Train Loss:  0.702121   |   Test accuracy:  57.5111%  Test Loss:  1.084909
+Minibatch:  96000  Train accuracy:  68.5161%  Train Loss:  0.708022   |   Test accuracy:  57.6222%  Test Loss:  1.107378
+Minibatch:  97000  Train accuracy:  67.9012%  Train Loss:  0.702755   |   Test accuracy:  57.0444%  Test Loss:  1.096836
+Minibatch:  98000  Train accuracy:  69.1160%  Train Loss:  0.691467   |   Test accuracy:  58.2667%  Test Loss:  1.084067
+Minibatch:  99000  Train accuracy:  69.0247%  Train Loss:  0.694906   |   Test accuracy:  57.7111%  Test Loss:  1.077722
