@@ -3,13 +3,18 @@
   "fc_layers": [
     {
       "activation": "relu",
-      "units": 100,
+      "units": 400,
       "name": "fc1"
     },
     {
       "activation": "relu",
-      "units": 20,
+      "units": 100,
       "name": "fc2"
+    },
+    {
+      "activation": "relu",
+      "units": 30,
+      "name": "fc3"
     }
   ],
   "name": "net2_CNN",
