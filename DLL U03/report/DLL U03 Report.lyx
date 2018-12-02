@@ -337,43 +337,11 @@ Environment Definition
 \end_layout
 
 \begin_layout Standard
-The environment in which the problem takes place consists of a random generated
- track circuit with corners of varying difficulty.
- The objective is to drive a racing car aroud the track, visiting every
- section of the track in the least possible time to maximize the value of
- the reward.
- The observations of the environment include an eagle view of the portion
- of the track the car is currently at, the accumulated reward value and
- a couple of useful indicators such as the overall speed or the position
- of the steering wheel, as can be seen in Figure 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:env"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-.
- The reward function is calculated as follows: for every passing step, 0.1
- is substracted from the reward, for every newly visited tile 
-\begin_inset Formula $1000/N$
-\end_inset
-
- is added to the score, where 
-\begin_inset Formula $N$
-\end_inset
-
- is the total number of tiles in the track.
- The episode ends when all the track tiles have been visited, or after 1000
- simulation steps have taken place.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
+\begin_inset Wrap figure
+lines 0
+placement o
+overhang 0col%
+width "50col%"
 status collapsed
 
 \begin_layout Plain Layout
@@ -381,7 +349,7 @@ status collapsed
 \begin_inset Graphics
 	filename img/Environment Definition.png
 	lyxscale 20
-	width 50col%
+	width 40col%
 
 \end_inset
 
@@ -413,7 +381,39 @@ name "fig:env"
 
 \end_inset
 
+The environment in which the problem takes place consists of a random generated
+ track circuit with corners of varying difficulty.
+\end_layout
 
+\begin_layout Standard
+The objective is to drive a racing car aroud the track, visiting every section
+ of the track in the least possible time to maximize the value of the reward.
+ The observations of the environment include an eagle view of the portion
+ of the track the car is currently at, the accumulated reward value and
+ a couple of useful indicators such as the overall speed or the position
+ of the steering wheel, as can be seen in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:env"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ The reward function is calculated as follows: for every passing step, 0.1
+ is substracted from the reward, for every newly visited tile 
+\begin_inset Formula $1000/N$
+\end_inset
+
+ is added to the score, where 
+\begin_inset Formula $N$
+\end_inset
+
+ is the total number of tiles in the track.
+ The episode ends when all the track tiles have been visited, or after a
+ certain amount of simulation steps have taken place.
 \end_layout
 
 \begin_layout Section
@@ -880,6 +880,7 @@ noprefix "false"
 
 \begin_layout Standard
 \begin_inset Float figure
+placement H
 wide false
 sideways false
 status collapsed
@@ -915,7 +916,7 @@ status open
 \align center
 \begin_inset Graphics
 	filename img/imgsample_data_pp_2202.png
-	width 65col%
+	width 50col%
 
 \end_inset
 
@@ -1244,46 +1245,6 @@ Resampling
 \end_layout
 
 \begin_layout Standard
-Due to the nature of the game, most of the time the player is not performing
- any actions, but rather just going straight.
- Also because the objective is to go around a circuit in a counter-clockwise
- fashion, most of the turning take place to the left.
- Given the greedy nature of the player, braking is seldomly used.
- At the same time, a user might perform different actions to seemingly equal
- looking situations, which makes a model have a hard time learning highly
- non-deterministic labeling of samples.
- The distribution of actions for all the recorded data samples can be seen
- in Figure 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Action-Histogram."
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-.
- It is worth noting that the braking action (5) never shows up in the dataset.
- This is partly due to the greediness of the player, but also because it
- was normally used in combination of another action, usually turning sharply
- around u-turns.
- The 
-\family typewriter
-action_to_id
-\family default
- function only cares about single actions at any given step, and if one
- were to take more than one, then it would encode it as going straight.
-\end_layout
-
-\begin_layout Standard
-Because of the reasons stated in the previous paragraph, a resampling function
- was implemented before providing the model the data for training.
- It's purpose: try to balance the distribution of labels more uniformly
- across the training data.
-\end_layout
-
-\begin_layout Standard
 \begin_inset Wrap figure
 lines 0
 placement o
@@ -1294,7 +1255,7 @@ status collapsed
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename img/act_hist.png
+	filename img/act_hist_01.png
 	lyxscale 20
 	width 40col%
 
@@ -1307,7 +1268,7 @@ status collapsed
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Action Histogram.
+Original Action Histogram.
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:Action-Histogram."
@@ -1324,6 +1285,117 @@ name "fig:Action-Histogram."
 
 \end_inset
 
+Due to the nature of the game, most of the time the player is not performing
+ any actions, but rather just going straight.
+ Also because the objective is to go around a circuit in a counter-clockwise
+ fashion, most of the turning takes place to the left.
+ Given the greedy nature of the player, braking is seldomly used.
+ At the same time, a user might perform different actions to seemingly equal
+ looking situations, which makes a model have a hard time learning highly
+ non-deterministic labeling of samples.
+ The distribution of actions for all the recorded data samples up to this
+ point (around 90'000 actions) can be seen in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Action-Histogram."
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Wrap figure
+lines 0
+placement o
+overhang 0col%
+width "50col%"
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/act_hist_02.png
+	lyxscale 20
+	width 40col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Action Histogram with new 
+\family typewriter
+action_to_id
+\family default
+ function.
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Action-Histogram-2."
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+It is worth noting that the braking action (5) never showed up in the original
+ dataset.
+ This is partly due to the greediness of the player, but also because it
+ was normally used in combination of another action, usually when turning
+ sharply around u-turns.
+ The 
+\family typewriter
+action_to_id
+\family default
+ function only cares about single actions at any given step, and if one
+ were to take more than one, then it would encode it as going straight.
+ After (rather later than sooner) realizing this, 
+\family typewriter
+action_to_id
+\family default
+ was rewritten to take into account multiple actions, in which case it randomly
+ picks one of them so as to not loose so much data in the process.
+ This allowed the distribution of the actions to look a bit more natural,
+ but still biased towards inaction, then with almost equal proportions to
+ accelerating and turning left, then to turning right, and finally to braking.
+ The histogram of the data sampled with the new function can be seen in
+ Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Action-Histogram-2."
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+Because of the reasons stated in the previous paragraph, a resampling function
+ was implemented before providing the model the data for training.
+ It's purpose: try to balance the distribution of labels more uniformly
+ across the training data.
+\end_layout
+
+\begin_layout Standard
 The resampling function does away with a lot of data, by assigning a probability
  depending on an action's ocurrence in the dataset.
  Thus, the more an action shows up in the original dataset, the less likely
@@ -1349,20 +1421,28 @@ In order to select whether sampling is desired from the command line without
  the original dataset.
 \end_layout
 
+\begin_layout Standard
+Due to the limitations of memory, every single action had to be done in
+ batches.
+ Training was of course accomplished doing so, but also evaluation, preprocessin
+g, resampling and resequencing (more on that later).
+\end_layout
+
 \begin_layout Subsection
 Data Augmentation
 \end_layout
 
 \begin_layout Standard
-The easiest way to augment the data would be to mirror images and actions
- where a turning (either left or right) action was taken.
+The easiest way to augment the data would have been to mirror the images
+ along the vertical axis and, if a turning (either left or right) action
+ was taken, mirror the action too.
  The problem with this approach would be the mirroring of the bottom indications
 , which in case the network used them to derive a feature, would then be
  totally useless.
  If they were useless in the first place, then it would even make sense
  to crop the images and retain only the eagle view to make processing faster,
  and then do the mirroring to augment the data.
- If the information is usefull, then the mirroring of the eagle view could
+ If the information were usefull, then the mirroring of the eagle view could
  take place, but then the steering wheel, ABS sensors and gyroscope indicators
  would need to be mirrored in place.
  The other issue issue is that it only helps in bridging the gap between
@@ -1370,7 +1450,7 @@ The easiest way to augment the data would be to mirror images and actions
 \end_layout
 
 \begin_layout Standard
-The second reason, and perhaps the strongest reason, would be the placing
+The second reason, and perhaps the most important one, would be the placing
  of that data within the data set.
  Given that the sequencing operation groups consecutive images into fixed
  length time steps for the training of the recurrent neural network to happen,
@@ -1385,7 +1465,7 @@ Although technically feasible, it was opted not to use data augmentation
 \end_layout
 
 \begin_layout Section
-Models
+Model Design
 \end_layout
 
 \begin_layout Standard
@@ -1405,6 +1485,224 @@ Thinking ahead, the design process of the model contemplated the recurrent
  and testing, without having to change any single bit of code.
  Used in conjunction with TensorFlow's own checkpoint files made it a breeze
  to change models on the fly.
+\end_layout
+
+\begin_layout Subsection
+CNN + RNN
+\end_layout
+
+\begin_layout Standard
+The way the network was designed completely contradicts the intended way
+ of integrating the time dimension into the channel dimension.
+ Not only would that defeat its purpose of handling multi-channel images
+ such as pictures with color information, but in turn would also be completely
+ lacking of any significance.
+ After the first convolution, the convolved images across the different
+ time steps would be added together, loosing any relevant temporal information
+ that the recurrent network could use.
+ Moreover, the 
+\begin_inset Quotes eld
+\end_inset
+
+temporal
+\begin_inset Quotes erd
+\end_inset
+
+ dimension size would change between convolutional layers, as the varying
+ number of filters dictate.
+\end_layout
+
+\begin_layout Standard
+For that reason, it was best though to incorporate a 5 dimension to the
+ input tensor, such that it's shape would look like:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\left[\begin{array}{ccccc}
+B & T & W & H & C\end{array}\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where:
+\end_layout
+
+\begin_layout Description
+B is the Batch dimension, or the number of samples.
+ Of dynamic shape and mostly used for training.
+\end_layout
+
+\begin_layout Description
+T is the Temporal dimension, or the number of time steps in the sequence.
+ Must be defined during the graph creation and kept constant throughout
+ all training and testing sessions.
+ This affects the convolutional layers, and of course the static LSTM cells.
+\end_layout
+
+\begin_layout Description
+W is the Image Width in pixels.
+\end_layout
+
+\begin_layout Description
+H is the Image Height in pixels.
+\end_layout
+
+\begin_layout Description
+C are the Image Channels.
+ E.g.: 3 for RGB color images or 4 for RGBA for color images with transparency.
+\end_layout
+
+\begin_layout Standard
+Now for the magical part.
+ The way the convolutional layers handle the 5D input is, simply put, that
+ they don't.
+ Unless one uses 3D convolutions, which for this particular problem makes
+ no sense, convolutional layers in TensorFlow don't like 5D inputs.
+ 
+\end_layout
+
+\begin_layout Standard
+The idea behind the design follows that of the nature of recurrent neural
+ networks themselves.
+ Just as they are 
+\begin_inset Quotes eld
+\end_inset
+
+unfolded
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+unrolled
+\begin_inset Quotes erd
+\end_inset
+
+ to calculate their internal and cell states while sharing weights for each
+ of the inputs in a sequence, the convolutional layers also unfold, sharing
+ the same kernels and layer properties among all inputs.
+ The architecture can be though of as running the same convolutions for
+ each of the inputs in parallel, thus constructing the same feature maps
+ for each one of the input images in a sequence.
+ 
+\end_layout
+
+\begin_layout Standard
+As there is no way of dynamically doing this in TensorFlow at the moment,
+ the Temporal dimension must be fixed starting from the design phase, just
+ as any other hyper-parameter.
+ Once a value has been selected, the model will create 
+\begin_inset Formula $t$
+\end_inset
+
+ convolutional layers for each of the originally (and propperly called layers),
+ with the property that they will all share the same filters at each level.
+ Conceptually, this could be visualized as shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:CNN-RNN"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ The resulting network can be seen in the TensorBoard Graphs tab, confirming
+ that the desired design was successfully implemented.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/cnn + rnn.png
+	lyxscale 10
+	width 80col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+CNN + RNN Architecture.
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:CNN-RNN"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Before the first convolutional layer, the tensor is unstacked along it's
+ temporal dimension, and then each individual image is fed to it's own convoluti
+onal neural network, only for the resulting feature maps to be flattened
+ and stacked again in preparation for the recurrent part of the network.
+\end_layout
+
+\begin_layout Standard
+The great advantage of this approach is that the number of parameters does
+ not change with respect to using a single convolutional network, while
+ at the same time we preserve the temporal dimension untouched until it
+ reaches the LSTM cells where it matters the most.
+ The clear disadvantage: a huge increase in training time due to the gradients
+ comming from the recurrent network need to be multiplied with the convolution
+ of each image in the sequence.
+\end_layout
+
+\begin_layout Subsection
+Resequencing.
+\end_layout
+
+\begin_layout Standard
+After the data set has been split into training and validation data, the
+ selection of samples for the batches used for training was done by randomly
+ generating a list of indices, so as to 
+\begin_inset Quotes eld
+\end_inset
+
+shuffle
+\begin_inset Quotes erd
+\end_inset
+
+ the data, while at the same time not having to actually shuffle all the
+ data at once, as that would be more expensive.
+ Given that the network design is inherently recursive, after randomly selecting
+ indices for the batch, the states preceding the selected indices need to
+ be used, so that the input to the LSTM makes actual sense.
 \end_layout
 
 \begin_layout Subsection

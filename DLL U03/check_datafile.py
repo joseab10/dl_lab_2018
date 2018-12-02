@@ -39,7 +39,7 @@ def unhot_actions(y):
     #tmp_y[y == [0, 0, 0, 1, 0]] = 3
     #tmp_y[y == [0, 0, 0, 0, 1]] = 4
 
-    tmp_y = np.matmul(y,np.array([0, 1, 2, 3, 4])).astype('int8')
+    tmp_y = np.argmax(y, axis=1).astype('int8')
 
     return tmp_y
 
@@ -47,9 +47,9 @@ def unhot_actions(y):
 
 
 
-file3 = './data/data[5k]_pp.pkl.gzip'
+file3 = './data/data[60k]_pp2.pkl.gzip'
 file2 = './data/data[40k]_pp.pkl.gzip'
-file = './data/data.pkl.gzip'
+file = './data/data[5k]_pp.pkl.gzip'
 
 f = gzip.open(file, 'rb')
 data = pickle.load(f)
@@ -71,8 +71,8 @@ y = y3
 bins = [-.5, .5, 1.5, 2.5, 3.5, 4.5]
 bins = [0, 1, 2, 3, 4, 5]
 plt.hist(y, bins = bins)
-plt.show()
-#plt.savefig('./report/img/act_hist.png', dpi=300)
+#plt.show()
+plt.savefig('./report/img/act_hist.png', dpi=300)
 
 #plot_data(data2['state'], filename='sample_data_rgb_')
 #plot_data(data3['state'], filename='sample_data_pp_')
