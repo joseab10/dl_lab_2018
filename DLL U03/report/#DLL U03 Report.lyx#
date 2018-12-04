@@ -2161,7 +2161,7 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="9" columns="7">
+<lyxtabular version="3" rows="10" columns="7">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -2249,7 +2249,7 @@ Testing
 \begin_inset Text
 
 \begin_layout Plain Layout
-Final Training
+Final 
 \end_layout
 
 \end_inset
@@ -2258,12 +2258,12 @@ Final Training
 \begin_inset Text
 
 \begin_layout Plain Layout
-Final Validation 
+Final 
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell multirow="3" alignment="center" valignment="middle" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2272,7 +2272,7 @@ Number
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell multirow="3" alignment="center" valignment="middle" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2285,12 +2285,77 @@ Training
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reward
+
 \end_layout
 
 \end_inset
 </cell>
 <cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Training
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Validation
+\end_layout
+
+\end_inset
+</cell>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reward
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2503,7 +2568,7 @@ net2 (CNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-net3 (CNN + RNN)
+net3 (CNN+RNN)
 \end_layout
 
 \end_inset
@@ -2512,7 +2577,7 @@ net3 (CNN + RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+91.9944%
 \end_layout
 
 \end_inset
@@ -2521,7 +2586,7 @@ net3 (CNN + RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+71.7333%
 \end_layout
 
 \end_inset
@@ -2530,7 +2595,7 @@ net3 (CNN + RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+200'000
 \end_layout
 
 \end_inset
@@ -2539,7 +2604,7 @@ net3 (CNN + RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+11:00:00
 \end_layout
 
 \end_inset
@@ -2548,7 +2613,7 @@ net3 (CNN + RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+566.9941
 \end_layout
 
 \end_inset
@@ -2557,7 +2622,7 @@ net3 (CNN + RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+300.5476
 \end_layout
 
 \end_inset
@@ -2568,7 +2633,7 @@ net3 (CNN + RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-net4 (CNN + RNN)
+net4 (CNN+RNN)
 \end_layout
 
 \end_inset
@@ -2613,7 +2678,7 @@ net4 (CNN + RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+748.0682
 \end_layout
 
 \end_inset
@@ -2622,7 +2687,7 @@ net4 (CNN + RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+160.8649
 \end_layout
 
 \end_inset
@@ -2633,7 +2698,7 @@ net4 (CNN + RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-JABnet (CNN + RNN)
+JABnet (CNN+RNN)
 \end_layout
 
 \end_inset
@@ -2642,7 +2707,7 @@ JABnet (CNN + RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+94.9185%
 \end_layout
 
 \end_inset
@@ -2651,7 +2716,7 @@ JABnet (CNN + RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+72.8333%
 \end_layout
 
 \end_inset
@@ -2660,7 +2725,7 @@ JABnet (CNN + RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+200'000
 \end_layout
 
 \end_inset
@@ -2669,7 +2734,7 @@ JABnet (CNN + RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+6:01:08
 \end_layout
 
 \end_inset
@@ -2678,7 +2743,7 @@ JABnet (CNN + RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+742.1062
 \end_layout
 
 \end_inset
@@ -2687,7 +2752,7 @@ JABnet (CNN + RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+221.1171
 \end_layout
 
 \end_inset
@@ -2698,7 +2763,7 @@ JABnet (CNN + RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-Myself (Human being)
+Myself (Human NN)
 \end_layout
 
 \end_inset
@@ -2774,10 +2839,6 @@ Exercise Results.
 
 \end_inset
 
-
-\end_layout
-
-\begin_layout Plain Layout
 
 \end_layout
 
@@ -5208,6 +5269,362 @@ Appendix B: Learning Curves
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:Appendix-B:-Learning"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/net2_train_accuracy.svg
+	width 45col%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Training Accuracy.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/net2_validation_accuracy.svg
+	width 45col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Validation Accuracy.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+net2 Learning Curves.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/net3_train_accuracy.svg
+	width 45col%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Training Accuracy.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/net3_validation_accuracy.svg
+	width 45col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Validation Accuracy.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+net3 Learning Curves.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/net4_train_accuracy.svg
+	width 45col%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Training Accuracy.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/net4_validation_accuracy.svg
+	width 45col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Validation Accuracy.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+net4 Learning Curves.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/jabnet_train_accuracy.svg
+	width 45col%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Training Accuracy.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/jabnet_validation_accuracy.svg
+	width 45col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Validation Accuracy.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+JABnet Learning Curves.
+\end_layout
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 

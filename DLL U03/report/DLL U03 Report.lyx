@@ -1937,9 +1937,9 @@ Training
 
 \begin_layout Standard
 Quite a few training sessions were performed on around 10 different models
- in total, eventually settling with the 5 most promissing ones.
+ in total, eventually settling with the 5 most promising ones.
  During all these sessions, the model was never capable of exceeding 75%
- validation accuracy, despite having played with all the hyperparameters
+ validation accuracy, despite having played with all the hyper-parameters
  in every possible way: extending the number of batches to train on, changing
  the datasets, early stopping and saving the model at certain checkpoints,
  retraining a model saved to a checkpoint even with different data, changing
@@ -1947,13 +1947,13 @@ Quite a few training sessions were performed on around 10 different models
 , adding and removing layers, adding drop-out to the recurrent and fully
  connected layers and L2-regularization to the loss function, and many other
  actions.
- Regardless of this shortcommings, the model ended up performing quite good
- in the test track, perhaps due to the limited ammount of unique states
- that can exist in the simulation.
+ Regardless of this shortcomings, the model ended up performing quite good
+ in the test track, perhaps due to the limited amount of unique states that
+ can exist in the simulation.
 \end_layout
 
 \begin_layout Standard
-The learning curves for the 5 most promissing agents can be seen in Appendix
+The learning curves for the 5 most promising agents can be seen in Appendix
  
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -1993,7 +1993,7 @@ name "subsec:Testing"
 \begin_layout Standard
 To be able to test the agent, the data obtained from the simulator must
  be preprocessed int the exact same fashion as it was done for the training.
- Similarly, the otputs predicted by the model must be converted from their
+ Similarly, the outputs predicted by the model must be converted from their
  one-hot format to the vector with 3 components that the environment takes.
  
 \end_layout
@@ -2017,7 +2017,7 @@ noprefix "false"
 \begin_inset Formula $h$
 \end_inset
 
- is the history length of the seqence input to the agent.
+ is the history length of the sequence input to the agent.
  This only applies for recurrent agents while the step queue is being filled,
  as the history length for convolutional agents must be equal to 1.
 \end_layout
@@ -2065,7 +2065,7 @@ where:
 
 \begin_layout Description
 agent_name the name of the model to be tested.
- It can currenty take one the following values: 
+ It can currently take one the following values: 
 \family typewriter
 net1|net2|net3|net4|JABnet
 \family default
@@ -2073,8 +2073,8 @@ net1|net2|net3|net4|JABnet
 \end_layout
 
 \begin_layout Description
-debug_level a variable to control the ammount of output of the program.
- For this script, any value above 1 will result in outputing the agent's
+debug_level a variable to control the amount of output of the program.
+ For this script, any value above 1 will result in outputting the agent's
  actions to stdout.
 \end_layout
 
@@ -2147,7 +2147,7 @@ Results
 \end_layout
 
 \begin_layout Standard
-The following table sumarizes the results obtained by each model during
+The following table summarizes the results obtained by each model during
  training and testing.
  Only the values for the last training and testing sessions are shown.
 \end_layout
@@ -2161,7 +2161,7 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="9" columns="7">
+<lyxtabular version="3" rows="10" columns="7">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -2249,7 +2249,7 @@ Testing
 \begin_inset Text
 
 \begin_layout Plain Layout
-Final Training
+Final 
 \end_layout
 
 \end_inset
@@ -2258,12 +2258,12 @@ Final Training
 \begin_inset Text
 
 \begin_layout Plain Layout
-Final Validation 
+Final 
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell multirow="3" alignment="center" valignment="middle" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2272,7 +2272,7 @@ Number
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell multirow="3" alignment="center" valignment="middle" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2285,12 +2285,77 @@ Training
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reward
+
 \end_layout
 
 \end_inset
 </cell>
 <cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Training
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Validation
+\end_layout
+
+\end_inset
+</cell>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reward
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2503,7 +2568,7 @@ net2 (CNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-net3 (CNN + RNN)
+net3 (CNN+RNN)
 \end_layout
 
 \end_inset
@@ -2512,7 +2577,7 @@ net3 (CNN + RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+91.9944%
 \end_layout
 
 \end_inset
@@ -2521,7 +2586,7 @@ net3 (CNN + RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+71.7333%
 \end_layout
 
 \end_inset
@@ -2530,7 +2595,7 @@ net3 (CNN + RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+200'000
 \end_layout
 
 \end_inset
@@ -2539,7 +2604,7 @@ net3 (CNN + RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+11:00:00
 \end_layout
 
 \end_inset
@@ -2548,7 +2613,7 @@ net3 (CNN + RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+566.9941
 \end_layout
 
 \end_inset
@@ -2557,7 +2622,7 @@ net3 (CNN + RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+300.5476
 \end_layout
 
 \end_inset
@@ -2568,7 +2633,7 @@ net3 (CNN + RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-net4 (CNN + RNN)
+net4 (CNN+RNN)
 \end_layout
 
 \end_inset
@@ -2633,7 +2698,7 @@ net4 (CNN + RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-JABnet (CNN + RNN)
+JABnet (CNN+RNN)
 \end_layout
 
 \end_inset
@@ -2642,7 +2707,7 @@ JABnet (CNN + RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+94.9185%
 \end_layout
 
 \end_inset
@@ -2651,7 +2716,7 @@ JABnet (CNN + RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+72.8333%
 \end_layout
 
 \end_inset
@@ -2660,7 +2725,7 @@ JABnet (CNN + RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+200'000
 \end_layout
 
 \end_inset
@@ -2669,7 +2734,7 @@ JABnet (CNN + RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+6:01:08
 \end_layout
 
 \end_inset
@@ -2678,7 +2743,7 @@ JABnet (CNN + RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+742.1062
 \end_layout
 
 \end_inset
@@ -2687,7 +2752,7 @@ JABnet (CNN + RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+221.1171
 \end_layout
 
 \end_inset
@@ -2698,7 +2763,7 @@ JABnet (CNN + RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-Myself (Human being)
+Myself (Human NN)
 \end_layout
 
 \end_inset
@@ -2777,10 +2842,6 @@ Exercise Results.
 
 \end_layout
 
-\begin_layout Plain Layout
-
-\end_layout
-
 \end_inset
 
 
@@ -2795,7 +2856,7 @@ After having programmed an agent with two different approaches, one using
  only convolutional layers and one using both convolutional and recurrent
  layers, and having seen the results, it might seem obvious that the purely
  convolutional one should suffice for solving this task.
- However, perhaps due to bias while becoming fond of recurent networks,
+ However, perhaps due to bias while becoming fond of recurrent networks,
  I believe that the model using LSTM cells performed more cleanly, with
  a lot less jerking thanks to it's capacity to see the corners 5 or 10 steps
  ahead.
@@ -2810,12 +2871,12 @@ During this exercise, the quality of the data used for training became very
 \end_layout
 
 \begin_layout Standard
-Although the behaviour observed during the training sessions clearly screems
+Although the behavior observed during the training sessions clearly screams
  of overfitting the training data, it seems that it did not affect the performan
 ce in the test environment so much.
  It is my hypothesis that the model was never able to overcome the 75% validatio
 n accuracy barrier, despite having used all the tricks in the book, due
- to the extremely undeteriministic process of labeling the data.
+ to the extremely indeterministic process of labeling the data.
  I strongly believe that there must likely be sets of equally looking images
  with totally contradicting actions taken during the collection drives.
  The hypothesis is, as of this moment, lacking any evidence due to time
@@ -4681,12 +4742,12 @@ end{lstlisting}
 placement H
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename img/net4 Arq.png
+	filename img/net4 Arq (conv exp).png
 	lyxscale 20
 	width 100col%
 
@@ -5208,6 +5269,453 @@ Appendix B: Learning Curves
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:Appendix-B:-Learning"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/net1_train_accuracy.svg
+	width 45col%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Training Accuracy.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/net1_validation_accuracy.svg
+	width 45col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Validation Accuracy.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+net1 Learning Curves.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/net2_train_accuracy.svg
+	width 45col%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Training Accuracy.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/net2_validation_accuracy.svg
+	width 45col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Validation Accuracy.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+net2 Learning Curves.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/net3_train_accuracy.svg
+	width 45col%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Training Accuracy.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/net3_validation_accuracy.svg
+	width 45col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Validation Accuracy.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+net3 Learning Curves.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/net4_train_accuracy.svg
+	width 45col%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Training Accuracy.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/net4_validation_accuracy.svg
+	width 45col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Validation Accuracy.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+net4 Learning Curves.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/jabnet_train_accuracy.svg
+	width 45col%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Training Accuracy.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/jabnet_validation_accuracy.svg
+	width 45col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Validation Accuracy.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+JABnet Learning Curves.
+\end_layout
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
