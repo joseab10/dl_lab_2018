@@ -70,6 +70,46 @@
 \usetikzlibrary{shapes.multipart}
 \usetikzlibrary{calc}
 \usetikzlibrary{patterns}
+
+
+% Custom JSON listing
+%\usepackage{bera}% optional: just to have a nice mono-spaced font
+\usepackage{listings}
+\usepackage{xcolor}
+
+\colorlet{punct}{red!60!black}
+\definecolor{background}{HTML}{EEEEEE}
+\definecolor{delim}{RGB}{20,105,176}
+\colorlet{numb}{magenta!60!black}
+
+\lstdefinelanguage{json}{
+    basicstyle=\normalfont\ttfamily,
+    numbers=left,
+    numberstyle=\scriptsize,
+    stepnumber=1,
+    numbersep=8pt,
+    showstringspaces=false,
+    breaklines=true,
+    frame=lines,
+    backgroundcolor=\color{background},
+    literate=
+     *{0}{{{\color{numb}0}}}{1}
+      {1}{{{\color{numb}1}}}{1}
+      {2}{{{\color{numb}2}}}{1}
+      {3}{{{\color{numb}3}}}{1}
+      {4}{{{\color{numb}4}}}{1}
+      {5}{{{\color{numb}5}}}{1}
+      {6}{{{\color{numb}6}}}{1}
+      {7}{{{\color{numb}7}}}{1}
+      {8}{{{\color{numb}8}}}{1}
+      {9}{{{\color{numb}9}}}{1}
+      {:}{{{\color{punct}{:}}}}{1}
+      {,}{{{\color{punct}{,}}}}{1}
+      {\{}{{{\color{delim}{\{}}}}{1}
+      {\}}{{{\color{delim}{\}}}}}{1}
+      {[}{{{\color{delim}{[}}}}{1}
+      {]}{{{\color{delim}{]}}}}{1},
+}
 \end_preamble
 \use_default_options true
 \begin_modules
@@ -330,6 +370,17 @@ The purpose of this report is to present the reasoning behind the design
  machine learning model through a combination of 2D convolutions and Long
  Short-Term Memory Cells using the TensorFlow framework, and to show the
  results obtained with this approach.
+ For instructions on testing the agents, jump to Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Testing"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Section
@@ -386,8 +437,9 @@ The environment in which the problem takes place consists of a random generated
 \end_layout
 
 \begin_layout Standard
-The objective is to drive a racing car aroud the track, visiting every section
- of the track in the least possible time to maximize the value of the reward.
+The objective is to drive a racing car around the track, visiting every
+ section of the track in the least possible time to maximize the value of
+ the reward.
  The observations of the environment include an eagle view of the portion
  of the track the car is currently at, the accumulated reward value and
  a couple of useful indicators such as the overall speed or the position
@@ -403,7 +455,7 @@ noprefix "false"
 
 .
  The reward function is calculated as follows: for every passing step, 0.1
- is substracted from the reward, for every newly visited tile 
+ is subtracted from the reward, for every newly visited tile 
 \begin_inset Formula $1000/N$
 \end_inset
 
@@ -839,7 +891,7 @@ ns, preprocessing of the data was also shifted to the collection pipeline,
 \begin_layout Standard
 In a futile attempt to also save storage space, the rewards and terminals
  were dropped from the saving process, while the images were stored as 8
- bit grayscales and the actions as one hot vectors.
+ bit gray-scales and the actions as one hot vectors.
  No matter how the data was stored, the resulting files were always larger
  than if no preprocessing had been done, most likely due to making the gzip
  compression process less efficient.
@@ -853,13 +905,13 @@ Preprocessing
 \begin_layout Standard
 As stated in the previous section, the preprocessing pipeline was shifted
  to the collection one to improve performance, as preprocessing took place
- on batches of only 1'000 samples at a time, instead of the whole 50'000
- samples of a complete dataset, which proved to be undoable in the pool
- machines due to crashing because of memory limitations.
+ on batches of only 1'000 samples at a time, instead of the whole 50 or
+ 60'000 samples of a complete dataset, which proved to be undoable in the
+ pool machines due to crashing because of memory limitations.
 \end_layout
 
 \begin_layout Standard
-Because the colour information could be thought of as redundant or not providing
+Because the color information could be thought of as redundant or not providing
  more insight to the state of the environment, image data was converted
  to 8 bit grayscale to save training and processing power.
  Due to the selection of Softmax as the activation function for the last
@@ -1398,16 +1450,70 @@ Because of the reasons stated in the previous paragraph, a resampling function
 \end_layout
 
 \begin_layout Standard
+\begin_inset Wrap figure
+lines 0
+placement o
+overhang 0col%
+width "50col%"
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/resampled_0.75_hist.png
+	lyxscale 20
+	width 40col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Action Histogram after resampling to 75% of the data.
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Resampled-Histogram"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
 The resampling function does away with a lot of data, by assigning a probability
- depending on an action's ocurrence in the dataset.
+ depending on an action's occurrence in the dataset.
  Thus, the more an action shows up in the original dataset, the less likely
- is it going to appear in the resamoled one.
+ is it going to appear in the resampled one.
  Given that resampling deletes frames randomly according to a probability
  distribution to create a sampled dataset that is some percentage smaller
  than the original one, it was only used to train purely convolutional models,
  because doing so for models involving recurrence would mean breaking perfectly
  reasonable sequences of data into nonsensical chunks of images and actions
  which might not even be possible to happen in a real simulation.
+ Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Resampled-Histogram"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ shows an example of the distribution histogram of the 60k dataset after
+ being resampled to 75%.
+ Given that the resampling operation is random, every training session would
+ get a different distribution.
 \end_layout
 
 \begin_layout Standard
@@ -1427,7 +1533,7 @@ In order to select whether sampling is desired from the command line without
 Due to the limitations of memory, every single action had to be done in
  batches.
  Training was of course accomplished doing so, but also evaluation, preprocessin
-g, resampling and resequencing (more on that later).
+g, resampling and re-sequencing (more on that later).
 \end_layout
 
 \begin_layout Subsection
@@ -1444,7 +1550,7 @@ The easiest way to augment the data would have been to mirror the images
  If they were useless in the first place, then it would even make sense
  to crop the images and retain only the eagle view to make processing faster,
  and then do the mirroring to augment the data.
- If the information were usefull, then the mirroring of the eagle view could
+ If the information were useful, then the mirroring of the eagle view could
  take place, but then the steering wheel, ABS sensors and gyroscope indicators
  would need to be mirrored in place.
  The other issue issue is that it only helps in bridging the gap between
@@ -1461,8 +1567,8 @@ The second reason, and perhaps the most important one, would be the placing
 \end_layout
 
 \begin_layout Standard
-Although technically feasible, it was opted not to use data augmentation
- for training any of the models for the reasons stated in this section.
+Although technically feasible, it was decided against data augmentation
+ for the training of all the models for the reasons stated in this section.
  
 \end_layout
 
@@ -1472,8 +1578,29 @@ Model Design
 
 \begin_layout Standard
 Thinking ahead, the design process of the model contemplated the recurrent
- part of the network since the beginning, though always giving the posibility
- of not using it.
+ part of the network since the beginning, though always giving the possibility
+ of not using it by leaving the 
+\family typewriter
+
+\begin_inset Quotes eld
+\end_inset
+
+lstm_layers
+\begin_inset Quotes erd
+\end_inset
+
+
+\family default
+ key of the configuration dictionary as an empty list, as is the case for
+ models 
+\series bold
+net1
+\series default
+ and 
+\series bold
+net2
+\series default
+.
  The general architecture for all the models used was a succession of several
  convolutional layers, followed by the recurrent portion of the network
  comprised of LSTM cells and finally a couple of fully connected layers.
@@ -1487,10 +1614,29 @@ Thinking ahead, the design process of the model contemplated the recurrent
  and testing, without having to change any single bit of code.
  Used in conjunction with TensorFlow's own checkpoint files made it a breeze
  to change models on the fly.
+ The actual configuration files for the models used can be found in Appendix
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Appendix-A:-Network"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsection
 CNN + RNN
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:CNN-+-RNN"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -1515,8 +1661,11 @@ temporal
 \end_layout
 
 \begin_layout Standard
-For that reason, it was best though to incorporate a 5 dimension to the
- input tensor, such that it's shape would look like:
+For that reason, it was best though to incorporate a 
+\begin_inset Formula $5^{th}$
+\end_inset
+
+ dimension to the input tensor, such that it's shape would look like:
 \end_layout
 
 \begin_layout Standard
@@ -1537,7 +1686,7 @@ where:
 
 \begin_layout Description
 B is the Batch dimension, or the number of samples.
- Of dynamic shape and mostly used for training.
+ Of dynamic length and mostly used for training.
 \end_layout
 
 \begin_layout Description
@@ -1558,6 +1707,7 @@ H is the Image Height in pixels.
 \begin_layout Description
 C are the Image Channels.
  E.g.: 3 for RGB color images or 4 for RGBA for color images with transparency.
+ In this particular example it is of size 1 as the images are in Grayscale.
 \end_layout
 
 \begin_layout Standard
@@ -1601,10 +1751,10 @@ As there is no way of dynamically doing this in TensorFlow at the moment,
  the Temporal dimension must be fixed starting from the design phase, just
  as any other hyper-parameter.
  Once a value has been selected, the model will create 
-\begin_inset Formula $t$
+\begin_inset Formula $T$
 \end_inset
 
- convolutional layers for each of the originally (and propperly called layers),
+ convolutional layers for each of the originally (and properly called layers),
  with the property that they will all share the same filters at each level.
  Conceptually, this could be visualized as shown in Figure 
 \begin_inset CommandInset ref
@@ -1617,8 +1767,18 @@ noprefix "false"
 \end_inset
 
 .
- The resulting network can be seen in the TensorBoard Graphs tab, confirming
- that the desired design was successfully implemented.
+ The resulting network can be seen in the TensorBoard Graphs tab and Appendix
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Appendix-A:-Network"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, confirming that the desired design was successfully implemented.
 \end_layout
 
 \begin_layout Standard
@@ -1680,12 +1840,19 @@ The great advantage of this approach is that the number of parameters does
  at the same time we preserve the temporal dimension untouched until it
  reaches the LSTM cells where it matters the most.
  The clear disadvantage: a huge increase in training time due to the gradients
- comming from the recurrent network need to be multiplied with the convolution
+ coming from the recurrent network need to be multiplied with the convolution
  of each image in the sequence.
 \end_layout
 
 \begin_layout Subsection
-Resequencing.
+Re-sequencing.
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Re-sequencing."
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -1706,28 +1873,963 @@ shuffle
  be used, so that the input to the LSTM makes actual sense.
 \end_layout
 
+\begin_layout Standard
+For example, for images 
+\begin_inset Formula $I_{0},I_{1},\dots$
+\end_inset
+
+ up to 
+\begin_inset Formula $I_{n}$
+\end_inset
+
+, their corresponding sequence for a history length of 
+\begin_inset Formula $h=4$
+\end_inset
+
+, along with the corresponding action labels 
+\begin_inset Formula $a_{i}$
+\end_inset
+
+ would look like the following representation., where the sliding sequence
+ window is represented by the square brackets.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\begin{array}{cccccccc}
+ &  &  & a_{3}\\
+ &  &  & \downarrow & a_{4}\\
+\mathbf{[I_{0}} & \mathbf{I_{1}} & \mathbf{I_{2}} & \mathbf{I_{3}]} & \downarrow & a_{5}\\
+I_{0} & \mathbf{[I_{1}} & \mathbf{I_{2}} & \mathbf{I_{3}} & \mathbf{I_{4}]} & \downarrow & a_{6}\\
+I_{0} & I_{1} & \mathbf{[I_{2}} & \mathbf{I_{3}} & \mathbf{I_{4}} & \mathbf{I_{5}]} & \downarrow & \dots\\
+I_{0} & I_{1} & I_{2} & \mathbf{[I_{3}} & \mathbf{I_{4}} & \mathbf{I_{5}} & \mathbf{I_{6}]}\\
+I_{0} & I_{1} & I_{2} & I_{3} & \mathbf{[I_{4}} & \mathbf{I_{5}} & \mathbf{I_{6}} & \dots
+\end{array}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+From the example above can be noticed that the labels selected correspond
+ to the action taken by the player at the last step of a sequence.
+ Thus, the first 
+\begin_inset Formula $h-1$
+\end_inset
+
+ actions are not used at all.
+ It was decided to not pad the sequence with black images, because loosing
+ 5 or 10 actions, out of a dataset of 60'000 would not make much of a difference.
+ On the other hand, while testing the agent, as the sequence queue is filling
+ up, the program is designed to accelerate for the first 
+\begin_inset Formula $h-1$
+\end_inset
+
+ steps, after which the agent takes control with its predictions.
+\end_layout
+
 \begin_layout Subsection
-net1
+Training
 \end_layout
 
 \begin_layout Standard
-The very first model to be used, called net1 was a purelly convolutional
- network with only two layers.
- It presented a lot of overfitting, as training accuracy rose to 99.99% while
- the validation accuracy remained down to 75%.
- Nevertheless, the model exhibited the right expected behaviour, attempting
- to turn around corners, and actually achieving some scores, though with
- sub-human performance.
- Because of all the code changes after this first attempt, the only possible
- way of testing this model is by reverting to that point in time using 
+Quite a few training sessions were performed on around 10 different models
+ in total, eventually settling with the 5 most promissing ones.
+ During all these sessions, the model was never capable of exceeding 75%
+ validation accuracy, despite having played with all the hyperparameters
+ in every possible way: extending the number of batches to train on, changing
+ the datasets, early stopping and saving the model at certain checkpoints,
+ retraining a model saved to a checkpoint even with different data, changing
+ the learning rate, reducing the number of parameters so as to better generalize
+, adding and removing layers, adding drop-out to the recurrent and fully
+ connected layers and L2-regularization to the loss function, and many other
+ actions.
+ Regardless of this shortcommings, the model ended up performing quite good
+ in the test track, perhaps due to the limited ammount of unique states
+ that can exist in the simulation.
+\end_layout
+
+\begin_layout Standard
+The learning curves for the 5 most promissing agents can be seen in Appendix
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Appendix-B:-Learning"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, as well as in the interface of Tensorboard for greater detail.
+\end_layout
+
+\begin_layout Subsubsection
+Optimization Algorithm
+\end_layout
+
+\begin_layout Standard
+For training the model, an ADAM optimizer was used.
+ Originally it considered only the cross entropy loss function over the
+ labels and predicted outputs, but after not being able to get past a 75%
+ validation accuracy, L2-regularization was also applied only to the weights/ker
+nels of all the layers.
+\end_layout
+
+\begin_layout Subsection
+Testing
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Testing"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+To be able to test the agent, the data obtained from the simulator must
+ be preprocessed int the exact same fashion as it was done for the training.
+ Similarly, the otputs predicted by the model must be converted from their
+ one-hot format to the vector with 3 components that the environment takes.
+ 
+\end_layout
+
+\begin_layout Standard
+As stated in Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Re-sequencing."
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, because of using recurrent neural networks, the first 
+\begin_inset Formula $h-1$
+\end_inset
+
+ actions taken by the agent are fixed to accelerate, where 
+\begin_inset Formula $h$
+\end_inset
+
+ is the history length of the seqence input to the agent.
+ This only applies for recurrent agents while the step queue is being filled,
+ as the history length for convolutional agents must be equal to 1.
+\end_layout
+
+\begin_layout Standard
+In order to test the agent, it is necessary to load both the json architecture
+ file and the desired tensorflow checkpoint file.
+ This can be done by using the following added arguments when calling the
+ program from a command line.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Box Boxed
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status open
+
+\begin_layout Plain Layout
+
 \family typewriter
-git checkout U03_working_1
-\family default
- and running the test_agent.py program.
+python3.5 [-u] test_agent.py --agent <agent_name> [--debug <debug_level>]
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-The network 
+where:
+\end_layout
+
+\begin_layout Description
+agent_name the name of the model to be tested.
+ It can currenty take one the following values: 
+\family typewriter
+net1|net2|net3|net4|JABnet
+\family default
+.
+\end_layout
+
+\begin_layout Description
+debug_level a variable to control the ammount of output of the program.
+ For this script, any value above 1 will result in outputing the agent's
+ actions to stdout.
+\end_layout
+
+\begin_layout Standard
+If more control over the actual files is required, the following parameters
+ can be used:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Box Boxed
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status collapsed
+
+\begin_layout Plain Layout
+
+\family typewriter
+python3.5 [-u] test_agent.py --arq_file <path_to_narq> --ckpt <path_to_ckpt>
+ [--debug <debug_level>]
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where:
+\end_layout
+
+\begin_layout Description
+path_to_narq is the full or relative path to the network architecture file
+ with extension 
+\family typewriter
+.narq.json
+\family default
+.
+ Located in the 
+\family typewriter
+./models/
+\family default
+ subdirectory in this project.
+\end_layout
+
+\begin_layout Description
+path_to_ckpt is the full or relative path to the TensorFlow checkpoint containin
+g the saved configuration and parameters for the model.
+ Also located in the 
+\family typewriter
+./models/
+\family default
+ subdirectory.
+\end_layout
+
+\begin_layout Section
+Results
+\end_layout
+
+\begin_layout Standard
+The following table sumarizes the results obtained by each model during
+ training and testing.
+ Only the values for the last training and testing sessions are shown.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="9" columns="7">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell multirow="3" alignment="center" valignment="middle" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Model
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Training
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Testing
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Final Training
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Final Validation 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Number 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Training 
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reward
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ Accuracy
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Accuracy
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+of Batches
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Time
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Mean
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\sigma$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+net1 (CNN)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+86.6481%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+72.3833%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+100'000
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+40:22
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+585.1061
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+307.7683
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+net2 (CNN)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+72.7296%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+62.1167%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+300'000
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1:06:22
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+809.8464
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+111.2685
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+net3 (CNN + RNN)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+net4 (CNN + RNN)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+92.6074%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+72.4333%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+200'000
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3:45:02
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+748.0682
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+160.8649
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+JABnet (CNN + RNN)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Myself (Human being)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+~1:00:00
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+884.3021
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+41.3228
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Exercise Results.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Discussion
+\end_layout
+
+\begin_layout Standard
+After having programmed an agent with two different approaches, one using
+ only convolutional layers and one using both convolutional and recurrent
+ layers, and having seen the results, it might seem obvious that the purely
+ convolutional one should suffice for solving this task.
+ However, perhaps due to bias while becoming fond of recurent networks,
+ I believe that the model using LSTM cells performed more cleanly, with
+ a lot less jerking thanks to it's capacity to see the corners 5 or 10 steps
+ ahead.
+\end_layout
+
+\begin_layout Standard
+During this exercise, the quality of the data used for training became very
+ apparent, affecting the entire distribution of the actions predicted by
+ the model.
+ The same applies to any process directly connected to the data, such as
+ shuffling, selecting, preprocessing and even storing.
+\end_layout
+
+\begin_layout Standard
+Although the behaviour observed during the training sessions clearly screems
+ of overfitting the training data, it seems that it did not affect the performan
+ce in the test environment so much.
+ It is my hypothesis that the model was never able to overcome the 75% validatio
+n accuracy barrier, despite having used all the tricks in the book, due
+ to the extremely undeteriministic process of labeling the data.
+ I strongly believe that there must likely be sets of equally looking images
+ with totally contradicting actions taken during the collection drives.
+ The hypothesis is, as of this moment, lacking any evidence due to time
+ constraints, but eventually I shall have a look on the entire dataset to
+ confirm it.
+ The moral of the story: That is why one should not drive after having had
+ a couple of drinks.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -1788,7 +2890,2756 @@ Appendices
 \end_layout
 
 \begin_layout Subsection
-Appendix A
+Appendix A: Network Architectures
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Appendix-A:-Network"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+During the course of the exercise, several architectures were tested in
+ a search for the best agent.
+ This appendix shows the json configuration files used to create the networks
+ and the model graphs as generated by tensorboard of the most successful
+ model architectures.
+ The first models, i.e.
+ 
+\series bold
+net1
+\series default
+ and 
+\series bold
+net2
+\series default
+, are purely convolutional and fully connected models.
+ The rest have a combination of convolutional, recursive and fully connected
+ layers as explained in Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:CNN-+-RNN"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ The parallel application of convolutions can be best appreciated in the
+ 
+\series bold
+net4
+\series default
+ model, where the node for the third convolutional layer has been expanded.
+\end_layout
+
+\begin_layout Standard
+The train and save nodes have been cropped out of the images for convenience
+\end_layout
+
+\begin_layout Subsubsection
+net1
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{lstlisting}[language=json,firstnumber=1,caption={models/net1
+\backslash
+_CNN.narq.json Configuration File.},captionpos=b]
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+  "name": "net1",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "path": "./models/",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "in_image_width"  : 96,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "in_image_height" : 96,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "in_channels"     :  1,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "history_length"  :  1,
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "out_classes"     :  5,
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "learning_rate"   : 0.0001,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "dropout_rate"    : 0.8,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "l2_penalty"      : 0.01,
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "conv_layers": [
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "conv1",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "kernel size" :  5,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "filters"     : 16,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"  : "relu",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "padding"     : "VALID" ,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "stride"      : [1, 1, 1, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pooling"     : "max",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool ksize"  : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool stride" : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool padding": "VALID"
+\end_layout
+
+\begin_layout Plain Layout
+
+    },
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "conv2",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "kernel size" : 3,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "filters"     : 24,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"  : "relu",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "padding"     : "VALID",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "stride"      : [1,1,1,1],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pooling"     : "max",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool ksize"  : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool stride" : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool padding": "VALID"
+\end_layout
+
+\begin_layout Plain Layout
+
+    }
+\end_layout
+
+\begin_layout Plain Layout
+
+  ],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "lstm_layers": [
+\end_layout
+
+\begin_layout Plain Layout
+
+  ],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "fc_layers": [
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "fc1",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "units"       : 100,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"  : "relu"
+\end_layout
+
+\begin_layout Plain Layout
+
+    },
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "fc2",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "units"       : 30,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"  : "relu"
+\end_layout
+
+\begin_layout Plain Layout
+
+    }
+\end_layout
+
+\begin_layout Plain Layout
+
+  ]
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{lstlisting}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/net1 Arq.png
+	lyxscale 20
+	width 100col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+net1 FlowGraph.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+net2
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{lstlisting}[language=json,firstnumber=1,caption={models/net2
+\backslash
+_CNN.narq.json Configuration File.},captionpos=b]
+\end_layout
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\begin_layout Plain Layout
+  "name": "net2_CNN",
+\end_layout
+
+\begin_layout Plain Layout
+  "path": "./models/",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+  "in_image_width"  : 96,
+\end_layout
+
+\begin_layout Plain Layout
+  "in_image_height" : 96,
+\end_layout
+
+\begin_layout Plain Layout
+  "in_channels"     :  1,
+\end_layout
+
+\begin_layout Plain Layout
+  "history_length"  :  1,
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+  "out_classes"     :  5,
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+  "learning_rate"   : 0.00001,
+\end_layout
+
+\begin_layout Plain Layout
+  "dropout_rate"    : 0.8,
+\end_layout
+
+\begin_layout Plain Layout
+  "l2_penalty"      : 0.01,
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+  "conv_layers": [
+\end_layout
+
+\begin_layout Plain Layout
+    {
+\end_layout
+
+\begin_layout Plain Layout
+      "name"         : "conv1",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+      "kernel size"  : 7,
+\end_layout
+
+\begin_layout Plain Layout
+      "filters"      : 3,
+\end_layout
+
+\begin_layout Plain Layout
+      "activation"   : "relu",
+\end_layout
+
+\begin_layout Plain Layout
+      "padding"      : "VALID",
+\end_layout
+
+\begin_layout Plain Layout
+      "stride"       : [1, 1, 1, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+      "pooling"      : "max",
+\end_layout
+
+\begin_layout Plain Layout
+      "pool ksize"   : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+      "pool stride"  : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+      "pool padding" : "VALID"
+\end_layout
+
+\begin_layout Plain Layout
+    },
+\end_layout
+
+\begin_layout Plain Layout
+    {
+\end_layout
+
+\begin_layout Plain Layout
+      "name"         : "conv2",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+      "kernel size"  : 5,
+\end_layout
+
+\begin_layout Plain Layout
+      "filters"      : 5,
+\end_layout
+
+\begin_layout Plain Layout
+      "activation"   : "relu",
+\end_layout
+
+\begin_layout Plain Layout
+      "padding"      : "VALID",
+\end_layout
+
+\begin_layout Plain Layout
+      "stride"       : [1, 1, 1, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+      "pooling"      : "max",
+\end_layout
+
+\begin_layout Plain Layout
+      "pool ksize"   : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+      "pool stride"  : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+      "pool padding" : "VALID"
+\end_layout
+
+\begin_layout Plain Layout
+    },
+\end_layout
+
+\begin_layout Plain Layout
+    {
+\end_layout
+
+\begin_layout Plain Layout
+      "name"         : "conv3",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+      "kernel size"  : 3,
+\end_layout
+
+\begin_layout Plain Layout
+      "filters"      : 10,
+\end_layout
+
+\begin_layout Plain Layout
+      "activation"   : "relu",
+\end_layout
+
+\begin_layout Plain Layout
+      "padding"      : "VALID",
+\end_layout
+
+\begin_layout Plain Layout
+      "stride"       : [1, 1, 1, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+      "pooling"      : "max",
+\end_layout
+
+\begin_layout Plain Layout
+      "pool ksize"   : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+      "pool stride"  : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+      "pool padding" : "VALID"
+\end_layout
+
+\begin_layout Plain Layout
+    },
+\end_layout
+
+\begin_layout Plain Layout
+    {
+\end_layout
+
+\begin_layout Plain Layout
+      "name"         : "conv4",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+      "kernel size"  : 3,
+\end_layout
+
+\begin_layout Plain Layout
+      "filters"      : 10,
+\end_layout
+
+\begin_layout Plain Layout
+      "activation"   : "relu",
+\end_layout
+
+\begin_layout Plain Layout
+      "padding"      : "VALID",
+\end_layout
+
+\begin_layout Plain Layout
+      "stride"       : [1, 1, 1, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+      "pooling"      : "max",
+\end_layout
+
+\begin_layout Plain Layout
+      "pool ksize"   : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+      "pool stride"  : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+      "pool padding" : "VALID"
+\end_layout
+
+\begin_layout Plain Layout
+    }
+\end_layout
+
+\begin_layout Plain Layout
+  ],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+  "lstm_layers": [
+\end_layout
+
+\begin_layout Plain Layout
+  ],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+  "fc_layers": [
+\end_layout
+
+\begin_layout Plain Layout
+    {
+\end_layout
+
+\begin_layout Plain Layout
+      "name"         : "fc1",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+      "units"        : 400,
+\end_layout
+
+\begin_layout Plain Layout
+      "activation"   : "relu"
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+    },
+\end_layout
+
+\begin_layout Plain Layout
+    {
+\end_layout
+
+\begin_layout Plain Layout
+      "name"         : "fc2",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+      "units"        : 100,
+\end_layout
+
+\begin_layout Plain Layout
+      "activation"   : "relu"
+\end_layout
+
+\begin_layout Plain Layout
+    },
+\end_layout
+
+\begin_layout Plain Layout
+    {
+\end_layout
+
+\begin_layout Plain Layout
+      "name"         : "fc3",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+      "units"        : 30,
+\end_layout
+
+\begin_layout Plain Layout
+      "activation"   : "relu"
+\end_layout
+
+\begin_layout Plain Layout
+    }
+\end_layout
+
+\begin_layout Plain Layout
+  ]
+\end_layout
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{lstlisting}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/net2 Arq.png
+	lyxscale 20
+	width 100col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+net2 FlowGraph.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+net3
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{lstlisting}[language=json,firstnumber=1,caption={models/net3
+\backslash
+_CRNN.narq.json Configuration File.},captionpos=b]
+\end_layout
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\begin_layout Plain Layout
+  "name": "net3_CRNN",
+\end_layout
+
+\begin_layout Plain Layout
+  "path": "./models/",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+  "in_image_width"  : 96,
+\end_layout
+
+\begin_layout Plain Layout
+  "in_image_height" : 96,
+\end_layout
+
+\begin_layout Plain Layout
+  "in_channels"     :  1,
+\end_layout
+
+\begin_layout Plain Layout
+  "history_length"  : 10,
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+  "out_classes"     :  5,
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+  "learning_rate"   : 0.0001,
+\end_layout
+
+\begin_layout Plain Layout
+  "dropout_rate"    : 0.8,
+\end_layout
+
+\begin_layout Plain Layout
+  "l2_penalty"      : 0.01,
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+  "conv_layers": [
+\end_layout
+
+\begin_layout Plain Layout
+    {
+\end_layout
+
+\begin_layout Plain Layout
+      "name"        : "conv1",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+      "kernel size" : 7,
+\end_layout
+
+\begin_layout Plain Layout
+      "filters"     : 3,
+\end_layout
+
+\begin_layout Plain Layout
+      "activation"  : "relu",
+\end_layout
+
+\begin_layout Plain Layout
+      "padding"     : "SAME",
+\end_layout
+
+\begin_layout Plain Layout
+      "stride"      : [1, 1, 1, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+      "pooling"     : "max",
+\end_layout
+
+\begin_layout Plain Layout
+      "pool ksize"  : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+      "pool stride" : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+      "pool padding": "VALID"
+\end_layout
+
+\begin_layout Plain Layout
+    },
+\end_layout
+
+\begin_layout Plain Layout
+    {
+\end_layout
+
+\begin_layout Plain Layout
+      "name"        : "conv2",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+      "kernel size" : 5,
+\end_layout
+
+\begin_layout Plain Layout
+      "filters"     : 5,
+\end_layout
+
+\begin_layout Plain Layout
+      "activation"  : "relu",
+\end_layout
+
+\begin_layout Plain Layout
+      "padding"     : "SAME",
+\end_layout
+
+\begin_layout Plain Layout
+      "stride"      : [1, 1, 1, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+      "pooling"     : "max",
+\end_layout
+
+\begin_layout Plain Layout
+      "pool ksize"  : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+      "pool stride" : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+      "pool padding": "VALID"
+\end_layout
+
+\begin_layout Plain Layout
+    },
+\end_layout
+
+\begin_layout Plain Layout
+    {
+\end_layout
+
+\begin_layout Plain Layout
+      "name"        : "conv3",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+      "kernel size" : 3,
+\end_layout
+
+\begin_layout Plain Layout
+      "filters"     : 10,
+\end_layout
+
+\begin_layout Plain Layout
+      "activation"  : "relu",
+\end_layout
+
+\begin_layout Plain Layout
+      "padding"     : "SAME",
+\end_layout
+
+\begin_layout Plain Layout
+      "stride"      : [1, 1, 1, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+      "pooling"     : "max",
+\end_layout
+
+\begin_layout Plain Layout
+      "pool ksize"  : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+      "pool stride" : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+      "pool padding": "VALID"
+\end_layout
+
+\begin_layout Plain Layout
+    },
+\end_layout
+
+\begin_layout Plain Layout
+    {
+\end_layout
+
+\begin_layout Plain Layout
+      "name"        : "conv4",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+      "kernel size" : 3,
+\end_layout
+
+\begin_layout Plain Layout
+      "filters"     : 15,
+\end_layout
+
+\begin_layout Plain Layout
+      "activation"  : "relu",
+\end_layout
+
+\begin_layout Plain Layout
+      "padding"     : "SAME",
+\end_layout
+
+\begin_layout Plain Layout
+      "stride"      : [1, 1, 1, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+      "pooling"     : "max",
+\end_layout
+
+\begin_layout Plain Layout
+      "pool ksize"  : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+      "pool stride" : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+      "pool padding": "VALID"
+\end_layout
+
+\begin_layout Plain Layout
+    }
+\end_layout
+
+\begin_layout Plain Layout
+  ],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+  "lstm_layers": [
+\end_layout
+
+\begin_layout Plain Layout
+    {
+\end_layout
+
+\begin_layout Plain Layout
+      "name"        : "lstm1",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+      "units"       : 200
+\end_layout
+
+\begin_layout Plain Layout
+    }
+\end_layout
+
+\begin_layout Plain Layout
+  ],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+  "fc_layers": [
+\end_layout
+
+\begin_layout Plain Layout
+    {
+\end_layout
+
+\begin_layout Plain Layout
+      "name"        : "fc1",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+      "units"       : 200,
+\end_layout
+
+\begin_layout Plain Layout
+      "activation"  : "relu"
+\end_layout
+
+\begin_layout Plain Layout
+    },
+\end_layout
+
+\begin_layout Plain Layout
+    {
+\end_layout
+
+\begin_layout Plain Layout
+      "name"        : "fc2",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+      "units"       : 60,
+\end_layout
+
+\begin_layout Plain Layout
+      "activation"  : "relu"
+\end_layout
+
+\begin_layout Plain Layout
+    }
+\end_layout
+
+\begin_layout Plain Layout
+  ]
+\end_layout
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{lstlisting}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/net3 Arq.png
+	lyxscale 20
+	width 100col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+net3 FlowGraph.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+net4
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{lstlisting}[language=json,firstnumber=1,caption={models/net4
+\backslash
+_CRNN.narq.json Configuration File.},captionpos=b]
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+  "name": "net4_CRNN",
+\end_layout
+
+\begin_layout Plain Layout
+
+  "path": "./models/",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "in_image_width"  : 96,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "in_image_height" : 96,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "in_channels"     : 1,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "history_length"  : 5,
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "out_classes"     : 5,
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "learning_rate"   : 0.0001,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "dropout_rate"    : 0.8,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "l2_penalty"      : 0.01,
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "conv_layers": [
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "conv1",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "kernel size" : 7,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "filters"     : 3,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"  : "relu",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "padding"     : "VALID",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "stride"      : [1, 1, 1, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pooling"     : "max",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool ksize"  : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool stride" : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool padding": "VALID"
+\end_layout
+
+\begin_layout Plain Layout
+
+    },
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "conv2",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "kernel size" : 5,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "filters"     : 5,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"  : "relu",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "padding"     : "VALID",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "stride"      : [1, 1, 1, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pooling"     : "max",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool ksize"  : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool stride" : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool padding": "VALID"
+\end_layout
+
+\begin_layout Plain Layout
+
+    },
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "conv3",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "kernel size" : 3,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "filters"     : 10,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"  : "relu",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "padding"     : "VALID",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "stride"      : [1, 1, 1, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pooling"     : "max",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool ksize"  : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool stride" : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool padding": "VALID"
+\end_layout
+
+\begin_layout Plain Layout
+
+    }
+\end_layout
+
+\begin_layout Plain Layout
+
+  ],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "lstm_layers": [
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "lstm1",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "units"       : 20
+\end_layout
+
+\begin_layout Plain Layout
+
+    }
+\end_layout
+
+\begin_layout Plain Layout
+
+  ],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "fc_layers": [
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "fc1",
+\end_layout
+
+\begin_layout Plain Layout
+
+      
+\end_layout
+
+\begin_layout Plain Layout
+
+      "units"       : 20,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"  : "relu"
+\end_layout
+
+\begin_layout Plain Layout
+
+    }
+\end_layout
+
+\begin_layout Plain Layout
+
+  ]
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{lstlisting}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/net4 Arq.png
+	lyxscale 20
+	width 100col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+net4 FlowGraph.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+JABnet
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{lstlisting}[language=json,firstnumber=1,caption={models/JABnet.narq.json
+ Configuration File.},captionpos=b]
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+  "name": "JABnet",
+\end_layout
+
+\begin_layout Plain Layout
+
+  "path": "./models/",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "in_image_width"  : 96,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "in_image_height" : 96,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "in_channels"     :  1,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "history_length"  :  5,
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "out_classes"     : 5,
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "learning_rate"   : 0.0001,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "dropout_rate"    : 0.8,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "l2_penalty"      : 0.01,
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "conv_layers": [
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "conv1",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "kernel size" : 7,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "filters"     : 4,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"  : "relu",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "padding"     : "SAME",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "stride"      : [1, 1, 1, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pooling"     : "max",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool ksize"  : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool stride" : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool padding": "SAME"
+\end_layout
+
+\begin_layout Plain Layout
+
+    },
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "conv2",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "kernel size" : 5,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "filters"     : 8,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"  : "relu",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "padding"     : "SAME",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "stride"      : [1, 1, 1, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pooling"     : "max",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool ksize"  : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool stride" : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool padding": "SAME"
+\end_layout
+
+\begin_layout Plain Layout
+
+    },
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "conv3",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "kernel size" :  3,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "filters"     : 32,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"  : "relu",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "padding"     : "SAME",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "stride"      : [1, 1, 1, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pooling"     : "max",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool ksize"  : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool stride" : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool padding": "SAME"
+\end_layout
+
+\begin_layout Plain Layout
+
+    }
+\end_layout
+
+\begin_layout Plain Layout
+
+  ],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "lstm_layers": [
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "lstm1",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "units"       : 32
+\end_layout
+
+\begin_layout Plain Layout
+
+    }
+\end_layout
+
+\begin_layout Plain Layout
+
+  ],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "fc_layers": [
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "fc1",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "units"       : 32,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"  : "relu"
+\end_layout
+
+\begin_layout Plain Layout
+
+    },
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "fc2",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "units"       : 16,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"  : "relu"
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+    }
+\end_layout
+
+\begin_layout Plain Layout
+
+  ]
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{lstlisting}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/JABnet Arq.png
+	lyxscale 20
+	width 100col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+JABnet FlowGraph.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Appendix B: Learning Curves
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Appendix-B:-Learning"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Appendix C: Convolutional Kernels and Feature Maps for JABnet
+\end_layout
+
+\begin_layout Standard
+In an effort to visualize at least part of the features learned by the models,
+ this appendix shows the values of the weights used for the convolutional
+ layers of the JABnet model, as well as the resulting feature maps after
+ each convolution and pooling operation.
+\end_layout
+
+\begin_layout Standard
+For the sample feature maps, the 
+\family typewriter
+filter_to_image.py
+\family default
+ script was used, passing the following state image as a parameter to the
+ model:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/Sample_state.png
+	width 50col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Sample State for the Feature Maps.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Convolutional Layer 1
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/JABnet conv1 Kernels.png
+	lyxscale 20
+	width 30col%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Convolution Kernels.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/JABnet_conv1_fmaps_conv.png
+	lyxscale 20
+	width 30col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Convolution Feature Maps.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/JABnet_conv1_fmaps_pool.png
+	lyxscale 20
+	width 30col%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+MaxPool Feature Maps.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+First Convolutional Layer.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Convolutional Layer 2
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/JABnet conv2 Kernels.png
+	lyxscale 20
+	width 30col%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Convolution Kernels.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/JABnet_conv2_fmaps_conv.png
+	lyxscale 20
+	width 30col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Convolution Feature Maps.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/JABnet_conv2_fmaps_pool.png
+	lyxscale 20
+	width 30col%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+MaxPool Feature Maps.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Second Convolutional Layer.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Convolutional Layer 3
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/JABnet conv3 Kernels.png
+	lyxscale 20
+	width 30col%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Convolution Kernels.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/JABnet_conv3_fmaps_conv.png
+	lyxscale 20
+	width 30col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Convolution Feature Maps.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/JABnet_conv3_fmaps_pool.png
+	lyxscale 20
+	width 30col%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+MaxPool Feature Maps.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Third Convolutional Layer.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \end_body

@@ -1,56 +1,69 @@
 {
+  "name": "net1",
+
+  "path": "./models/",
+
+  "in_image_width"  : 96,
+  "in_image_height" : 96,
+  "in_channels"     :  1,
+  "history_length"  :  1,
+
+  "out_classes"     :  5,
+
+  "learning_rate"   : 0.0001,
+  "dropout_rate"    : 0.8,
+  "l2_penalty"      : 0.01,
+
+
   "conv_layers": [
     {
-                    "name"        : "conv1",
-                    "filters"     : 16     ,
-                    "kernel size" : 5      ,
-                    "padding"     : "VALID" ,
-                    "stride"      : [1,1,1,1]  ,
-                    "activation"  : "relu",
+      "name"        : "conv1",
 
-                    "pooling"     : "max",
-                    "pool ksize"  : [1, 2, 2, 1],
-                    "pool stride" : [1, 2, 2, 1],
-                    "pool padding": "VALID"
-                },
+      "kernel size" :  5,
+      "filters"     : 16,
+      "activation"  : "relu",
+      "padding"     : "VALID" ,
+      "stride"      : [1, 1, 1, 1],
 
-                {
-                    "name"       : "conv2",
-                    "filters"    : 24,
-                    "kernel size": 3,
-                    "padding"    : "VALID",
-                    "stride"     : [1,1,1,1],
-                    "activation" : "relu",
-
-                    "pooling"     : "max",
-                    "pool ksize"  : [1, 2, 2, 1],
-                    "pool stride" : [1, 2, 2, 1],
-                    "pool padding": "VALID"
-                }
-  ],
-  "name": "net1",
-  "out_classes": 5,
-  "lstm_layers": [
-  ],
-  "in_image_width": 96,
-  "in_channels": 1,
-  "path": "./models/",
-  "fc_layers": [
-    {
-      "activation": "relu",
-      "units": 100,
-      "name": "fc1"
+      "pooling"     : "max",
+      "pool ksize"  : [1, 2, 2, 1],
+      "pool stride" : [1, 2, 2, 1],
+      "pool padding": "VALID"
     },
     {
-      "activation": "relu",
-      "units": 30,
-      "name": "fc2"
+      "name"        : "conv2",
+
+      "kernel size" : 3,
+      "filters"     : 24,
+      "activation"  : "relu",
+      "padding"     : "VALID",
+      "stride"      : [1,1,1,1],
+
+      "pooling"     : "max",
+      "pool ksize"  : [1, 2, 2, 1],
+      "pool stride" : [1, 2, 2, 1],
+      "pool padding": "VALID"
     }
   ],
-  "learning_rate": 0.0001,
-  "dropout_rate" : 0.8,
-  "l2_penalty" : 0.01,
-  "in_image_height": 96,
-  "history_length": 1
+
+
+  "lstm_layers": [
+  ],
+
+
+  "fc_layers": [
+    {
+      "name"        : "fc1",
+
+      "units"       : 100,
+      "activation"  : "relu"
+    },
+    {
+      "name"        : "fc2",
+
+      "units"       : 30,
+      "activation"  : "relu"
+    }
+  ]
 }
 

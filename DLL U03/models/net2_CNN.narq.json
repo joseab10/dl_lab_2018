@@ -1,81 +1,102 @@
 {
-  "history_length": 1,
-  "fc_layers": [
-    {
-      "activation": "relu",
-      "units": 400,
-      "name": "fc1"
-    },
-    {
-      "activation": "relu",
-      "units": 100,
-      "name": "fc2"
-    },
-    {
-      "activation": "relu",
-      "units": 30,
-      "name": "fc3"
-    }
-  ],
   "name": "net2_CNN",
-  "in_image_width": 96,
   "path": "./models/",
-  "learning_rate": 0.00001,
-  "dropout_rate" : 0.8,
-  "l2_penalty" : 0.01,
-  "lstm_layers": [
-  ],
+
+  "in_image_width"  : 96,
+  "in_image_height" : 96,
+  "in_channels"     :  1,
+  "history_length"  :  1,
+
+  "out_classes"     :  5,
+
+  "learning_rate"   : 0.00001,
+  "dropout_rate"    : 0.8,
+  "l2_penalty"      : 0.01,
+
+
   "conv_layers": [
     {
-      "pool padding": "VALID",
-      "padding": "VALID",
-      "pool ksize": [1, 2, 2, 1],
-      "name": "conv1",
-      "activation": "relu",
-      "stride": [1, 1, 1, 1],
-      "kernel size": 7,
-      "pool stride": [1, 2, 2, 1],
-      "pooling": "max",
-      "filters": 3
+      "name"         : "conv1",
+
+      "kernel size"  : 7,
+      "filters"      : 3,
+      "activation"   : "relu",
+      "padding"      : "VALID",
+      "stride"       : [1, 1, 1, 1],
+
+      "pooling"      : "max",
+      "pool ksize"   : [1, 2, 2, 1],
+      "pool stride"  : [1, 2, 2, 1],
+      "pool padding" : "VALID"
     },
     {
-      "pool padding": "VALID",
-      "padding": "VALID",
-      "pool ksize": [1, 2, 2, 1],
-      "name": "conv2",
-      "activation": "relu",
-      "stride": [1, 1, 1, 1],
-      "kernel size": 5,
-      "pool stride": [1, 2, 2, 1],
-      "pooling": "max",
-      "filters": 5
+      "name"         : "conv2",
+
+      "kernel size"  : 5,
+      "filters"      : 5,
+      "activation"   : "relu",
+      "padding"      : "VALID",
+      "stride"       : [1, 1, 1, 1],
+
+      "pooling"      : "max",
+      "pool ksize"   : [1, 2, 2, 1],
+      "pool stride"  : [1, 2, 2, 1],
+      "pool padding" : "VALID"
     },
     {
-      "pool padding": "VALID",
-      "padding": "VALID",
-      "pool ksize": [1, 2, 2, 1],
-      "name": "conv3",
-      "activation": "relu",
-      "stride": [1, 1, 1, 1],
-      "kernel size": 3,
-      "pool stride": [1, 2, 2, 1],
-      "pooling": "max",
-      "filters": 10
+      "name"         : "conv3",
+
+      "kernel size"  : 3,
+      "filters"      : 10,
+      "activation"   : "relu",
+      "padding"      : "VALID",
+      "stride"       : [1, 1, 1, 1],
+
+      "pooling"      : "max",
+      "pool ksize"   : [1, 2, 2, 1],
+      "pool stride"  : [1, 2, 2, 1],
+      "pool padding" : "VALID"
     },
     {
-      "pool padding": "VALID",
-      "padding": "VALID",
-      "pool ksize": [1, 2, 2, 1],
-      "name": "conv4",
-      "activation": "relu",
-      "stride": [1, 1, 1, 1],
-      "kernel size": 3,
-      "pool stride": [1, 2, 2, 1],
-      "pooling": "max",
-      "filters": 10
+      "name"         : "conv4",
+
+      "kernel size"  : 3,
+      "filters"      : 10,
+      "activation"   : "relu",
+      "padding"      : "VALID",
+      "stride"       : [1, 1, 1, 1],
+
+      "pooling"      : "max",
+      "pool ksize"   : [1, 2, 2, 1],
+      "pool stride"  : [1, 2, 2, 1],
+      "pool padding" : "VALID"
     }
   ],
-  "out_classes": 5,
-  "in_channels": 1,
-  "in_image_height": 96
+
+
+  "lstm_layers": [
+  ],
+
+
+  "fc_layers": [
+    {
+      "name"         : "fc1",
+
+      "units"        : 400,
+      "activation"   : "relu"
+
+    },
+    {
+      "name"         : "fc2",
+
+      "units"        : 100,
+      "activation"   : "relu"
+    },
+    {
+      "name"         : "fc3",
+
+      "units"        : 30,
+      "activation"   : "relu"
+    }
+  ]
 }

@@ -96,9 +96,10 @@ if __name__ == "__main__":
     #<JAB>
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--arq_file', action="store", default='models/JABnet.narq.json', help='Load Architecture from file.')
+    parser.add_argument('--arq_file', action="store" , default='models/JABnet.narq.json'                                           , help='Load Architecture from file.')
     parser.add_argument('--ckpt_file', action="store", default='models/early stop/JABnet_20181202-155353_i26000_TrAcc_82.5796.ckpt', help='Load Parameters from file.')
-    parser.add_argument('--debug', action='store', default=0, help='Debug verbosity level [0-100].', type=int)
+    parser.add_argument('--agent', action="store"    , default=''                                                                  , help='Automatically Load an Agent from its narq and ckpt files')
+    parser.add_argument('--debug', action='store'    , default=0                                                                   , help='Debug verbosity level [0-100].', type=int)
 
     args = parser.parse_args()
 
@@ -106,6 +107,19 @@ if __name__ == "__main__":
 
     arq_file = args.arq_file
     ckpt_file = args.ckpt_file
+
+    # Type less in the command line
+    agents = {
+        'net1'  : {'narq': './models/net1_CNN.narq.json' , 'ckpt': './models/net1.ckpt'},
+        'net2'  : {'narq': './models/net2_CNN.narq.json' , 'ckpt': './models/net2.ckpt'},
+        'net3'  : {'narq': './models/net3_CRNN.narq.json', 'ckpt': './models/net3_CRNN.ckpt'},
+        'net4'  : {'narq': './models/net4_CRNN.narq.json', 'ckpt': './models/net4_CRNN.ckpt'},
+        'JABnet': {'narq': './models/JABnet.narq.json'   , 'ckpt': './models/JABnet.ckpt'}
+    }
+
+    if args.agent != '':
+        arq_file  = agents[args.agent]['narq']
+        ckpt_file = agents[args.agent]['ckpt']
 
 
     agent = Model(from_file=arq_file)
