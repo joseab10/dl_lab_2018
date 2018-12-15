@@ -1,4 +1,4 @@
-from collections import namedtuple
+from collections import namedtuple, deque
 import numpy as np
 import os
 import gzip
@@ -9,9 +9,13 @@ class ReplayBuffer:
     # TODO: implement a capacity for the replay buffer (FIFO, capacity: 1e5 - 1e6)
 
     # Replay buffer for experience replay. Stores transitions.
-    def __init__(self):
+    def __init__(self, capacity=100000):
         self._data = namedtuple("ReplayBuffer", ["states", "actions", "next_states", "rewards", "dones"])
-        self._data = self._data(states=[], actions=[], next_states=[], rewards=[], dones=[])
+        self._data = self._data(states=deque(maxlen=capacity),
+                                actions=deque(maxlen=capacity),
+                                next_states=deque(maxlen=capacity),
+                                rewards=deque(maxlen=capacity),
+                                dones=deque(maxlen=capacity))
 
     def add_transition(self, state, action, next_state, reward, done):
         """

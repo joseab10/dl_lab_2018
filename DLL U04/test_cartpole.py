@@ -13,8 +13,20 @@ if __name__ == "__main__":
 
     env = gym.make("CartPole-v0").unwrapped
 
-    # TODO: load DQN agent
-    # ...
+    state_dim = 4
+    num_actions = 2
+    hidden = 20
+    lr = 1e-4
+    tau = 0.01
+
+    Q = NeuralNetwork(state_dim, num_actions, hidden, lr)
+    Q_Target = TargetNetwork(state_dim, num_actions, hidden, lr, tau)
+
+    discount_factor = 0.99
+    batch_size = 64
+    epsilon = 1
+    agent = DQNAgent(Q, Q_Target, num_actions, discount_factor=discount_factor, batch_size=batch_size, epsilon=epsilon)
+    agent.load('./models/cartpole/dqn_agent.ckpt')
  
     n_test_episodes = 15
 

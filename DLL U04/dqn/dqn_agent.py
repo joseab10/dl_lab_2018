@@ -4,7 +4,7 @@ from dqn.replay_buffer import ReplayBuffer
 
 class DQNAgent:
 
-    def __init__(self, Q, Q_target, num_actions, discount_factor=0.99, batch_size=64, epsilon=0.05):
+    def __init__(self, Q, Q_target, num_actions, discount_factor=0.99, batch_size=64, epsilon=0.05, act_probabilities = None):
         """
          Q-Learning agent for off-policy TD control using Function Approximation.
          Finds the optimal greedy policy while following an epsilon-greedy policy.
@@ -35,6 +35,12 @@ class DQNAgent:
 
         self.saver = tf.train.Saver()
 
+        # <JAB>
+        if act_probabilities is None:
+            self.act_probabilities = np.ones(num_actions) / num_actions
+        else:
+            self.act_probabilities = act_probabilities
+
 
     def train(self, state, action, next_state, reward, terminal):
         """
@@ -50,6 +56,21 @@ class DQNAgent:
         #              self.Q.update(...)
         #       2.3 call soft update for target network
         #              self.Q_target.update(...)
+
+        # <JAB>
+        self.replay_buffer.add_transition(state,action,next_state,reward, terminal)
+
+        buffer = self.replay_buffer.next_batch(self.batch_size)
+        batch_states      = buffer[0]
+        batch_actions     = buffer[1]
+        batch_next_states = buffer[2]
+        batch_rewards     = buffer[3]
+        batch_dones       = buffer[4]
+
+        td_target = batch_rewards
+        td_target[np.logical_not(batch_dones)] += self.discount_factor * np.max(self.Q_target.predict(self.sess, batch_next_states), axis=1)[np.logical_not(batch_dones)]
+        self.Q.update(self.sess, batch_states, batch_actions, td_target)
+        self.Q_target.update(self.sess)
    
 
     def act(self, state, deterministic):
@@ -65,6 +86,10 @@ class DQNAgent:
         if deterministic or r > self.epsilon:
             # TODO: take greedy action (argmax)
             # action_id = ...
+            # <JAB>
+            action_id = np.argmax(self.Q.predict(self.sess, state.reshape(1,-1)))
+            # </JAB>
+
         else:
 
             # TODO: sample random action
@@ -72,6 +97,9 @@ class DQNAgent:
             # You can sample the agents actions with different probabilities (need to sum up to 1) so that the agent will prefer to accelerate or going straight.
             # To see how the agent explores, turn the rendering in the training on and look what the agent is doing.
             # action_id = ...
+            # <JAB>
+            action_id = np.random.choice(np.arange(self.num_actions), p=self.act_probabilities)
+            # </JAB>
           
         return action_id
 

@@ -73,7 +73,7 @@ class TargetNetwork(NeuralNetwork):
     it is always set to the values of its associate.
     """
     def __init__(self, state_dim, num_actions, hidden=20, lr=1e-4, tau=0.01):
-        MLP.__init__(self, state_dim, num_actions, hidden, lr)
+        NeuralNetwork.__init__(self, state_dim, num_actions, hidden, lr)
         self.tau = tau
         self._associate = self._register_associate()
 
@@ -89,3 +89,44 @@ class TargetNetwork(NeuralNetwork):
     def update(self, sess):
         for op in self._associate:
           sess.run(op)
+
+
+
+class CNN():
+    def __init__(self, state_dim, num_actions, lr=1e-4):
+        self._build_model(state_dim, num_actions, lr)
+
+    def _build_model(self, img_width, img_height, hist_len, num_actions, hidden, lr):
+        """
+        This method creates a neural network with two hidden fully connected layers and 20 neurons each. The output layer
+        has #a neurons, where #a is the number of actions and has linear activation.
+        Also creates its loss (mean squared loss) and its optimizer (e.g. Adam with a learning rate of 1e-4).
+        """
+
+        self.states_ = tf.placeholder(tf.float32, shape=[None, img_width, img_height, hist_len])
+        self.actions_ = tf.placeholder(tf.int32, shape=[None])  # Integer id of which action was selected
+        self.targets_ = tf.placeholder(tf.float32, shape=[None])  # The TD target value
+
+        # network
+        cv = tf.
+
+
+
+
+
+        fc1 = tf.layers.dense(self.states_, hidden, tf.nn.relu)
+        fc2 = tf.layers.dense(fc1, hidden, tf.nn.relu)
+        self.predictions = tf.layers.dense(fc2, num_actions)
+
+        # Get the predictions for the chosen actions only
+        batch_size = tf.shape(self.states_)[0]
+        gather_indices = tf.range(batch_size) * tf.shape(self.predictions)[1] + self.actions_
+        self.action_predictions = tf.gather(tf.reshape(self.predictions, [-1]), gather_indices)
+
+        # Calculate the loss
+        self.losses = tf.squared_difference(self.targets_, self.action_predictions)
+        self.loss = tf.reduce_mean(self.losses)
+
+        # Optimizer Parameters from original paper
+        self.optimizer = tf.train.AdamOptimizer(lr)
+        self.train_op = self.optimizer.minimize(self.loss)
