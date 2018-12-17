@@ -5,11 +5,15 @@ sys.path.append("../")
 
 import numpy as np
 import gym
+from gym import wrappers
+
 from dqn.dqn_agent import DQNAgent
 from dqn.networks import CNN, CNNTargetNetwork
 from tensorboard_evaluation import *
 import itertools as it
-from utils import EpisodeStats
+from utils import *
+
+
 
 def run_episode(env, agent, deterministic, skip_frames=0,  do_training=True, rendering=False, max_timesteps=1000, history_length=0):
     """
@@ -24,10 +28,12 @@ def run_episode(env, agent, deterministic, skip_frames=0,  do_training=True, ren
     image_hist = []
 
     step = 0
+
     state = env.reset()
+    #env._max_episode_steps = max_timesteps
 
     # fix bug of corrupted states without rendering in gym environment
-    env.viewer.window.dispatch_events() 
+    env.viewer.window.dispatch_events()
 
     # append image history to first state
     state = state_preprocessing(state)
@@ -40,6 +46,10 @@ def run_episode(env, agent, deterministic, skip_frames=0,  do_training=True, ren
         # Hint: adapt the probabilities of the 5 actions for random sampling so that the agent explores properly. 
         # action_id = agent.act(...)
         # action = your_id_to_action_method(...)
+        action_id = agent.act([state], deterministic)
+        action = id_to_action(action_id)
+
+        #print('\tStep ', '{:7d}'.format(step), ' Action: ', ACTIONS[action_id]['log'])
 
         # Hint: frame skipping might help you to get better results.
         reward = 0
@@ -65,15 +75,24 @@ def run_episode(env, agent, deterministic, skip_frames=0,  do_training=True, ren
 
         state = next_state
         
-        if terminal or (step * (skip_frames + 1)) > max_timesteps : 
+        #if terminal or (step * (skip_frames + 1)) > max_timesteps :
+        #    break
+
+        if terminal:
             break
+
+        if step % 100 == 0:
+            print('\t\tStep ', '{:4d}'.format(step), ' Reward: ', '{:4.4f}'.format(reward))
 
         step += 1
 
     return stats
 
 
-def train_online(env, agent, num_episodes, history_length=0, model_dir="./models_carracing", tensorboard_dir="./tensorboard"):
+def train_online(env, agent, num_episodes,
+                 history_length=0,
+                 model_dir="./models_carracing", tensorboard_dir="./tensorboard", rendering=False,
+                 min_epsilon=0.05, epsilon_decay=0.9):
    
     if not os.path.exists(model_dir):
         os.mkdir(model_dir)  
@@ -81,12 +100,15 @@ def train_online(env, agent, num_episodes, history_length=0, model_dir="./models
     print("... train agent")
     tensorboard = Evaluation(os.path.join(tensorboard_dir, "train"), ["episode_reward", "straight", "left", "right", "accel", "brake"])
 
+    max_timesteps = 1000
+
     for i in range(num_episodes):
-        print("epsiode %d" % i)
+        #print("epsiode %d" % i)
 
         # Hint: you can keep the episodes short in the beginning by changing max_timesteps (otherwise the car will spend most of the time out of the track)
+
        
-        stats = run_episode(env, agent, max_timesteps=max_timesteps, deterministic=False, do_training=True)
+        stats = run_episode(env, agent, max_timesteps=max_timesteps, deterministic=False, do_training=True, rendering=rendering)
 
         tensorboard.write_episode_data(i, eval_dict={ "episode_reward" : stats.episode_reward, 
                                                       "straight" : stats.get_action_usage(STRAIGHT),
@@ -100,7 +122,14 @@ def train_online(env, agent, num_episodes, history_length=0, model_dir="./models
         # ...
 
         if i % 100 == 0 or (i >= num_episodes - 1):
-            agent.saver.save(agent.sess, os.path.join(model_dir, "dqn_agent.ckpt")) 
+            agent.saver.save(agent.sess, os.path.join(model_dir, "dqn_agent.ckpt"))
+
+            max_timesteps += 100
+
+        print('\tEpisode ', '{:7d}'.format(i), ' Reward: ', '{:4.4f}'.format(stats.episode_reward))
+
+        if agent.epsilon > min_epsilon:
+            agent.epsilon = epsilon_decay * agent.epsilon
 
     tensorboard.close_session()
 
@@ -110,9 +139,46 @@ def state_preprocessing(state):
 if __name__ == "__main__":
 
     env = gym.make('CarRacing-v0').unwrapped
+
+
     
     # TODO: Define Q network, target network and DQN agent
     # ...
+    # <JAB>
+    num_actions = 5
+    hidden = 20
+    lr = 1e-4
+    tau = 0.01
+    hist_len = 0
+
+    rendering = False
+
+    if not rendering:
+        env = wrappers.Monitor(env, './video', video_callable=False, force=True)
+
+    Q = CNN(96, 96, hist_len + 1, 5, lr)
+    Q_Target = CNNTargetNetwork(96, 96, hist_len + 1, 5, lr, tau)
+
+    discount_factor = 0.99
+    batch_size = 64
+    epsilon = 0.75
+    act_probabilities = np.ones(num_actions)
+    act_probabilities[STRAIGHT] = 5
+    act_probabilities[ACCELERATE] = 40
+    act_probabilities[LEFT] = 30
+    act_probabilities[RIGHT] = 30
+    act_probabilities[BRAKE] = 1
+    act_probabilities /= np.sum(act_probabilities)
+
+    agent = DQNAgent(Q, Q_Target, num_actions, discount_factor=discount_factor, batch_size=batch_size, epsilon=epsilon, act_probabilities=act_probabilities)
+    # </JAB>
+
+    min_epsilon = 0.05
+    epsilon_decay = 0.9
+
+    num_episodes = 10000
     
-    train_online(env, agent, num_episodes=1000, history_length=0, model_dir="./models_carracing")
+    train_online(env, agent, num_episodes=num_episodes, history_length=hist_len, model_dir="./models/carracing",
+                 tensorboard_dir='./tensorboard/carracing', rendering=rendering,
+                 min_epsilon=min_epsilon, epsilon_decay=epsilon_decay)
 

@@ -67,8 +67,9 @@ class DQNAgent:
         batch_rewards     = buffer[3]
         batch_dones       = buffer[4]
 
-        td_target = batch_rewards
-        td_target[np.logical_not(batch_dones)] += self.discount_factor * np.max(self.Q_target.predict(self.sess, batch_next_states), axis=1)[np.logical_not(batch_dones)]
+        #td_target = batch_rewards
+        #td_target[np.logical_not(batch_dones)] += self.discount_factor * np.max(self.Q_target.predict(self.sess, batch_next_states), axis=1)[np.logical_not(batch_dones)]
+        td_target = batch_rewards + self.discount_factor * np.max(self.Q_target.predict(self.sess, batch_next_states), axis = 1)
         self.Q.update(self.sess, batch_states, batch_actions, td_target)
         self.Q_target.update(self.sess)
    
@@ -87,7 +88,7 @@ class DQNAgent:
             # TODO: take greedy action (argmax)
             # action_id = ...
             # <JAB>
-            action_id = np.argmax(self.Q.predict(self.sess, state.reshape(1,-1)))
+            action_id = np.argmax(self.Q.predict(self.sess, state))
             # </JAB>
 
         else:

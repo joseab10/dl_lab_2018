@@ -93,30 +93,96 @@ class TargetNetwork(NeuralNetwork):
 
 
 class CNN():
-    def __init__(self, state_dim, num_actions, lr=1e-4):
-        self._build_model(state_dim, num_actions, lr)
+    def __init__(self, img_width, img_height, hist_len, num_actions, lr=1e-4, prefix=''):
 
-    def _build_model(self, img_width, img_height, hist_len, num_actions, hidden, lr):
+        self._build_model(img_width, img_height, hist_len, num_actions, lr, prefix)
+
+    def _build_model(self, img_width, img_height, hist_len, num_actions, lr, prefix=''):
         """
         This method creates a neural network with two hidden fully connected layers and 20 neurons each. The output layer
         has #a neurons, where #a is the number of actions and has linear activation.
         Also creates its loss (mean squared loss) and its optimizer (e.g. Adam with a learning rate of 1e-4).
         """
 
-        self.states_ = tf.placeholder(tf.float32, shape=[None, img_width, img_height, hist_len])
-        self.actions_ = tf.placeholder(tf.int32, shape=[None])  # Integer id of which action was selected
-        self.targets_ = tf.placeholder(tf.float32, shape=[None])  # The TD target value
+        with tf.name_scope(prefix + "INPUT"):
+            self.states_ = tf.placeholder(tf.float32, shape=[None, img_width, img_height, hist_len], name='states')
+            self.actions_ = tf.placeholder(tf.int32, shape=[None], name='actions')  # Integer id of which action was selected
+            self.targets_ = tf.placeholder(tf.float32, shape=[None], name='targets')  # The TD target value
 
         # network
-        cv = tf.
 
+        with tf.name_scope(prefix + "CNN"):
+            with tf.name_scope(prefix + "cl1"):
+                cv1 = tf.layers.conv2d(self.states_, 3, 7,
+                                      strides=(1, 1),
+                                      padding='VALID',
+                                      activation=tf.nn.relu,
+                                      name=prefix + 'conv1'
+                                      )
 
+                mp1 = tf.nn.max_pool(cv1,
+                                     [1, 2, 2, 1],
+                                     [1, 2, 2, 1],
+                                     'VALID',
+                                     name=prefix + 'maxp1'
+                                    )
 
+            with tf.name_scope(prefix + "cl2"):
+                cv2 = tf.layers.conv2d(mp1, 5, 5,
+                                       strides=(1, 1),
+                                       padding='VALID',
+                                       activation=tf.nn.relu,
+                                       name=prefix + 'conv2'
+                                       )
 
+                mp2 = tf.nn.max_pool(cv2,
+                                     [1, 2, 2, 1],
+                                     [1, 2, 2, 1],
+                                     'VALID',
+                                     name=prefix + 'maxp2'
+                                     )
 
-        fc1 = tf.layers.dense(self.states_, hidden, tf.nn.relu)
-        fc2 = tf.layers.dense(fc1, hidden, tf.nn.relu)
-        self.predictions = tf.layers.dense(fc2, num_actions)
+            with tf.name_scope(prefix + "cl3"):
+                cv3 = tf.layers.conv2d(mp2, 10, 3,
+                                       strides=(1, 1),
+                                       padding='VALID',
+                                       activation=tf.nn.relu,
+                                       name=prefix + 'conv3'
+                                       )
+
+                mp3 = tf.nn.max_pool(cv3,
+                                     [1, 2, 2, 1],
+                                     [1, 2, 2, 1],
+                                     'VALID',
+                                     name=prefix + 'maxp3'
+                                     )
+
+            with tf.name_scope(prefix + "cl4"):
+                cv4 = tf.layers.conv2d(mp3, 10, 3,
+                                       strides=(1, 1),
+                                       padding='VALID',
+                                       activation=tf.nn.relu,
+                                       name=prefix + 'conv4'
+                                       )
+
+                mp4 = tf.nn.max_pool(cv4,
+                                     [1, 2, 2, 1],
+                                     [1, 2, 2, 1],
+                                     'VALID',
+                                     name=prefix + 'maxp4'
+                                     )
+
+                last_shape = mp4.get_shape().as_list()
+                flat_size = last_shape[1] * last_shape[2] * last_shape[3]
+                flattened_output = tf.reshape(mp4, shape=[-1, flat_size])
+
+        with tf.name_scope(prefix + "MLP"):
+            fc1 = tf.layers.dense(flattened_output, 400, tf.nn.relu, name=prefix + 'fcl1')
+            fc2 = tf.layers.dense(fc1, 100, tf.nn.relu, name=prefix + 'fcl2')
+            fc3 = tf.layers.dense(fc2, 30, tf.nn.relu, name=prefix + 'fcl3')
+
+        with tf.name_scope("OUTPUT"):
+            self.predictions = tf.layers.dense(fc3, num_actions, name=prefix + 'out1')
 
         # Get the predictions for the chosen actions only
         batch_size = tf.shape(self.states_)[0]
@@ -130,3 +196,50 @@ class CNN():
         # Optimizer Parameters from original paper
         self.optimizer = tf.train.AdamOptimizer(lr)
         self.train_op = self.optimizer.minimize(self.loss)
+
+    def predict(self, sess, states):
+        """
+        Args:
+          sess: TensorFlow session
+          states: array of states for which we want to predict the actions.
+        Returns:
+          The prediction of the output tensor.
+        """
+        prediction = sess.run(self.predictions, {self.states_: states})
+        return prediction
+
+    def update(self, sess, states, actions, targets):
+        """
+        Updates the weights of the neural network, based on its targets, its
+        predictions, its loss and its optimizer.
+
+        Args:
+          sess: TensorFlow session.
+          states: [current_state] or states of batch
+          actions: [current_action] or actions of batch
+          targets: [current_target] or targets of batch
+        """
+        feed_dict = {self.states_: states, self.targets_: targets, self.actions_: actions}
+        _, loss = sess.run([self.train_op, self.loss], feed_dict)
+        return loss
+
+
+class CNNTargetNetwork(CNN):
+
+    def __init__(self, img_width, img_height, hist_len, num_actions, lr=1e-4, tau=0.01):
+        CNN.__init__(self, img_width, img_height, hist_len, num_actions, lr=1e-4, prefix='T_')
+        self.tau = tau
+        self._associate = self._register_associate()
+
+    def _register_associate(self):
+        tf_vars = tf.trainable_variables()
+        total_vars = len(tf_vars)
+        op_holder = []
+        for idx, var in enumerate(tf_vars[0:total_vars // 2]):
+            op_holder.append(tf_vars[idx + total_vars // 2].assign(
+                (var.value() * self.tau) + ((1 - self.tau) * tf_vars[idx + total_vars // 2].value())))
+        return op_holder
+
+    def update(self, sess):
+        for op in self._associate:
+            sess.run(op)

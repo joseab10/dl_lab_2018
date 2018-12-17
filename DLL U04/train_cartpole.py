@@ -20,7 +20,7 @@ def run_episode(env, agent, deterministic, do_training=True, rendering=False, ma
     step = 0
     while True:
         
-        action_id = agent.act(state=state, deterministic=deterministic)
+        action_id = agent.act(state=[state], deterministic=deterministic)
         next_state, reward, terminal, info = env.step(action_id)
 
         if do_training:  
@@ -113,6 +113,8 @@ if __name__ == "__main__":
     agent = DQNAgent(Q, Q_Target, num_actions, discount_factor=discount_factor, batch_size=batch_size, epsilon=epsilon)
 
     min_epsilon = 0.05
+    epsilon_decay = 0.9
+
     num_episodes = 10000
-    train_online(env, agent, num_episodes, model_dir = './models/cartpole', tensorboard_dir='./tensorboard/cartpole', rendering=True, min_epsilon=min_epsilon, epsilon_decay=0.9)
+    train_online(env, agent, num_episodes, model_dir = './models/cartpole', tensorboard_dir='./tensorboard/cartpole', rendering=True, min_epsilon=min_epsilon, epsilon_decay=epsilon_decay)
  
