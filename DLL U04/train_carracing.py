@@ -13,6 +13,7 @@ from tensorboard_evaluation import *
 import itertools as it
 from utils import *
 
+import argparse
 
 
 def run_episode(env, agent, deterministic, skip_frames=0,  do_training=True, rendering=False, max_timesteps=1000, history_length=0):
@@ -42,7 +43,6 @@ def run_episode(env, agent, deterministic, skip_frames=0,  do_training=True, ren
     
     while True:
 
-        # TODO: get action_id from agent
         # Hint: adapt the probabilities of the 5 actions for random sampling so that the agent explores properly. 
         # action_id = agent.act(...)
         # action = your_id_to_action_method(...)
@@ -78,9 +78,6 @@ def run_episode(env, agent, deterministic, skip_frames=0,  do_training=True, ren
         if terminal or (step * (skip_frames + 1)) > max_timesteps :
             break
 
-        #if terminal:
-        #    break
-
         if step % 100 == 0:
             print('\t\tStep ', '{:4d}'.format(step), ' Reward: ', '{:4.4f}'.format(reward))
 
@@ -98,28 +95,35 @@ def train_online(env, agent, num_episodes,
         os.mkdir(model_dir)  
  
     print("... train agent")
-    tensorboard = Evaluation(os.path.join(tensorboard_dir, "train"), ["episode_reward", "straight", "left", "right", "accel", "brake"])
+    tensorboard = Evaluation(os.path.join(tensorboard_dir, "train"), ["episode_reward", "validation_reward", "straight", "left", "right", "accel", "brake"])
 
     max_timesteps = 1000
+    valid_reward = 0
 
     for i in range(num_episodes):
         #print("epsiode %d" % i)
 
         # Hint: you can keep the episodes short in the beginning by changing max_timesteps (otherwise the car will spend most of the time out of the track)
 
+        deterministic = False
+        if i % 10 == 0:
+            deterministic = True
        
-        stats = run_episode(env, agent, max_timesteps=max_timesteps, deterministic=False, do_training=True, rendering=rendering)
+        stats = run_episode(env, agent, max_timesteps=max_timesteps,
+                            deterministic=deterministic, do_training=True,
+                            rendering=rendering, history_length=history_length)
 
-        tensorboard.write_episode_data(i, eval_dict={ "episode_reward" : stats.episode_reward, 
-                                                      "straight" : stats.get_action_usage(STRAIGHT),
-                                                      "left" : stats.get_action_usage(LEFT),
-                                                      "right" : stats.get_action_usage(RIGHT),
-                                                      "accel" : stats.get_action_usage(ACCELERATE),
-                                                      "brake" : stats.get_action_usage(BRAKE)
+        if i % 10 == 0:
+            valid_reward = stats.episode_reward
+
+        tensorboard.write_episode_data(i, eval_dict={ "episode_reward"   : stats.episode_reward,
+                                                      "validation_reward": valid_reward,
+                                                      "straight"         : stats.get_action_usage(STRAIGHT),
+                                                      "left"             : stats.get_action_usage(LEFT),
+                                                      "right"            : stats.get_action_usage(RIGHT),
+                                                      "accel"            : stats.get_action_usage(ACCELERATE),
+                                                      "brake"            : stats.get_action_usage(BRAKE)
                                                       })
-
-        # TODO: evaluate agent with deterministic actions from time to time
-        # ...
 
         if i % 100 == 0 or (i >= num_episodes - 1):
             agent.saver.save(agent.sess, os.path.join(model_dir, "dqn_agent.ckpt"))
@@ -138,45 +142,81 @@ def state_preprocessing(state):
 
 if __name__ == "__main__":
 
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('--his_len', action='store',      default=0,
+                        help='History Length for CNN.',       type=int  )
+    parser.add_argument('--lr',      action='store',      default=1e-4,
+                        help='Learning Rate.',                type=float)
+    parser.add_argument('--tau',     action='store',      default=0.01,
+                        help='Soft-Update Interpolation Parameter (Tau).', type=float)
+    parser.add_argument('--df',      action='store',      default=0.99,
+                        help='Past Rewards Discount Factor.', type=float)
+    parser.add_argument('--bs',      action='store',      default=64,
+                        help='Batch Size.',                   type=int)
+    parser.add_argument('--episodes',action='store',      default=10000,
+                        help='Maximum Number of Training Episodes.', type=int)
+    parser.add_argument('--e_0',     action='store',      default=0.75,
+                        help='Initial Random Exploration rate (Epsilon).', type=float)
+    parser.add_argument('--e_dr',    action='store',      default=0.90,
+                        help='Random Exploration Decay Rate.', type=float)
+    parser.add_argument('--e_min',   action='store',      default=0.05,
+                        help='Minimum Exploration Rate.'     , type=float)
+    parser.add_argument('--render',  action='store_true', default=False,
+                        help='Render Environment.'                      )
+
+    args = parser.parse_args()
+
+    img_width = 96
+    img_height = 96
+    num_actions = 5
+    hidden      = 20
+
+    # Learning Rate
+    lr          = args.lr
+    # Soft-Update Interpolation Parameter
+    tau         = args.tau
+
+    hist_len    = args.his_len
+
+    # Past Rewards Discount Factor (Gamma)
+    discount_factor = args.df
+
+    batch_size = args.bs
+
+    # Random Exploration Rate (Epsilon)
+    epsilon0      = args.e_0
+    min_epsilon   = args.e_min
+    epsilon_decay = args.e_dr
+
+    # Render the carracing 2D environment
+    rendering   = args.render
+
+    # Maximum number of training Episodes
+    num_episodes = args.episodes
+
+
     env = gym.make('CarRacing-v0').unwrapped
 
+    #if not rendering:
+    #    env = wrappers.Monitor(env, './video', video_callable=False, force=True)
 
-    
-    # TODO: Define Q network, target network and DQN agent
-    # ...
-    # <JAB>
-    num_actions = 5
-    hidden = 20
-    lr = 1e-4
-    tau = 0.01
-    hist_len = 0
-
-    rendering = True
-
-    if not rendering:
-        env = wrappers.Monitor(env, './video', video_callable=False, force=True)
-
-    Q = CNN(96, 96, hist_len + 1, 5, lr)
-    Q_Target = CNNTargetNetwork(96, 96, hist_len + 1, 5, lr, tau)
-
-    discount_factor = 0.99
-    batch_size = 64
-    epsilon = 0.75
+    # Random Action Probability Distribution
     act_probabilities = np.ones(num_actions)
-    act_probabilities[STRAIGHT] = 5
+    act_probabilities[STRAIGHT]   = 5
     act_probabilities[ACCELERATE] = 40
-    act_probabilities[LEFT] = 30
-    act_probabilities[RIGHT] = 30
-    act_probabilities[BRAKE] = 1
+    act_probabilities[LEFT]       = 30
+    act_probabilities[RIGHT]      = 30
+    act_probabilities[BRAKE]      = 1
     act_probabilities /= np.sum(act_probabilities)
 
-    agent = DQNAgent(Q, Q_Target, num_actions, discount_factor=discount_factor, batch_size=batch_size, epsilon=epsilon, act_probabilities=act_probabilities)
-    # </JAB>
 
-    min_epsilon = 0.05
-    epsilon_decay = 0.9
+    Q = CNN(img_width, img_height, hist_len + 1, num_actions, lr)
+    Q_Target = CNNTargetNetwork(img_width, img_height, hist_len + 1, num_actions, lr, tau)
 
-    num_episodes = 10000
+    agent = DQNAgent(Q, Q_Target, num_actions,
+                     discount_factor=discount_factor, batch_size=batch_size,
+                     epsilon=epsilon0, act_probabilities=act_probabilities)
     
     train_online(env, agent, num_episodes=num_episodes, history_length=hist_len, model_dir="./models/carracing",
                  tensorboard_dir='./tensorboard/carracing', rendering=rendering,
