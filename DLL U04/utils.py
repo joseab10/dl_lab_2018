@@ -46,3 +46,14 @@ def rgb2gray(rgb):
     gray = np.dot(rgb[...,:3], [0.2125, 0.7154, 0.0721])
     gray =  2 * gray.astype('float32') - 1
     return gray
+
+"""
+                    &                 & \node[f]{};     & \node[f]{};     & \node[f]{};     & \node[f]{};     &                 &                 &             \\
+		\node[f]{}; & \node[f]{};     & \node[f]{};     & \node(A)[g]{A}; & \node(B)[g]{B}; & \node[f]{};     & \node[f]{};     & \node[f]{};     & \node[f]{}; \\
+		\node[f]{}; & \node(C)[g]{C}; & \node(D)[g]{D}; & \node(E)[g]{E}; & \node(F)[g]{F}; & \node(G)[g]{G}; & \node(H)[g]{H}; & \node(I)[g]{I}; & \node[f]{}; \\
+		\node[f]{}; & \node(J)[g]{J}; & \node[f]{};     & \node(K)[g]{K}; & \node(L)[g]{L}; & \node[f]{};     & \node(M)[g]{M}; & \node(N)[g]{N}; & \node[f]{}; \\
+		\node[f]{}; & \node(O)[g]{O}; & \node(P)[g]{P}; & \node(Q)[g]{Q}; & \node(R)[g]{R}; & \node[f]{};     & \node(S)[g]{S}; & \node(T)[g]{T}; & \node[f]{}; \\
+		\node[f]{}; & \node[f]{};     & \node[f]{};     & \node[f]{};     & \node[f]{};     & \node[f]{};     & \node[f]{};     & \node[f]{};     & \node[f]{}; \\
+		
+
+"""

@@ -75,11 +75,11 @@ def run_episode(env, agent, deterministic, skip_frames=0,  do_training=True, ren
 
         state = next_state
         
-        #if terminal or (step * (skip_frames + 1)) > max_timesteps :
-        #    break
-
-        if terminal:
+        if terminal or (step * (skip_frames + 1)) > max_timesteps :
             break
+
+        #if terminal:
+        #    break
 
         if step % 100 == 0:
             print('\t\tStep ', '{:4d}'.format(step), ' Reward: ', '{:4.4f}'.format(reward))
@@ -151,7 +151,7 @@ if __name__ == "__main__":
     tau = 0.01
     hist_len = 0
 
-    rendering = False
+    rendering = True
 
     if not rendering:
         env = wrappers.Monitor(env, './video', video_callable=False, force=True)

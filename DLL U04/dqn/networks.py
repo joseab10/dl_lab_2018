@@ -157,24 +157,28 @@ class CNN():
                                      name=prefix + 'maxp3'
                                      )
 
-            with tf.name_scope(prefix + "cl4"):
-                cv4 = tf.layers.conv2d(mp3, 10, 3,
-                                       strides=(1, 1),
-                                       padding='VALID',
-                                       activation=tf.nn.relu,
-                                       name=prefix + 'conv4'
-                                       )
-
-                mp4 = tf.nn.max_pool(cv4,
-                                     [1, 2, 2, 1],
-                                     [1, 2, 2, 1],
-                                     'VALID',
-                                     name=prefix + 'maxp4'
-                                     )
-
-                last_shape = mp4.get_shape().as_list()
+                last_shape = mp3.get_shape().as_list()
                 flat_size = last_shape[1] * last_shape[2] * last_shape[3]
-                flattened_output = tf.reshape(mp4, shape=[-1, flat_size])
+                flattened_output = tf.reshape(mp3, shape=[-1, flat_size])
+
+            #with tf.name_scope(prefix + "cl4"):
+            #    cv4 = tf.layers.conv2d(mp3, 10, 3,
+            #                           strides=(1, 1),
+            #                           padding='VALID',
+            #                           activation=tf.nn.relu,
+            #                           name=prefix + 'conv4'
+            #                           )
+#
+            #    mp4 = tf.nn.max_pool(cv4,
+            #                         [1, 2, 2, 1],
+            #                         [1, 2, 2, 1],
+            #                         'VALID',
+            #                         name=prefix + 'maxp4'
+            #                         )
+#
+            #    last_shape = mp4.get_shape().as_list()
+            #    flat_size = last_shape[1] * last_shape[2] * last_shape[3]
+            #    flattened_output = tf.reshape(mp4, shape=[-1, flat_size])
 
         with tf.name_scope(prefix + "MLP"):
             fc1 = tf.layers.dense(flattened_output, 400, tf.nn.relu, name=prefix + 'fcl1')

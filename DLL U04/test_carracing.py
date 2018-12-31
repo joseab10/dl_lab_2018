@@ -1,10 +1,14 @@
 from __future__ import print_function
 
 import gym
-from dqn.agent import DQNAgent
-from train_carracingimport run_episode
+from dqn.dqn_agent import DQNAgent
+from train_carracing import run_episode
 from dqn.networks import *
 import numpy as np
+
+import os
+import json
+from datetime import datetime
 
 np.random.seed(0)
 
@@ -16,6 +20,11 @@ if __name__ == "__main__":
 
     #TODO: Define networks and load agent
     # ....
+    cnn = CNN(96, 96, 1, 5)
+    T_cnn = CNNTargetNetwork(96, 96, 1, 5)
+    agent = DQNAgent(cnn, T_cnn, 5)
+
+    agent.load('./models/carracing/carracing/dqn_agent.ckpt')
 
     n_test_episodes = 15
 
