@@ -10,7 +10,7 @@ from schedule import Schedule
 from early_stop import EarlyStop
 
 
-def run_episode(env, agent, deterministic, do_training=True, rendering=False, max_timesteps=1000):
+def run_episode(env, agent, deterministic, do_training=True, do_prefill=False, rendering=False, max_timesteps=1000):
     """
     This methods runs one episode for a gym environment. 
     deterministic == True => agent executes only greedy actions according the Q function approximator (no random actions).
@@ -28,6 +28,8 @@ def run_episode(env, agent, deterministic, do_training=True, rendering=False, ma
 
         if do_training:  
             agent.train(state, action_id, next_state, reward, terminal)
+        if do_prefill:
+            agent.replay_buffer.add_transition(state, action_id, next_state, reward, terminal)
 
         stats.step(reward, action_id)
 
@@ -135,28 +137,9 @@ def prefill_buffer(env, agent, rendering = False, max_timesteps = 1000):
     episode = 0
     while (not agent.replay_buffer.has_min_items()):
 
-        state = env.reset()
-        stats = EpisodeStats()
-
-        step = 0
+        stats = run_episode(env, agent, deterministic=False, do_training=False, do_prefill=True,
+                            rendering=rendering, max_timesteps=max_timesteps)
         episode += 1
-
-        while True:
-            action_id = agent.act(state=[state], deterministic=False)
-            next_state, reward, terminal, info = env.step(action_id)
-
-            agent.replay_buffer.add_transition(state, action_id, next_state, reward, terminal)
-            stats.step(reward, action_id)
-
-            state = next_state
-
-            if rendering:
-                env.render()
-
-            if terminal or step > max_timesteps:
-                break
-
-            step += 1
 
         print("Prefill Episode: ", '{:7d}'.format(episode), ' Reward: ', '{:4.0f}'.format(stats.episode_reward),
               ' Buffer Filled: ', '{:8d}'.format(agent.replay_buffer.len()))

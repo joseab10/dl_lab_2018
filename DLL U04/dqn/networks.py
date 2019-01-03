@@ -86,25 +86,6 @@ class TargetNetwork(NeuralNetwork):
             op_holder.append(tf_vars[idx+total_vars//2].assign(
               (var.value()*self.tau) + ((1-self.tau)*tf_vars[idx+total_vars//2].value())))
         return op_holder
-
-        #from_vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope='DQN')
-        #to_vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope='TargetDQN')
-#
-        #var_ids = {}
-#
-        #for id, var in enumerate(to_vars):
-        #    var_name = var.name.split('/', 1)[1]
-        #    var_ids[var_name] = id
-#
-        #op_holder = []
-        #for from_var in from_vars:
-        #    var_name = from_var.name.split('/', 1)[1]
-#
-        #    to_var = to_vars[var_ids[var_name]]
-#
-        #    op_holder.append(to_var.assign((self.tau * from_var.value()) + ((1 - self.tau) * to_var.value())))
-#
-        #return op_holder
       
     def update(self, sess):
         for op in self._associate:
@@ -260,8 +241,10 @@ class CNN():
 
 class CNNTargetNetwork(CNN):
 
-    def __init__(self, img_width, img_height, hist_len, num_actions, lr=1e-4, tau=0.01):
-        CNN.__init__(self, img_width, img_height, hist_len, num_actions, lr=lr, net_name='TargetDQN')
+    def __init__(self, img_width, img_height, hist_len, num_actions, lr=1e-4, tau=0.01,
+                 conv_layers=2, fc_layers = 1):
+        CNN.__init__(self, img_width, img_height, hist_len, num_actions, lr=lr, net_name='TargetDQN',
+                     conv_layers=conv_layers, fc_layers = fc_layers)
         self.tau = tau
         self._associate = self._register_associate()
 
@@ -273,26 +256,6 @@ class CNNTargetNetwork(CNN):
             op_holder.append(tf_vars[idx + total_vars // 2].assign(
                 (var.value() * self.tau) + ((1 - self.tau) * tf_vars[idx + total_vars // 2].value())))
         return op_holder
-
-        #from_vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope='DQN')
-        #to_vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope='TargetDQN')
-#
-        #var_ids = {}
-#
-        #for id, var in enumerate(to_vars):
-        #    var_name = var.name.split('/', 1)[1]
-        #    var_ids[var_name] = id
-#
-        #op_holder = []
-        #for from_var in from_vars:
-        #    var_name = from_var.name.split('/', 1)[1]
-#
-        #    to_var = to_vars[var_ids[var_name]]
-#
-        #    op_holder.append(to_var.assign((from_var.value() * self.tau) + ((1 - self.tau) * from_var.value())))
-#
-        #return op_holder
-
 
     def update(self, sess):
         for op in self._associate:
