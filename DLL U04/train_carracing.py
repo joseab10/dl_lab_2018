@@ -130,8 +130,8 @@ def train_online(env, agent, num_episodes, epsilon_schedule, early_stop,
         # Validation (Deterministic)
         if i % 10 == 0:
             deterministic = True
-            if i % 100 == 0:
-                do_rendering = True
+            #if i % 100 == 0:
+            #    do_rendering = True
 
         if epsilon_schedule is not None:
             agent.epsilon = epsilon_schedule(i)
@@ -286,7 +286,7 @@ if __name__ == "__main__":
     log_dir = "./log"
     log_file = 'training'
 
-    if name_suffix == "":
+    if name_suffix is not "":
         model_dir  += name_suffix
         name_suffix = "_"  + name_suffix
         log_file += name_suffix
@@ -295,7 +295,7 @@ if __name__ == "__main__":
 
     if not os.path.exists(log_dir):
         os.mkdir(log_dir)
-    sys.stdout = open(log_dir + log_file, 'w')
+    sys.stdout = open(log_dir + "/" +  log_file, 'w')
 
     # Early Stop
     early_stop_patience = args.patience
