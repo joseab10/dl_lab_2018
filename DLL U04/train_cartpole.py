@@ -10,6 +10,7 @@ from schedule import Schedule
 from early_stop import EarlyStop
 
 
+
 def run_episode(env, agent, deterministic, do_training=True, do_prefill=False, rendering=False, max_timesteps=1000):
     """
     This methods runs one episode for a gym environment. 
@@ -170,14 +171,14 @@ if __name__ == "__main__":
     discount_factor = 0.99
     batch_size      = 100
 
-    double_dqn = True
+    double_dqn = False
     rendering  = False
 
     epsilon_0        = 0.9
     min_epsilon      = 0.05
     decay_episodes   = 400
-    decay_function   = 'exponential'
-    cosine_annealing = True
+    decay_function   = 'constant'
+    cosine_annealing = False
     annealing_cycles = 10
 
     num_episodes    = 4000

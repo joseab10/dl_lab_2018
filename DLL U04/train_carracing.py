@@ -17,6 +17,8 @@ import argparse
 
 from schedule import Schedule
 from early_stop import EarlyStop
+from test_carracing import *
+
 
 
 def run_episode(env, agent, deterministic, skip_frames=0,  do_training=True, do_prefill=False,
@@ -95,7 +97,7 @@ def run_episode(env, agent, deterministic, skip_frames=0,  do_training=True, do_
 
 def train_online(env, agent, num_episodes, epsilon_schedule, early_stop,
                  history_length=0, max_timesteps=1000,
-                 model_dir="./models_carracing", tensorboard_dir="./tensorboard", rendering=False,
+                 model_dir="./models_carracing", tensorboard_dir="./tensorboard", tensorboard_suffix="", rendering=False,
                  skip_frames=0):
    
     if not os.path.exists(model_dir):
@@ -105,7 +107,8 @@ def train_online(env, agent, num_episodes, epsilon_schedule, early_stop,
     tensorboard = Evaluation(os.path.join(tensorboard_dir, "train"), ["episode_reward", "validation_reward",
                                                                       "episode_reward_100", "validation_reward_10",
                                                                       "episode_duration", "epsilon",
-                                                                      "straight", "left", "right", "accel", "brake"])
+                                                                      "straight", "left", "right", "accel", "brake"],
+                             dir_suffix=tensorboard_suffix)
 
     valid_reward = 0
 
@@ -122,17 +125,20 @@ def train_online(env, agent, num_episodes, epsilon_schedule, early_stop,
 
         deterministic = False
         training = True
+        do_rendering = rendering
 
         # Validation (Deterministic)
         if i % 10 == 0:
             deterministic = True
+            if i % 100 == 0:
+                do_rendering = True
 
         if epsilon_schedule is not None:
             agent.epsilon = epsilon_schedule(i)
        
         stats = run_episode(env, agent, max_timesteps=max_timesteps,
                             deterministic=deterministic, do_training=training,
-                            rendering=rendering, history_length=history_length, skip_frames=skip_frames)
+                            rendering=do_rendering, history_length=history_length, skip_frames=skip_frames)
 
         ep_type = '   '
         if i % 10 == 0:
@@ -166,7 +172,7 @@ def train_online(env, agent, num_episodes, epsilon_schedule, early_stop,
         print('Episode ', ep_type, ': ', '{:7d}'.format(i), ' Reward: ', '{:4.4f}'.format(stats.episode_reward))
 
         # Early Stopping
-        early_stop.step(stats.episode_reward)
+        early_stop.step(valid_reward_10)
         if early_stop.save_flag:
             if early_stop.stop:
                 break
@@ -196,15 +202,15 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--his_len', action='store',      default=0,
-                        help='History Length for CNN.',       type=int  )
+    parser.add_argument('--his_len', action='store',      default=4,
+                        help='History Length for CNN.',       type=int)
     parser.add_argument('--lr',      action='store',      default=1e-4,
                         help='Learning Rate.',                type=float)
     parser.add_argument('--tau',     action='store',      default=0.01,
                         help='Soft-Update Interpolation Parameter (Tau).', type=float)
     parser.add_argument('--df',      action='store',      default=0.99,
                         help='Past Rewards Discount Factor.', type=float)
-    parser.add_argument('--bs',      action='store',      default=64,
+    parser.add_argument('--bs',      action='store',      default=100,
                         help='Batch Size.',                   type=int)
     parser.add_argument('--episodes',action='store',      default=10000,
                         help='Maximum Number of Training Episodes.', type=int)
@@ -219,6 +225,8 @@ if __name__ == "__main__":
 
     parser.add_argument('--ddqn', action='store_true', default=False,
                         help='Use Double-DQN.')
+    parser.add_argument('--model_suffix', action='store', default='',
+                        help='Name suffix to identify models, data and results.', type=str)
 
     # Epsilon
     parser.add_argument('--e_0',     action='store',      default=0.75,
@@ -227,7 +235,7 @@ if __name__ == "__main__":
                         help='Minimum Exploration Rate.'     , type=float)
     parser.add_argument('--e_df', action='store', default='exponential',
                         help='Random Exploration Decay Function.', type=str)
-    parser.add_argument('--e_steps', action='store', default=600,
+    parser.add_argument('--e_steps', action='store', default=150,
                         help='Random Exploration Decay Episodes.', type=int)
     parser.add_argument('--e_ann', action='store_true', default=False,
                         help='Random Exploration Decay Cosine Annealing.')
@@ -235,7 +243,7 @@ if __name__ == "__main__":
                         help='Random Exploration Decay Cosine Annealing Cycles.', type=int)
 
     # Early Stop
-    parser.add_argument('--patience', action='store', default=30,
+    parser.add_argument('--patience', action='store', default=25,
                         help='Early Stop Stalled Episodes Patience.', type=int)
 
     parser.add_argument('--render',  action='store_true', default=False,
@@ -272,6 +280,23 @@ if __name__ == "__main__":
     conv_layers = args.conv_lay
     fc_layers = args.fc_lay
 
+    name_suffix = args.model_suffix
+    model_dir = "./models/carracing/"
+    tensorboard_dir = './tensorboard/carracing'
+    log_dir = "./log"
+    log_file = 'training'
+
+    if name_suffix == "":
+        model_dir  += name_suffix
+        name_suffix = "_"  + name_suffix
+        log_file += name_suffix
+
+    log_file += datetime.now().strftime("%Y%m%d-%H%M%S") + '.out'
+
+    if not os.path.exists(log_dir):
+        os.mkdir(log_dir)
+    sys.stdout = open(log_dir + log_file, 'w')
+
     # Early Stop
     early_stop_patience = args.patience
 
@@ -291,16 +316,21 @@ if __name__ == "__main__":
 
     env = gym.make('CarRacing-v0').unwrapped
 
-    #if not rendering:
-    #    env = wrappers.Monitor(env, './video', video_callable=False, force=True)
-
     # Random Action Probability Distribution
     act_probabilities = np.ones(num_actions)
-    act_probabilities[STRAIGHT]   = 5
-    act_probabilities[ACCELERATE] = 40
-    act_probabilities[LEFT]       = 30
-    act_probabilities[RIGHT]      = 30
-    act_probabilities[BRAKE]      = 1
+    #act_probabilities[STRAIGHT]   = 5
+    #act_probabilities[ACCELERATE] = 40
+    #act_probabilities[LEFT]       = 30
+    #act_probabilities[RIGHT]      = 30
+    #act_probabilities[BRAKE]      = 1
+
+    # According to Tensorboard's best training session (in %)
+    act_probabilities[STRAIGHT] = 18.05
+    act_probabilities[ACCELERATE] = 40.55
+    act_probabilities[LEFT] = 19.66
+    act_probabilities[RIGHT] = 18.05
+    act_probabilities[BRAKE] = 3.687
+
     act_probabilities /= np.sum(act_probabilities)
 
 
@@ -323,13 +353,17 @@ if __name__ == "__main__":
 
     # Buffer Filling
     print("*** Prefilling Buffer ***")
-    prefill_buffer(env, agent, rendering=rendering)
+    prefill_buffer(env, agent, rendering=rendering, history_length=hist_len)
     agent.epsilon = epsilon0
 
     # Training
     print("\n\n*** Training Agent ***")
     train_online(env, agent, num_episodes, epsilon_schedule, early_stop,
                  history_length=hist_len, max_timesteps=max_timesteps,
-                 model_dir="./models/carracing", tensorboard_dir='./tensorboard/carracing', rendering=rendering,
+                 model_dir=model_dir, tensorboard_dir=tensorboard_dir, tensorboard_suffix=name_suffix,
+                 rendering=rendering,
                  skip_frames=skip_frames)
 
+    # Testing
+    print("\n\n*** Testing Agent ***")
+    test_model(model_dir, name_suffix, hist_len=hist_len, conv_layers=conv_layers, fc_layers=fc_layers, n_test_episodes=1)

@@ -54,7 +54,7 @@ class EarlyStop:
             if self._stalled_episodes >= self.patience:
                 warning = True
 
-                if self._dJ < 0:
+                if self._dJ < - 5 * self._stalled_derivative:
                     print('EARLY STOP: FINISHING TRAINING! Decreasing reward after ',
                           self._stalled_episodes, ' stalled episodes.')
                     stop = True

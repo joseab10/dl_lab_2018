@@ -370,10 +370,13 @@ headheight}{12pt}
 
 \begin_layout Abstract
 The purpose of this report is to present the reasoning behind the design
- choices for solving the OpenAI Gym Car Racing Environment using a supervised
- machine learning model through a combination of 2D convolutions and Long
- Short-Term Memory Cells using the TensorFlow framework, and to show the
- results obtained with this approach.
+ choices for solving the OpenAI Gym Cart Pole and Car Racing Environments
+ using a deep reinforcement learning agent, using the algorithms of Deep-Q-Netwo
+rk (DQN), Double-DQN to estimate the Quality Function, and 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+-Greedy with decay and annealing for the exploration vs exploitation tradeoff.
 \end_layout
 
 \begin_layout Section
@@ -381,8 +384,37 @@ Environment Definition
 \end_layout
 
 \begin_layout Standard
-The environment in which the problem takes place consists of a random generated
- track circuit with corners of varying difficulty.
+In order to be able to solve the problems at hand, we first need to understand
+ how the environment works, and how we can interact with it.
+\end_layout
+
+\begin_layout Subsection
+CartPole
+\end_layout
+
+\begin_layout Standard
+This first environment replicates the classical control problem of the inverted
+ pendulum, where an agent needs to move a cart along a single axis (left/right)
+ to maintain a pendulum attached to it in an upright position.
+ The environment gives a reward of 
+\begin_inset Formula $+1$
+\end_inset
+
+ for each action taken, and terminates every time the pendulum tips more
+ than 12º in either direction, the cart leaves the visible area 
+\begin_inset Formula $(-2.4,2.4)$
+\end_inset
+
+ or the episode lasts 200 time steps.
+\end_layout
+
+\begin_layout Subsection
+CarRacing
+\end_layout
+
+\begin_layout Standard
+The environment in which the second problem takes place consists of a random
+ generated track circuit with corners of varying difficulty.
 \end_layout
 
 \begin_layout Standard
@@ -408,11 +440,48 @@ The objective is to drive a racing car around the track, visiting every
 \end_layout
 
 \begin_layout Section
-Models
+Agents
+\end_layout
+
+\begin_layout Standard
+DQN
+\end_layout
+
+\begin_layout Subsection
+Double-DQN
 \end_layout
 
 \begin_layout Section
 Training
+\end_layout
+
+\begin_layout Subsection
+Buffer Prefilling
+\end_layout
+
+\begin_layout Standard
+Given that at the start of the training, the buffer is empty, if trained
+ on that data, the agent will strongly learn the same first erroneous first
+ couple of states.
+ In fact, depending on the value of the Batch Size Parameter, it can learn
+ the same state 64, 100 or more times while the buffer is still filling
+ up, state by state.
+ For that reason, before the actual training starts, it was decided to fill
+ up the buffer with states in which complete random actions were taken,
+ up to a point where a certain multiple of the Batch Size has been filled
+ with states.
+ E.g., if the batch size were configured to be 64, then it would probably
+ be a good idea to have at least 5 times that many samples in the experience
+ buffer before training, i.e., 
+\begin_inset Formula $5\times64=320$
+\end_inset
+
+ samples.
+ It is also not very recommended to fill the buffer too much, as the rewards
+ for such states would most likely very low, and if there are too many of
+ such states in the buffer, depending on the maximum size of the buffer,
+ it may take a very long time before they get replaced by states with beter
+ reward values.
 \end_layout
 
 \begin_layout Subsection
@@ -609,8 +678,12 @@ Annealing
 \end_layout
 
 \begin_layout Standard
-Annealing was done by bounding a cosine function between the desired decay
- function and a constant function.
+was done by bounding a cosine function between the desired decay function
+ and a constant function valued at 
+\begin_inset Formula $y_{1}$
+\end_inset
+
+.
  This way, the output value oscillates between the desired final value 
 \begin_inset Formula $y_{1}$
 \end_inset
@@ -664,7 +737,7 @@ Using these two values, the annealing function is defined as follows:
 \begin_layout Standard
 \begin_inset Formula 
 \[
-f_{2}(x)=a\cos\left(\frac{\left(2c+1\right)\pi}{t}x\right)+b
+f_{2}(x)=a\cdot\cos\left(\frac{\left(2c+1\right)\pi}{t}x\right)+b
 \]
 
 \end_inset
@@ -686,17 +759,51 @@ where
 \end_layout
 
 \begin_layout Standard
+Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Supported-Decay-Functions."
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ shows the plots for sample decay rates with 
+\begin_inset Formula $y_{0}=0.9$
+\end_inset
+
+, 
+\begin_inset Formula $y_{1}=0.5$
+\end_inset
+
+, 
+\begin_inset Formula $t=100$
+\end_inset
+
+ and 
+\begin_inset Formula $c=5$
+\end_inset
+
+, obtained with the help of the 
+\family typewriter
+schedule_test.py
+\family default
+ script.
+\end_layout
+
+\begin_layout Standard
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -836,6 +943,13 @@ Exponential Step Decay (with and without Annealing)
 
 \begin_layout Plain Layout
 Supported Decay Functions.
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Supported-Decay-Functions."
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -874,8 +988,337 @@ Results
 \end_layout
 
 \begin_layout Standard
-The following table summarizes the results obtained by each model during
- training and testing.
+For all cases, the following hyperparameters were used in order to better
+ compare the results:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="8" columns="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+HyperParameter
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CartPole
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CarRacing
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Initial Epsilon (
+\begin_inset Formula $\epsilon_{0}$
+\end_inset
+
+)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $0.90$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Final Epsilon (
+\begin_inset Formula $\epsilon_{1}$
+\end_inset
+
+)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $0.05$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Decay Episodes (
+\begin_inset Formula $t$
+\end_inset
+
+)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $400$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Annealing Cycles (
+\begin_inset Formula $c$
+\end_inset
+
+)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $10$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Learning Rate (
+\begin_inset Formula $\eta$
+\end_inset
+
+)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1\times10^{-4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TargetQ Update Weight (
+\begin_inset Formula $\tau$
+\end_inset
+
+)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $0.01$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Early Stop Patience
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $20$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Common Hyperparameters
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:Exercise-Results."
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ summarizes the results obtained by each agent during training and testing.
  Only the values for the last training and testing sessions are shown.
 \end_layout
 
@@ -883,13 +1326,14 @@ The following table summarizes the results obtained by each model during
 \begin_inset Float table
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="10" columns="7">
+<lyxtabular version="3" rows="22" columns="8">
 <features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -902,7 +1346,34 @@ status collapsed
 \begin_inset Text
 
 \begin_layout Plain Layout
-Model
+Environment
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Experiments
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \end_inset
@@ -911,25 +1382,9 @@ Model
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Training
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
 \end_layout
 
 \end_inset
@@ -947,6 +1402,8 @@ Training
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Testing
 \end_layout
 
@@ -976,7 +1433,7 @@ Testing
 \begin_inset Text
 
 \begin_layout Plain Layout
-Final 
+Double
 \end_layout
 
 \end_inset
@@ -985,7 +1442,16 @@ Final
 \begin_inset Text
 
 \begin_layout Plain Layout
-Final 
+Epsilon 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Cosine
 \end_layout
 
 \end_inset
@@ -994,7 +1460,7 @@ Final
 \begin_inset Text
 
 \begin_layout Plain Layout
-Number 
+Number of
 \end_layout
 
 \end_inset
@@ -1012,7 +1478,7 @@ Training
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Reward
 \end_layout
 
 \end_inset
@@ -1041,7 +1507,7 @@ Training
 \begin_inset Text
 
 \begin_layout Plain Layout
-Training
+DQN
 \end_layout
 
 \end_inset
@@ -1050,7 +1516,16 @@ Training
 \begin_inset Text
 
 \begin_layout Plain Layout
-Validation
+Schedule
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ Annealing
 \end_layout
 
 \end_inset
@@ -1077,7 +1552,7 @@ Validation
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reward
+(over 15 episodes)
 \end_layout
 
 \end_inset
@@ -1106,7 +1581,7 @@ Reward
 \begin_inset Text
 
 \begin_layout Plain Layout
- Accuracy
+
 \end_layout
 
 \end_inset
@@ -1115,7 +1590,16 @@ Reward
 \begin_inset Text
 
 \begin_layout Plain Layout
-Accuracy
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \end_inset
@@ -1124,7 +1608,7 @@ Accuracy
 \begin_inset Text
 
 \begin_layout Plain Layout
-of Batches
+Episodes
 \end_layout
 
 \end_inset
@@ -1151,7 +1635,7 @@ Mean
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\sigma$
+\begin_inset Formula $\sigma^{2}$
 \end_inset
 
 
@@ -1161,11 +1645,11 @@ Mean
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell multirow="3" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" rotate="90" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-net1 (CNN)
+CartPole
 \end_layout
 
 \end_inset
@@ -1174,7 +1658,10 @@ net1 (CNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-86.6481%
+\begin_inset Formula $\times$
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -1183,34 +1670,7 @@ net1 (CNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-72.3833%
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-100'000
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-40:22
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-585.1061
+Constant
 \end_layout
 
 \end_inset
@@ -1219,18 +1679,57 @@ net1 (CNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-307.7683
+\begin_inset Formula $\times$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-net2 (CNN)
+
 \end_layout
 
 \end_inset
@@ -1239,7 +1738,10 @@ net2 (CNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-72.7296%
+\begin_inset Formula $\times$
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -1248,34 +1750,7 @@ net2 (CNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-62.1167%
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-300'000
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-1:06:22
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-809.8464
+Linear
 \end_layout
 
 \end_inset
@@ -1284,18 +1759,57 @@ net2 (CNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-111.2685
+\begin_inset Formula $\times$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-net3 (CNN+RNN)
+
 \end_layout
 
 \end_inset
@@ -1304,7 +1818,10 @@ net3 (CNN+RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-91.9944%
+\begin_inset Formula $\times$
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -1313,34 +1830,7 @@ net3 (CNN+RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-71.7333%
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-200'000
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-11:00:00
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-566.9941
+Exponential
 \end_layout
 
 \end_inset
@@ -1349,18 +1839,57 @@ net3 (CNN+RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-300.5476
+\begin_inset Formula $\times$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-net4 (CNN+RNN)
+
 \end_layout
 
 \end_inset
@@ -1369,7 +1898,10 @@ net4 (CNN+RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-92.6074%
+\begin_inset Formula $\times$
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -1378,34 +1910,7 @@ net4 (CNN+RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-72.4333%
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-200'000
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3:45:02
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-748.0682
+Linear
 \end_layout
 
 \end_inset
@@ -1414,18 +1919,490 @@ net4 (CNN+RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-160.8649
+\begin_inset Formula $\checkmark$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\times$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Exponential
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\checkmark$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\checkmark$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Constant
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\times$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\checkmark$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Linear
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\times$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+864
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+00:05:54
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+485.8666
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+482.9412
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\checkmark$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Exponential
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\times$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1449
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+00:19:43
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1002.0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\checkmark$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Linear
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\checkmark$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1929
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+00:08:06
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+625.9333
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+460.7428
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\checkmark$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Exponential
+\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-JABnet (CNN+RNN)
+\begin_inset Formula $\checkmark$
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -1434,7 +2411,7 @@ JABnet (CNN+RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-94.9185%
+1401
 \end_layout
 
 \end_inset
@@ -1443,7 +2420,7 @@ JABnet (CNN+RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-72.8333%
+00:13:51
 \end_layout
 
 \end_inset
@@ -1452,25 +2429,7 @@ JABnet (CNN+RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-200'000
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6:01:08
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-742.1062
+668.1333
 \end_layout
 
 \end_inset
@@ -1479,18 +2438,611 @@ JABnet (CNN+RNN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-221.1171
+394.2709
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
+<cell multirow="3" alignment="center" valignment="middle" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CarRacing
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\times$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Linear
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\times$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\times$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Exponential
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\times$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\times$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Linear
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\checkmark$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\times$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Exponential
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\checkmark$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\checkmark$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Linear
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\times$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\checkmark$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Exponential
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\times$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\checkmark$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Linear
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\checkmark$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\checkmark$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Exponential
+\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Myself (Human NN)
+\begin_inset Formula $\checkmark$
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -1499,7 +3051,7 @@ Myself (Human NN)
 \begin_inset Text
 
 \begin_layout Plain Layout
--
+
 \end_layout
 
 \end_inset
@@ -1508,7 +3060,7 @@ Myself (Human NN)
 \begin_inset Text
 
 \begin_layout Plain Layout
--
+
 \end_layout
 
 \end_inset
@@ -1517,25 +3069,7 @@ Myself (Human NN)
 \begin_inset Text
 
 \begin_layout Plain Layout
--
-\end_layout
 
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-~1:00:00
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-884.3021
 \end_layout
 
 \end_inset
@@ -1544,7 +3078,7 @@ Myself (Human NN)
 \begin_inset Text
 
 \begin_layout Plain Layout
-41.3228
+
 \end_layout
 
 \end_inset
@@ -1562,6 +3096,13 @@ Myself (Human NN)
 
 \begin_layout Plain Layout
 Exercise Results.
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:Exercise-Results."
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -1681,2296 +3222,6 @@ net4
 
 \begin_layout Standard
 The train and save nodes have been cropped out of the images for convenience
-\end_layout
-
-\begin_layout Subsubsection
-net1
-\end_layout
-
-\begin_layout Standard
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{lstlisting}[language=json,firstnumber=1,caption={models/net1
-\backslash
-_CNN.narq.json Configuration File.},captionpos=b]
-\end_layout
-
-\begin_layout Plain Layout
-
-{
-\end_layout
-
-\begin_layout Plain Layout
-
-  "name": "net1",
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-  "path": "./models/",
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-  "in_image_width"  : 96,
-\end_layout
-
-\begin_layout Plain Layout
-
-  "in_image_height" : 96,
-\end_layout
-
-\begin_layout Plain Layout
-
-  "in_channels"     :  1,
-\end_layout
-
-\begin_layout Plain Layout
-
-  "history_length"  :  1,
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-  "out_classes"     :  5,
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-  "learning_rate"   : 0.0001,
-\end_layout
-
-\begin_layout Plain Layout
-
-  "dropout_rate"    : 0.8,
-\end_layout
-
-\begin_layout Plain Layout
-
-  "l2_penalty"      : 0.01,
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-  "conv_layers": [
-\end_layout
-
-\begin_layout Plain Layout
-
-    {
-\end_layout
-
-\begin_layout Plain Layout
-
-      "name"        : "conv1",
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "kernel size" :  5,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "filters"     : 16,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "activation"  : "relu",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "padding"     : "VALID" ,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "stride"      : [1, 1, 1, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pooling"     : "max",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool ksize"  : [1, 2, 2, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool stride" : [1, 2, 2, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool padding": "VALID"
-\end_layout
-
-\begin_layout Plain Layout
-
-    },
-\end_layout
-
-\begin_layout Plain Layout
-
-    {
-\end_layout
-
-\begin_layout Plain Layout
-
-      "name"        : "conv2",
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "kernel size" : 3,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "filters"     : 24,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "activation"  : "relu",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "padding"     : "VALID",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "stride"      : [1,1,1,1],
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pooling"     : "max",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool ksize"  : [1, 2, 2, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool stride" : [1, 2, 2, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool padding": "VALID"
-\end_layout
-
-\begin_layout Plain Layout
-
-    }
-\end_layout
-
-\begin_layout Plain Layout
-
-  ],
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-  "lstm_layers": [
-\end_layout
-
-\begin_layout Plain Layout
-
-  ],
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-  "fc_layers": [
-\end_layout
-
-\begin_layout Plain Layout
-
-    {
-\end_layout
-
-\begin_layout Plain Layout
-
-      "name"        : "fc1",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "units"       : 100,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "activation"  : "relu"
-\end_layout
-
-\begin_layout Plain Layout
-
-    },
-\end_layout
-
-\begin_layout Plain Layout
-
-    {
-\end_layout
-
-\begin_layout Plain Layout
-
-      "name"        : "fc2",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "units"       : 30,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "activation"  : "relu"
-\end_layout
-
-\begin_layout Plain Layout
-
-    }
-\end_layout
-
-\begin_layout Plain Layout
-
-  ]
-\end_layout
-
-\begin_layout Plain Layout
-
-}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{lstlisting}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsubsection
-net2
-\end_layout
-
-\begin_layout Standard
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{lstlisting}[language=json,firstnumber=1,caption={models/net2
-\backslash
-_CNN.narq.json Configuration File.},captionpos=b]
-\end_layout
-
-\begin_layout Plain Layout
-
-{
-\end_layout
-
-\begin_layout Plain Layout
-
-  "name": "net2_CNN",
-\end_layout
-
-\begin_layout Plain Layout
-
-  "path": "./models/",
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-  "in_image_width"  : 96,
-\end_layout
-
-\begin_layout Plain Layout
-
-  "in_image_height" : 96,
-\end_layout
-
-\begin_layout Plain Layout
-
-  "in_channels"     :  1,
-\end_layout
-
-\begin_layout Plain Layout
-
-  "history_length"  :  1,
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-  "out_classes"     :  5,
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-  "learning_rate"   : 0.00001,
-\end_layout
-
-\begin_layout Plain Layout
-
-  "dropout_rate"    : 0.8,
-\end_layout
-
-\begin_layout Plain Layout
-
-  "l2_penalty"      : 0.01,
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-  "conv_layers": [
-\end_layout
-
-\begin_layout Plain Layout
-
-    {
-\end_layout
-
-\begin_layout Plain Layout
-
-      "name"         : "conv1",
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "kernel size"  : 7,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "filters"      : 3,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "activation"   : "relu",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "padding"      : "VALID",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "stride"       : [1, 1, 1, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pooling"      : "max",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool ksize"   : [1, 2, 2, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool stride"  : [1, 2, 2, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool padding" : "VALID"
-\end_layout
-
-\begin_layout Plain Layout
-
-    },
-\end_layout
-
-\begin_layout Plain Layout
-
-    {
-\end_layout
-
-\begin_layout Plain Layout
-
-      "name"         : "conv2",
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "kernel size"  : 5,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "filters"      : 5,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "activation"   : "relu",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "padding"      : "VALID",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "stride"       : [1, 1, 1, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pooling"      : "max",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool ksize"   : [1, 2, 2, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool stride"  : [1, 2, 2, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool padding" : "VALID"
-\end_layout
-
-\begin_layout Plain Layout
-
-    },
-\end_layout
-
-\begin_layout Plain Layout
-
-    {
-\end_layout
-
-\begin_layout Plain Layout
-
-      "name"         : "conv3",
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "kernel size"  : 3,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "filters"      : 10,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "activation"   : "relu",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "padding"      : "VALID",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "stride"       : [1, 1, 1, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pooling"      : "max",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool ksize"   : [1, 2, 2, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool stride"  : [1, 2, 2, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool padding" : "VALID"
-\end_layout
-
-\begin_layout Plain Layout
-
-    },
-\end_layout
-
-\begin_layout Plain Layout
-
-    {
-\end_layout
-
-\begin_layout Plain Layout
-
-      "name"         : "conv4",
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "kernel size"  : 3,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "filters"      : 10,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "activation"   : "relu",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "padding"      : "VALID",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "stride"       : [1, 1, 1, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pooling"      : "max",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool ksize"   : [1, 2, 2, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool stride"  : [1, 2, 2, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool padding" : "VALID"
-\end_layout
-
-\begin_layout Plain Layout
-
-    }
-\end_layout
-
-\begin_layout Plain Layout
-
-  ],
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-  "lstm_layers": [
-\end_layout
-
-\begin_layout Plain Layout
-
-  ],
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-  "fc_layers": [
-\end_layout
-
-\begin_layout Plain Layout
-
-    {
-\end_layout
-
-\begin_layout Plain Layout
-
-      "name"         : "fc1",
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "units"        : 400,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "activation"   : "relu"
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-    },
-\end_layout
-
-\begin_layout Plain Layout
-
-    {
-\end_layout
-
-\begin_layout Plain Layout
-
-      "name"         : "fc2",
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "units"        : 100,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "activation"   : "relu"
-\end_layout
-
-\begin_layout Plain Layout
-
-    },
-\end_layout
-
-\begin_layout Plain Layout
-
-    {
-\end_layout
-
-\begin_layout Plain Layout
-
-      "name"         : "fc3",
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "units"        : 30,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "activation"   : "relu"
-\end_layout
-
-\begin_layout Plain Layout
-
-    }
-\end_layout
-
-\begin_layout Plain Layout
-
-  ]
-\end_layout
-
-\begin_layout Plain Layout
-
-}
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{lstlisting}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsubsection
-net3
-\end_layout
-
-\begin_layout Standard
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{lstlisting}[language=json,firstnumber=1,caption={models/net3
-\backslash
-_CRNN.narq.json Configuration File.},captionpos=b]
-\end_layout
-
-\begin_layout Plain Layout
-
-{
-\end_layout
-
-\begin_layout Plain Layout
-
-  "name": "net3_CRNN",
-\end_layout
-
-\begin_layout Plain Layout
-
-  "path": "./models/",
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-  "in_image_width"  : 96,
-\end_layout
-
-\begin_layout Plain Layout
-
-  "in_image_height" : 96,
-\end_layout
-
-\begin_layout Plain Layout
-
-  "in_channels"     :  1,
-\end_layout
-
-\begin_layout Plain Layout
-
-  "history_length"  : 10,
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-  "out_classes"     :  5,
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-  "learning_rate"   : 0.0001,
-\end_layout
-
-\begin_layout Plain Layout
-
-  "dropout_rate"    : 0.8,
-\end_layout
-
-\begin_layout Plain Layout
-
-  "l2_penalty"      : 0.01,
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-  "conv_layers": [
-\end_layout
-
-\begin_layout Plain Layout
-
-    {
-\end_layout
-
-\begin_layout Plain Layout
-
-      "name"        : "conv1",
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "kernel size" : 7,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "filters"     : 3,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "activation"  : "relu",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "padding"     : "SAME",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "stride"      : [1, 1, 1, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pooling"     : "max",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool ksize"  : [1, 2, 2, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool stride" : [1, 2, 2, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool padding": "VALID"
-\end_layout
-
-\begin_layout Plain Layout
-
-    },
-\end_layout
-
-\begin_layout Plain Layout
-
-    {
-\end_layout
-
-\begin_layout Plain Layout
-
-      "name"        : "conv2",
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "kernel size" : 5,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "filters"     : 5,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "activation"  : "relu",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "padding"     : "SAME",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "stride"      : [1, 1, 1, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pooling"     : "max",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool ksize"  : [1, 2, 2, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool stride" : [1, 2, 2, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool padding": "VALID"
-\end_layout
-
-\begin_layout Plain Layout
-
-    },
-\end_layout
-
-\begin_layout Plain Layout
-
-    {
-\end_layout
-
-\begin_layout Plain Layout
-
-      "name"        : "conv3",
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "kernel size" : 3,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "filters"     : 10,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "activation"  : "relu",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "padding"     : "SAME",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "stride"      : [1, 1, 1, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pooling"     : "max",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool ksize"  : [1, 2, 2, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool stride" : [1, 2, 2, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool padding": "VALID"
-\end_layout
-
-\begin_layout Plain Layout
-
-    },
-\end_layout
-
-\begin_layout Plain Layout
-
-    {
-\end_layout
-
-\begin_layout Plain Layout
-
-      "name"        : "conv4",
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "kernel size" : 3,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "filters"     : 15,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "activation"  : "relu",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "padding"     : "SAME",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "stride"      : [1, 1, 1, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pooling"     : "max",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool ksize"  : [1, 2, 2, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool stride" : [1, 2, 2, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool padding": "VALID"
-\end_layout
-
-\begin_layout Plain Layout
-
-    }
-\end_layout
-
-\begin_layout Plain Layout
-
-  ],
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-  "lstm_layers": [
-\end_layout
-
-\begin_layout Plain Layout
-
-    {
-\end_layout
-
-\begin_layout Plain Layout
-
-      "name"        : "lstm1",
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "units"       : 200
-\end_layout
-
-\begin_layout Plain Layout
-
-    }
-\end_layout
-
-\begin_layout Plain Layout
-
-  ],
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-  "fc_layers": [
-\end_layout
-
-\begin_layout Plain Layout
-
-    {
-\end_layout
-
-\begin_layout Plain Layout
-
-      "name"        : "fc1",
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "units"       : 200,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "activation"  : "relu"
-\end_layout
-
-\begin_layout Plain Layout
-
-    },
-\end_layout
-
-\begin_layout Plain Layout
-
-    {
-\end_layout
-
-\begin_layout Plain Layout
-
-      "name"        : "fc2",
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "units"       : 60,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "activation"  : "relu"
-\end_layout
-
-\begin_layout Plain Layout
-
-    }
-\end_layout
-
-\begin_layout Plain Layout
-
-  ]
-\end_layout
-
-\begin_layout Plain Layout
-
-}
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{lstlisting}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsubsection
-net4
-\end_layout
-
-\begin_layout Standard
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{lstlisting}[language=json,firstnumber=1,caption={models/net4
-\backslash
-_CRNN.narq.json Configuration File.},captionpos=b]
-\end_layout
-
-\begin_layout Plain Layout
-
-{
-\end_layout
-
-\begin_layout Plain Layout
-
-  "name": "net4_CRNN",
-\end_layout
-
-\begin_layout Plain Layout
-
-  "path": "./models/",
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-  "in_image_width"  : 96,
-\end_layout
-
-\begin_layout Plain Layout
-
-  "in_image_height" : 96,
-\end_layout
-
-\begin_layout Plain Layout
-
-  "in_channels"     : 1,
-\end_layout
-
-\begin_layout Plain Layout
-
-  "history_length"  : 5,
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-  "out_classes"     : 5,
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-  "learning_rate"   : 0.0001,
-\end_layout
-
-\begin_layout Plain Layout
-
-  "dropout_rate"    : 0.8,
-\end_layout
-
-\begin_layout Plain Layout
-
-  "l2_penalty"      : 0.01,
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-  "conv_layers": [
-\end_layout
-
-\begin_layout Plain Layout
-
-    {
-\end_layout
-
-\begin_layout Plain Layout
-
-      "name"        : "conv1",
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "kernel size" : 7,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "filters"     : 3,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "activation"  : "relu",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "padding"     : "VALID",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "stride"      : [1, 1, 1, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pooling"     : "max",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool ksize"  : [1, 2, 2, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool stride" : [1, 2, 2, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool padding": "VALID"
-\end_layout
-
-\begin_layout Plain Layout
-
-    },
-\end_layout
-
-\begin_layout Plain Layout
-
-    {
-\end_layout
-
-\begin_layout Plain Layout
-
-      "name"        : "conv2",
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "kernel size" : 5,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "filters"     : 5,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "activation"  : "relu",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "padding"     : "VALID",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "stride"      : [1, 1, 1, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pooling"     : "max",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool ksize"  : [1, 2, 2, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool stride" : [1, 2, 2, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool padding": "VALID"
-\end_layout
-
-\begin_layout Plain Layout
-
-    },
-\end_layout
-
-\begin_layout Plain Layout
-
-    {
-\end_layout
-
-\begin_layout Plain Layout
-
-      "name"        : "conv3",
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "kernel size" : 3,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "filters"     : 10,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "activation"  : "relu",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "padding"     : "VALID",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "stride"      : [1, 1, 1, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pooling"     : "max",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool ksize"  : [1, 2, 2, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool stride" : [1, 2, 2, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool padding": "VALID"
-\end_layout
-
-\begin_layout Plain Layout
-
-    }
-\end_layout
-
-\begin_layout Plain Layout
-
-  ],
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-  "lstm_layers": [
-\end_layout
-
-\begin_layout Plain Layout
-
-    {
-\end_layout
-
-\begin_layout Plain Layout
-
-      "name"        : "lstm1",
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "units"       : 20
-\end_layout
-
-\begin_layout Plain Layout
-
-    }
-\end_layout
-
-\begin_layout Plain Layout
-
-  ],
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-  "fc_layers": [
-\end_layout
-
-\begin_layout Plain Layout
-
-    {
-\end_layout
-
-\begin_layout Plain Layout
-
-      "name"        : "fc1",
-\end_layout
-
-\begin_layout Plain Layout
-
-      
-\end_layout
-
-\begin_layout Plain Layout
-
-      "units"       : 20,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "activation"  : "relu"
-\end_layout
-
-\begin_layout Plain Layout
-
-    }
-\end_layout
-
-\begin_layout Plain Layout
-
-  ]
-\end_layout
-
-\begin_layout Plain Layout
-
-}
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{lstlisting}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsubsection
-JABnet
-\end_layout
-
-\begin_layout Standard
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{lstlisting}[language=json,firstnumber=1,caption={models/JABnet.narq.json
- Configuration File.},captionpos=b]
-\end_layout
-
-\begin_layout Plain Layout
-
-{
-\end_layout
-
-\begin_layout Plain Layout
-
-  "name": "JABnet",
-\end_layout
-
-\begin_layout Plain Layout
-
-  "path": "./models/",
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-  "in_image_width"  : 96,
-\end_layout
-
-\begin_layout Plain Layout
-
-  "in_image_height" : 96,
-\end_layout
-
-\begin_layout Plain Layout
-
-  "in_channels"     :  1,
-\end_layout
-
-\begin_layout Plain Layout
-
-  "history_length"  :  5,
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-  "out_classes"     : 5,
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-  "learning_rate"   : 0.0001,
-\end_layout
-
-\begin_layout Plain Layout
-
-  "dropout_rate"    : 0.8,
-\end_layout
-
-\begin_layout Plain Layout
-
-  "l2_penalty"      : 0.01,
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-  "conv_layers": [
-\end_layout
-
-\begin_layout Plain Layout
-
-    {
-\end_layout
-
-\begin_layout Plain Layout
-
-      "name"        : "conv1",
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "kernel size" : 7,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "filters"     : 4,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "activation"  : "relu",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "padding"     : "SAME",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "stride"      : [1, 1, 1, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pooling"     : "max",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool ksize"  : [1, 2, 2, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool stride" : [1, 2, 2, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool padding": "SAME"
-\end_layout
-
-\begin_layout Plain Layout
-
-    },
-\end_layout
-
-\begin_layout Plain Layout
-
-    {
-\end_layout
-
-\begin_layout Plain Layout
-
-      "name"        : "conv2",
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "kernel size" : 5,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "filters"     : 8,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "activation"  : "relu",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "padding"     : "SAME",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "stride"      : [1, 1, 1, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pooling"     : "max",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool ksize"  : [1, 2, 2, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool stride" : [1, 2, 2, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool padding": "SAME"
-\end_layout
-
-\begin_layout Plain Layout
-
-    },
-\end_layout
-
-\begin_layout Plain Layout
-
-    {
-\end_layout
-
-\begin_layout Plain Layout
-
-      "name"        : "conv3",
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "kernel size" :  3,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "filters"     : 32,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "activation"  : "relu",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "padding"     : "SAME",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "stride"      : [1, 1, 1, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pooling"     : "max",
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool ksize"  : [1, 2, 2, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool stride" : [1, 2, 2, 1],
-\end_layout
-
-\begin_layout Plain Layout
-
-      "pool padding": "SAME"
-\end_layout
-
-\begin_layout Plain Layout
-
-    }
-\end_layout
-
-\begin_layout Plain Layout
-
-  ],
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-  "lstm_layers": [
-\end_layout
-
-\begin_layout Plain Layout
-
-    {
-\end_layout
-
-\begin_layout Plain Layout
-
-      "name"        : "lstm1",
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "units"       : 32
-\end_layout
-
-\begin_layout Plain Layout
-
-    }
-\end_layout
-
-\begin_layout Plain Layout
-
-  ],
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-  "fc_layers": [
-\end_layout
-
-\begin_layout Plain Layout
-
-    {
-\end_layout
-
-\begin_layout Plain Layout
-
-      "name"        : "fc1",
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "units"       : 32,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "activation"  : "relu"
-\end_layout
-
-\begin_layout Plain Layout
-
-    },
-\end_layout
-
-\begin_layout Plain Layout
-
-    {
-\end_layout
-
-\begin_layout Plain Layout
-
-      "name"        : "fc2",
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-      "units"       : 16,
-\end_layout
-
-\begin_layout Plain Layout
-
-      "activation"  : "relu"
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-    }
-\end_layout
-
-\begin_layout Plain Layout
-
-  ]
-\end_layout
-
-\begin_layout Plain Layout
-
-}
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{lstlisting}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Newpage pagebreak
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Appendix B: Learning Curves
-\begin_inset CommandInset label
-LatexCommand label
-name "subsec:Appendix-B:-Learning"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Newpage pagebreak
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Appendix C: Convolutional Kernels and Feature Maps for JABnet
-\end_layout
-
-\begin_layout Standard
-In an effort to visualize at least part of the features learned by the models,
- this appendix shows the values of the weights used for the convolutional
- layers of the JABnet model, as well as the resulting feature maps after
- each convolution and pooling operation.
-\end_layout
-
-\begin_layout Standard
-For the sample feature maps, the 
-\family typewriter
-filter_to_image.py
-\family default
- script was used, passing the following state image as a parameter to the
- model:
-\end_layout
-
-\begin_layout Subsubsection
-Convolutional Layer 1
-\end_layout
-
-\begin_layout Subsubsection
-Convolutional Layer 2
-\end_layout
-
-\begin_layout Subsubsection
-Convolutional Layer 3
 \end_layout
 
 \end_body

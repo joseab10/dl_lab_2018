@@ -4,14 +4,14 @@ from datetime import datetime
 
 class Evaluation:
 
-    def __init__(self, store_dir, stats = []):
+    def __init__(self, store_dir, stats = [], dir_suffix=""):
         """
         Creates placeholders for the statistics listed in stats to generate tensorboard summaries.
         e.g. stats = ["loss"]
         """
         tf.reset_default_graph()
         self.sess = tf.Session()
-        self.tf_writer = tf.summary.FileWriter(os.path.join(store_dir, "experiment-%s" % datetime.now().strftime("%Y%m%d-%H%M%S") ))
+        self.tf_writer = tf.summary.FileWriter(os.path.join(store_dir, "experiment-%s" % datetime.now().strftime("%Y%m%d-%H%M%S") + dir_suffix))
 
         self.stats = stats
         self.pl_stats = {}
