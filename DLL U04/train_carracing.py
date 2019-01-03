@@ -96,13 +96,16 @@ def run_episode(env, agent, deterministic, skip_frames=0,  do_training=True, do_
 def train_online(env, agent, num_episodes, epsilon_schedule, early_stop,
                  history_length=0, max_timesteps=1000,
                  model_dir="./models_carracing", tensorboard_dir="./tensorboard", rendering=False,
-                 min_epsilon=0.05, epsilon_decay=0.9, skip_frames=0):
+                 skip_frames=0):
    
     if not os.path.exists(model_dir):
         os.mkdir(model_dir)  
  
     print("... train agent")
-    tensorboard = Evaluation(os.path.join(tensorboard_dir, "train"), ["episode_reward", "validation_reward", "straight", "left", "right", "accel", "brake"])
+    tensorboard = Evaluation(os.path.join(tensorboard_dir, "train"), ["episode_reward", "validation_reward",
+                                                                      "episode_reward_100", "validation_reward_10",
+                                                                      "episode_duration", "epsilon",
+                                                                      "straight", "left", "right", "accel", "brake"])
 
     valid_reward = 0
 
@@ -162,9 +165,6 @@ def train_online(env, agent, num_episodes, epsilon_schedule, early_stop,
 
         print('Episode ', ep_type, ': ', '{:7d}'.format(i), ' Reward: ', '{:4.4f}'.format(stats.episode_reward))
 
-        if agent.epsilon > min_epsilon:
-            agent.epsilon = epsilon_decay * agent.epsilon
-
         # Early Stopping
         early_stop.step(stats.episode_reward)
         if early_stop.save_flag:
@@ -216,6 +216,9 @@ if __name__ == "__main__":
                         help='Number of Convolutional Layers.', type=int)
     parser.add_argument('--fc_lay', action='store', default=1,
                         help='Number of Fully Connected Layers.', type=int)
+
+    parser.add_argument('--ddqn', action='store_true', default=False,
+                        help='Use Double-DQN.')
 
     # Epsilon
     parser.add_argument('--e_0',     action='store',      default=0.75,
@@ -275,12 +278,14 @@ if __name__ == "__main__":
     # Render the carracing 2D environment
     rendering   = args.render
 
+    max_timesteps = 1000
+
     # Maximum number of training Episodes
     num_episodes = args.episodes
 
     skip_frames = args.skip_frames
 
-    double_dqn = args.double_dqn
+    double_dqn = args.ddqn
 
     buffer_capacity = 100000
 
@@ -323,8 +328,8 @@ if __name__ == "__main__":
 
     # Training
     print("\n\n*** Training Agent ***")
-    train_online(env, agent, epsilon_schedule, early_stop,
-                 history_length=hist_len, model_dir="./models/carracing",
-                 tensorboard_dir='./tensorboard/carracing', rendering=rendering, skip_frames=skip_frames,
-                 min_epsilon=min_epsilon)
+    train_online(env, agent, num_episodes, epsilon_schedule, early_stop,
+                 history_length=hist_len, max_timesteps=max_timesteps,
+                 model_dir="./models/carracing", tensorboard_dir='./tensorboard/carracing', rendering=rendering,
+                 skip_frames=skip_frames)
 
