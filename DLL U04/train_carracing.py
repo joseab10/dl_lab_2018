@@ -89,7 +89,7 @@ def run_episode(env, agent, deterministic, skip_frames=0,  do_training=True, ren
 def train_online(env, agent, num_episodes,
                  history_length=0,
                  model_dir="./models_carracing", tensorboard_dir="./tensorboard", rendering=False,
-                 min_epsilon=0.05, epsilon_decay=0.9):
+                 min_epsilon=0.05, epsilon_decay=0.9, skip_frames=0):
    
     if not os.path.exists(model_dir):
         os.mkdir(model_dir)  
@@ -111,7 +111,7 @@ def train_online(env, agent, num_episodes,
        
         stats = run_episode(env, agent, max_timesteps=max_timesteps,
                             deterministic=deterministic, do_training=True,
-                            rendering=rendering, history_length=history_length)
+                            rendering=rendering, history_length=history_length, skip_frames=skip_frames)
 
         if i % 10 == 0:
             valid_reward = stats.episode_reward
@@ -139,6 +139,10 @@ def train_online(env, agent, num_episodes,
 
 def state_preprocessing(state):
     return rgb2gray(state).reshape(96, 96) / 255.0
+
+
+
+
 
 if __name__ == "__main__":
 
@@ -217,8 +221,10 @@ if __name__ == "__main__":
     agent = DQNAgent(Q, Q_Target, num_actions,
                      discount_factor=discount_factor, batch_size=batch_size,
                      epsilon=epsilon0, act_probabilities=act_probabilities)
-    
+
+    prefill_buffer(agent)
+
     train_online(env, agent, num_episodes=num_episodes, history_length=hist_len, model_dir="./models/carracing",
-                 tensorboard_dir='./tensorboard/carracing', rendering=rendering,
+                 tensorboard_dir='./tensorboard/carracing', rendering=rendering, skip_frames=skip_frames,
                  min_epsilon=min_epsilon, epsilon_decay=epsilon_decay)
 

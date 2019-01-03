@@ -51,3 +51,15 @@ if __name__ == "__main__":
     env.close()
     print('... finished')
 
+    # Wake me when you need me
+    from time import sleep
+
+
+    def beep(n=3):
+        for _ in range(n):
+            print('\a')
+            sleep(0.75)
+
+
+    beep()
+

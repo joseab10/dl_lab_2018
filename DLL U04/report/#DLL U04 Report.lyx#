@@ -1,0 +1,3977 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\begin_preamble
+%--------------------------------------------------------------------------------
+% Packages
+%--------------------------------------------------------------------------------
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage{ifthen}
+
+\usepackage{bm}
+
+\usepackage{fancyhdr}
+
+\usepackage[a4paper]{geometry}
+
+\usepackage{algpseudocode}
+
+\usepackage{lscape}
+
+\usepackage{fontawesome}
+
+\usepackage{halloweenmath}
+
+%--------------------------------------------------------------------------------
+% Layout
+%--------------------------------------------------------------------------------
+\setlength{\headheight}{12pt}
+
+\fancypagestyle{uni_freiburg_first}{
+	\fancyhead{}
+	\fancyhead[L]{
+		{\footnotesize{}Albert-Ludwigs Universität Freiburg}\\
+		Institut für Informatik\\
+		\textbf{\subject}\\
+		\myauthors}
+	\fancyhead[CO,CE]{
+		\textbf{\mytitle}\\
+		\duedate}
+	\fancyhead[RO,RE]{
+		\includegraphics[height=2cm]{\string"/Users/Jose/Documents/Homeworks/06 M.Sc. Informatik/General/Uni Freiburg Wappen\string".pdf}
+	}
+	\renewcommand{\headrulewidth}{0.4pt}
+	\fancyfoot{}
+	\fancyfoot[CE,CO]{\thepage}
+}
+
+\fancypagestyle{uni_freiburg}{
+	\fancyhead{}
+	\fancyhead[CO,CE]{
+		\mytitle
+	}
+	\renewcommand{\headrulewidth}{0pt}
+	\fancyfoot{}
+	\fancyfoot[CE,CO]{\thepage}
+}
+
+\pagestyle{uni_freiburg}
+
+
+
+%--------------------------------------------------------------------------------
+% Tikz Graphics
+%--------------------------------------------------------------------------------
+\usetikzlibrary{shapes.multipart}
+\usetikzlibrary{calc}
+\usetikzlibrary{patterns}
+
+
+% Custom JSON listing
+%\usepackage{bera}% optional: just to have a nice mono-spaced font
+\usepackage{listings}
+\usepackage{xcolor}
+
+\colorlet{punct}{red!60!black}
+\definecolor{background}{HTML}{EEEEEE}
+\definecolor{delim}{RGB}{20,105,176}
+\colorlet{numb}{magenta!60!black}
+
+\lstdefinelanguage{json}{
+    basicstyle=\normalfont\ttfamily,
+    numbers=left,
+    numberstyle=\scriptsize,
+    stepnumber=1,
+    numbersep=8pt,
+    showstringspaces=false,
+    breaklines=true,
+    frame=lines,
+    backgroundcolor=\color{background},
+    literate=
+     *{0}{{{\color{numb}0}}}{1}
+      {1}{{{\color{numb}1}}}{1}
+      {2}{{{\color{numb}2}}}{1}
+      {3}{{{\color{numb}3}}}{1}
+      {4}{{{\color{numb}4}}}{1}
+      {5}{{{\color{numb}5}}}{1}
+      {6}{{{\color{numb}6}}}{1}
+      {7}{{{\color{numb}7}}}{1}
+      {8}{{{\color{numb}8}}}{1}
+      {9}{{{\color{numb}9}}}{1}
+      {:}{{{\color{punct}{:}}}}{1}
+      {,}{{{\color{punct}{,}}}}{1}
+      {\{}{{{\color{delim}{\{}}}}{1}
+      {\}}{{{\color{delim}{\}}}}}{1}
+      {[}{{{\color{delim}{[}}}}{1}
+      {]}{{{\color{delim}{]}}}}{1},
+}
+\end_preamble
+\use_default_options true
+\begin_modules
+theorems-std
+theorems-sec
+\end_modules
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+newcommand{
+\backslash
+subject}{Deep Learning Lab}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+newcommand{
+\backslash
+mytitle}{Excercise Sheet 4}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+newcommand{
+\backslash
+myauthors}{Agnihotri, Shashank 
+\backslash
+
+\backslash
+ Arce y de la Borbolla, José}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+newcommand{
+\backslash
+duedate}{8.01.2019}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+setcounter{section}{4}
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+def
+\backslash
+thesubsection{
+\backslash
+arabic{section}}
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+def
+\backslash
+thesubsection{Exercise 
+\backslash
+arabic{section}.
+\backslash
+arabic{subsection}.}
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+def
+\backslash
+thesubsubsection{
+\backslash
+arabic{section}.
+\backslash
+arabic{subsection}.(
+\backslash
+alph{subsubsection})}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Date
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+duedate
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Title
+
+\size larger
+\begin_inset VSpace 0.5cm
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+subject
+\end_layout
+
+\end_inset
+
+
+\size default
+
+\begin_inset Newline linebreak
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+mytitle
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+thispagestyle{uni_freiburg_first}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+setlength{
+\backslash
+headheight}{12pt}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Abstract
+The purpose of this report is to present the reasoning behind the design
+ choices for solving the OpenAI Gym Car Racing Environment using a supervised
+ machine learning model through a combination of 2D convolutions and Long
+ Short-Term Memory Cells using the TensorFlow framework, and to show the
+ results obtained with this approach.
+\end_layout
+
+\begin_layout Section
+Environment Definition
+\end_layout
+
+\begin_layout Standard
+The environment in which the problem takes place consists of a random generated
+ track circuit with corners of varying difficulty.
+\end_layout
+
+\begin_layout Standard
+The objective is to drive a racing car around the track, visiting every
+ section of the track in the least possible time to maximize the value of
+ the reward.
+ The observations of the environment include an eagle view of the portion
+ of the track the car is currently at, the accumulated reward value and
+ a couple of useful indicators such as the overall speed or the position
+ of the steering wheel, as can be seen in Figure .
+ The reward function is calculated as follows: for every passing step, 0.1
+ is subtracted from the reward, for every newly visited tile 
+\begin_inset Formula $1000/N$
+\end_inset
+
+ is added to the score, where 
+\begin_inset Formula $N$
+\end_inset
+
+ is the total number of tiles in the track.
+ The episode ends when all the track tiles have been visited, or after a
+ certain amount of simulation steps have taken place.
+\end_layout
+
+\begin_layout Section
+Models
+\end_layout
+
+\begin_layout Section
+Training
+\end_layout
+
+\begin_layout Subsection
+Exploration vs Exploitation
+\end_layout
+
+\begin_layout Standard
+In order to better learn the subtle nuisances of each environment, a tradeoff
+ between exploration and exploitation must be made, such that the agent
+ tries different policies that may lead to increased rewards, instead of
+ just burning a certain policy into the model's parameters which could lead
+ to smaller rewards in the long run.
+\end_layout
+
+\begin_layout Standard
+For that purpose, given that we used an 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+-Greedy algorithm, a schedule class was programmed such that the may agent
+ explore more at the first training episodes, while at the same time settling
+ with a more deterministic approach after a certain number of training iteration
+s.
+\end_layout
+
+\begin_layout Subsubsection
+Decay Rate Schedules
+\end_layout
+
+\begin_layout Standard
+As of the writing of this document, the Schedule class offers three different
+ decay rates: constant, linear and exponential.
+ They are defined as follows.
+ In all of the formulas, the following symbols are used:
+\end_layout
+
+\begin_layout Description
+\begin_inset Formula $t$
+\end_inset
+
+ is the length of the input interval during which the function will vary
+ from 
+\begin_inset Formula $\left[0,t\right]\mapsto\left[y_{0},y_{1}\right]$
+\end_inset
+
+.
+ In our case it defines the number of training steps or episodes in which
+ the value of 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+ will decay.
+\end_layout
+
+\begin_layout Description
+\begin_inset Formula $y_{0}$
+\end_inset
+
+ is the function value at the start of the input interval
+\end_layout
+
+\begin_layout Description
+\begin_inset Formula $y_{1}$
+\end_inset
+
+ is the function value at the end of the interval defined by 
+\begin_inset Formula $t$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+All of the formulas are defined in a piecewise manner, such that for 
+\begin_inset Formula $x<0$
+\end_inset
+
+, the output will be 
+\begin_inset Formula $y_{0}$
+\end_inset
+
+ and for 
+\begin_inset Formula $x>t$
+\end_inset
+
+, the output will be 
+\begin_inset Formula $y_{1}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+f(x)=\begin{cases}
+y_{0} & x<0\\
+f_{2}(x) & 0\leq x\leq t\\
+y_{1} & x>t
+\end{cases}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph
+Linear Decay:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+f_{1}(x)=y_{0}-\frac{y_{0}-y_{1}}{t}x
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph
+Exponential Decay:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+f_{1}(x)=\left(y_{0}-k\cdot y_{1}\right)e^{\alpha x}+\left(k\cdot y_{1}\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where:
+\end_layout
+
+\begin_layout Description
+\begin_inset Formula $k$
+\end_inset
+
+ is a constant factor that helps in making the exponential actually intersect
+ the value of 
+\begin_inset Formula $y_{1}$
+\end_inset
+
+, instead of just approaching it asymptotically (0.98 for descending schedules,
+ and 1.02 for ascending ones).
+\end_layout
+
+\begin_layout Description
+\begin_inset Formula $\alpha$
+\end_inset
+
+ is the multiplicative constant of the exponent.
+ It is calculated as follows:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\alpha=\frac{1}{t}\log\left(\frac{\left(1-k\right)y_{1}}{y_{0}+k\cdot y_{1}}\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph
+Stepping
+\end_layout
+
+\begin_layout Standard
+The class allows the output of the function to be continuous or stepped.
+ For the later case, a number of steps must be specified for the interval
+ 
+\begin_inset Formula $\left[0,t\right]$
+\end_inset
+
+, for which the function stores the values of the selected continuous function
+ at the start of each subinterval.
+ The function then returns the stored value which corresponds to the index
+ defined by the integer division between the input and the length of the
+ intervals.
+\end_layout
+
+\begin_layout Paragraph
+Annealing
+\end_layout
+
+\begin_layout Standard
+Annealing was done by bounding a cosine function between the desired decay
+ function and a constant function.
+ This way, the output value oscillates between the desired final value 
+\begin_inset Formula $y_{1}$
+\end_inset
+
+ and the decayed value of the initial output 
+\begin_inset Formula $f(x)$
+\end_inset
+
+.
+ In order to achieve this, the amplitude (
+\begin_inset Formula $a$
+\end_inset
+
+) and offset (
+\begin_inset Formula $b$
+\end_inset
+
+) of the cosine function need to depend on the value of 
+\begin_inset Formula $x$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+a=\frac{f_{1}(x)-y_{1}}{2}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+b=\frac{f_{1}(x)+y_{1}}{2}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Using these two values, the annealing function is defined as follows:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+f_{2}(x)=a\cos\left(\frac{\left(2c+1\right)\pi}{t}x\right)+b
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\begin_inset Formula $c$
+\end_inset
+
+ represents the number of annealing cycles (or peaks of the cosine function)
+ to perform within the 
+\begin_inset Formula $\left[0,t\right]$
+\end_inset
+
+ interval.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/Linear_decay.png
+	lyxscale 25
+	width 45col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Linear Decay (with and without Annealing)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/Exp_decay.png
+	lyxscale 25
+	width 45col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Exponential Decay (with and without Annealing)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/Step_decay.png
+	lyxscale 25
+	width 45col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Linear Step Decay (with and without Annealing)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/ExpStep_decay.png
+	lyxscale 25
+	width 45col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Exponential Step Decay (with and without Annealing)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Supported Decay Functions.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Early Stopping
+\end_layout
+
+\begin_layout Standard
+After a couple of training sessions, both in the CartPole and the CarRacing
+ enviroments, we quickly realized that the agent can overtrain in such a
+ way that it drops all of it's learned performance as if it were training
+ from scratch again.
+ For that reason, we implemented Early stopping by checking if the derivative
+ of the training reward became negative after a certain period of stagnation.
+ That way, if the agent starts performing worse than previous iterations
+ in which it couldn't improve more, then the model would be saved before
+ it started to decline, and the training would stop.
+ This was achieved by the implementation of the EarlyStop Class in the code.
+\end_layout
+
+\begin_layout Section
+Results
+\end_layout
+
+\begin_layout Standard
+The following table summarizes the results obtained by each model during
+ training and testing.
+ Only the values for the last training and testing sessions are shown.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="10" columns="7">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell multirow="3" alignment="center" valignment="middle" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Model
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Training
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Testing
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Final 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Final 
+\end_layout
+
+\end_inset
+</cell>
+<cell multirow="3" alignment="center" valignment="middle" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Number 
+\end_layout
+
+\end_inset
+</cell>
+<cell multirow="3" alignment="center" valignment="middle" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Training 
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Training
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Validation
+\end_layout
+
+\end_inset
+</cell>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reward
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ Accuracy
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Accuracy
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+of Batches
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Time
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Mean
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\sigma$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+net1 (CNN)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+86.6481%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+72.3833%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+100'000
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+40:22
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+585.1061
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+307.7683
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+net2 (CNN)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+72.7296%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+62.1167%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+300'000
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1:06:22
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+809.8464
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+111.2685
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+net3 (CNN+RNN)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+91.9944%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+71.7333%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+200'000
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+11:00:00
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+566.9941
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+300.5476
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+net4 (CNN+RNN)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+92.6074%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+72.4333%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+200'000
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3:45:02
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+748.0682
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+160.8649
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+JABnet (CNN+RNN)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+94.9185%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+72.8333%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+200'000
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6:01:08
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+742.1062
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+221.1171
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Myself (Human NN)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+~1:00:00
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+884.3021
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+41.3228
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Exercise Results.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Discussion
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+setcounter{subsection}{0}
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+def
+\backslash
+thesubsection{
+\backslash
+arabic{section}}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+def
+\backslash
+thesubsection{
+\backslash
+Alph{subsection}}
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+def
+\backslash
+thesubsubsection{
+\backslash
+arabic{section}.
+\backslash
+arabic{subsection}.(
+\backslash
+alph{subsubsection})}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Appendices
+\end_layout
+
+\begin_layout Subsection
+Appendix A: Network Architectures
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Appendix-A:-Network"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+During the course of the exercise, several architectures were tested in
+ a search for the best agent.
+ This appendix shows the json configuration files used to create the networks
+ and the model graphs as generated by tensorboard of the most successful
+ model architectures.
+ The first models, i.e.
+ 
+\series bold
+net1
+\series default
+ and 
+\series bold
+net2
+\series default
+, are purely convolutional and fully connected models.
+ The rest have a combination of convolutional, recursive and fully connected
+ layers as explained in Section .
+ The parallel application of convolutions can be best appreciated in the
+ 
+\series bold
+net4
+\series default
+ model, where the node for the third convolutional layer has been expanded.
+\end_layout
+
+\begin_layout Standard
+The train and save nodes have been cropped out of the images for convenience
+\end_layout
+
+\begin_layout Subsubsection
+net1
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{lstlisting}[language=json,firstnumber=1,caption={models/net1
+\backslash
+_CNN.narq.json Configuration File.},captionpos=b]
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+  "name": "net1",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "path": "./models/",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "in_image_width"  : 96,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "in_image_height" : 96,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "in_channels"     :  1,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "history_length"  :  1,
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "out_classes"     :  5,
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "learning_rate"   : 0.0001,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "dropout_rate"    : 0.8,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "l2_penalty"      : 0.01,
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "conv_layers": [
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "conv1",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "kernel size" :  5,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "filters"     : 16,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"  : "relu",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "padding"     : "VALID" ,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "stride"      : [1, 1, 1, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pooling"     : "max",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool ksize"  : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool stride" : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool padding": "VALID"
+\end_layout
+
+\begin_layout Plain Layout
+
+    },
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "conv2",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "kernel size" : 3,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "filters"     : 24,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"  : "relu",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "padding"     : "VALID",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "stride"      : [1,1,1,1],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pooling"     : "max",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool ksize"  : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool stride" : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool padding": "VALID"
+\end_layout
+
+\begin_layout Plain Layout
+
+    }
+\end_layout
+
+\begin_layout Plain Layout
+
+  ],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "lstm_layers": [
+\end_layout
+
+\begin_layout Plain Layout
+
+  ],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "fc_layers": [
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "fc1",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "units"       : 100,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"  : "relu"
+\end_layout
+
+\begin_layout Plain Layout
+
+    },
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "fc2",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "units"       : 30,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"  : "relu"
+\end_layout
+
+\begin_layout Plain Layout
+
+    }
+\end_layout
+
+\begin_layout Plain Layout
+
+  ]
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{lstlisting}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+net2
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{lstlisting}[language=json,firstnumber=1,caption={models/net2
+\backslash
+_CNN.narq.json Configuration File.},captionpos=b]
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+  "name": "net2_CNN",
+\end_layout
+
+\begin_layout Plain Layout
+
+  "path": "./models/",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "in_image_width"  : 96,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "in_image_height" : 96,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "in_channels"     :  1,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "history_length"  :  1,
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "out_classes"     :  5,
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "learning_rate"   : 0.00001,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "dropout_rate"    : 0.8,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "l2_penalty"      : 0.01,
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "conv_layers": [
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"         : "conv1",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "kernel size"  : 7,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "filters"      : 3,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"   : "relu",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "padding"      : "VALID",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "stride"       : [1, 1, 1, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pooling"      : "max",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool ksize"   : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool stride"  : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool padding" : "VALID"
+\end_layout
+
+\begin_layout Plain Layout
+
+    },
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"         : "conv2",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "kernel size"  : 5,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "filters"      : 5,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"   : "relu",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "padding"      : "VALID",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "stride"       : [1, 1, 1, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pooling"      : "max",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool ksize"   : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool stride"  : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool padding" : "VALID"
+\end_layout
+
+\begin_layout Plain Layout
+
+    },
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"         : "conv3",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "kernel size"  : 3,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "filters"      : 10,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"   : "relu",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "padding"      : "VALID",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "stride"       : [1, 1, 1, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pooling"      : "max",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool ksize"   : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool stride"  : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool padding" : "VALID"
+\end_layout
+
+\begin_layout Plain Layout
+
+    },
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"         : "conv4",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "kernel size"  : 3,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "filters"      : 10,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"   : "relu",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "padding"      : "VALID",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "stride"       : [1, 1, 1, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pooling"      : "max",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool ksize"   : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool stride"  : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool padding" : "VALID"
+\end_layout
+
+\begin_layout Plain Layout
+
+    }
+\end_layout
+
+\begin_layout Plain Layout
+
+  ],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "lstm_layers": [
+\end_layout
+
+\begin_layout Plain Layout
+
+  ],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "fc_layers": [
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"         : "fc1",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "units"        : 400,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"   : "relu"
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+    },
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"         : "fc2",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "units"        : 100,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"   : "relu"
+\end_layout
+
+\begin_layout Plain Layout
+
+    },
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"         : "fc3",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "units"        : 30,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"   : "relu"
+\end_layout
+
+\begin_layout Plain Layout
+
+    }
+\end_layout
+
+\begin_layout Plain Layout
+
+  ]
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{lstlisting}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+net3
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{lstlisting}[language=json,firstnumber=1,caption={models/net3
+\backslash
+_CRNN.narq.json Configuration File.},captionpos=b]
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+  "name": "net3_CRNN",
+\end_layout
+
+\begin_layout Plain Layout
+
+  "path": "./models/",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "in_image_width"  : 96,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "in_image_height" : 96,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "in_channels"     :  1,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "history_length"  : 10,
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "out_classes"     :  5,
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "learning_rate"   : 0.0001,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "dropout_rate"    : 0.8,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "l2_penalty"      : 0.01,
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "conv_layers": [
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "conv1",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "kernel size" : 7,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "filters"     : 3,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"  : "relu",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "padding"     : "SAME",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "stride"      : [1, 1, 1, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pooling"     : "max",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool ksize"  : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool stride" : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool padding": "VALID"
+\end_layout
+
+\begin_layout Plain Layout
+
+    },
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "conv2",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "kernel size" : 5,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "filters"     : 5,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"  : "relu",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "padding"     : "SAME",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "stride"      : [1, 1, 1, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pooling"     : "max",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool ksize"  : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool stride" : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool padding": "VALID"
+\end_layout
+
+\begin_layout Plain Layout
+
+    },
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "conv3",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "kernel size" : 3,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "filters"     : 10,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"  : "relu",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "padding"     : "SAME",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "stride"      : [1, 1, 1, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pooling"     : "max",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool ksize"  : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool stride" : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool padding": "VALID"
+\end_layout
+
+\begin_layout Plain Layout
+
+    },
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "conv4",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "kernel size" : 3,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "filters"     : 15,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"  : "relu",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "padding"     : "SAME",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "stride"      : [1, 1, 1, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pooling"     : "max",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool ksize"  : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool stride" : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool padding": "VALID"
+\end_layout
+
+\begin_layout Plain Layout
+
+    }
+\end_layout
+
+\begin_layout Plain Layout
+
+  ],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "lstm_layers": [
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "lstm1",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "units"       : 200
+\end_layout
+
+\begin_layout Plain Layout
+
+    }
+\end_layout
+
+\begin_layout Plain Layout
+
+  ],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "fc_layers": [
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "fc1",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "units"       : 200,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"  : "relu"
+\end_layout
+
+\begin_layout Plain Layout
+
+    },
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "fc2",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "units"       : 60,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"  : "relu"
+\end_layout
+
+\begin_layout Plain Layout
+
+    }
+\end_layout
+
+\begin_layout Plain Layout
+
+  ]
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{lstlisting}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+net4
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{lstlisting}[language=json,firstnumber=1,caption={models/net4
+\backslash
+_CRNN.narq.json Configuration File.},captionpos=b]
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+  "name": "net4_CRNN",
+\end_layout
+
+\begin_layout Plain Layout
+
+  "path": "./models/",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "in_image_width"  : 96,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "in_image_height" : 96,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "in_channels"     : 1,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "history_length"  : 5,
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "out_classes"     : 5,
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "learning_rate"   : 0.0001,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "dropout_rate"    : 0.8,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "l2_penalty"      : 0.01,
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "conv_layers": [
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "conv1",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "kernel size" : 7,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "filters"     : 3,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"  : "relu",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "padding"     : "VALID",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "stride"      : [1, 1, 1, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pooling"     : "max",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool ksize"  : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool stride" : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool padding": "VALID"
+\end_layout
+
+\begin_layout Plain Layout
+
+    },
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "conv2",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "kernel size" : 5,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "filters"     : 5,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"  : "relu",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "padding"     : "VALID",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "stride"      : [1, 1, 1, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pooling"     : "max",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool ksize"  : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool stride" : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool padding": "VALID"
+\end_layout
+
+\begin_layout Plain Layout
+
+    },
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "conv3",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "kernel size" : 3,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "filters"     : 10,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"  : "relu",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "padding"     : "VALID",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "stride"      : [1, 1, 1, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pooling"     : "max",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool ksize"  : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool stride" : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool padding": "VALID"
+\end_layout
+
+\begin_layout Plain Layout
+
+    }
+\end_layout
+
+\begin_layout Plain Layout
+
+  ],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "lstm_layers": [
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "lstm1",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "units"       : 20
+\end_layout
+
+\begin_layout Plain Layout
+
+    }
+\end_layout
+
+\begin_layout Plain Layout
+
+  ],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "fc_layers": [
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "fc1",
+\end_layout
+
+\begin_layout Plain Layout
+
+      
+\end_layout
+
+\begin_layout Plain Layout
+
+      "units"       : 20,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"  : "relu"
+\end_layout
+
+\begin_layout Plain Layout
+
+    }
+\end_layout
+
+\begin_layout Plain Layout
+
+  ]
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{lstlisting}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+JABnet
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{lstlisting}[language=json,firstnumber=1,caption={models/JABnet.narq.json
+ Configuration File.},captionpos=b]
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+  "name": "JABnet",
+\end_layout
+
+\begin_layout Plain Layout
+
+  "path": "./models/",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "in_image_width"  : 96,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "in_image_height" : 96,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "in_channels"     :  1,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "history_length"  :  5,
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "out_classes"     : 5,
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "learning_rate"   : 0.0001,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "dropout_rate"    : 0.8,
+\end_layout
+
+\begin_layout Plain Layout
+
+  "l2_penalty"      : 0.01,
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "conv_layers": [
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "conv1",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "kernel size" : 7,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "filters"     : 4,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"  : "relu",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "padding"     : "SAME",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "stride"      : [1, 1, 1, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pooling"     : "max",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool ksize"  : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool stride" : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool padding": "SAME"
+\end_layout
+
+\begin_layout Plain Layout
+
+    },
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "conv2",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "kernel size" : 5,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "filters"     : 8,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"  : "relu",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "padding"     : "SAME",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "stride"      : [1, 1, 1, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pooling"     : "max",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool ksize"  : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool stride" : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool padding": "SAME"
+\end_layout
+
+\begin_layout Plain Layout
+
+    },
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "conv3",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "kernel size" :  3,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "filters"     : 32,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"  : "relu",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "padding"     : "SAME",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "stride"      : [1, 1, 1, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pooling"     : "max",
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool ksize"  : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool stride" : [1, 2, 2, 1],
+\end_layout
+
+\begin_layout Plain Layout
+
+      "pool padding": "SAME"
+\end_layout
+
+\begin_layout Plain Layout
+
+    }
+\end_layout
+
+\begin_layout Plain Layout
+
+  ],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "lstm_layers": [
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "lstm1",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "units"       : 32
+\end_layout
+
+\begin_layout Plain Layout
+
+    }
+\end_layout
+
+\begin_layout Plain Layout
+
+  ],
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  "fc_layers": [
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "fc1",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "units"       : 32,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"  : "relu"
+\end_layout
+
+\begin_layout Plain Layout
+
+    },
+\end_layout
+
+\begin_layout Plain Layout
+
+    {
+\end_layout
+
+\begin_layout Plain Layout
+
+      "name"        : "fc2",
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+      "units"       : 16,
+\end_layout
+
+\begin_layout Plain Layout
+
+      "activation"  : "relu"
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+    }
+\end_layout
+
+\begin_layout Plain Layout
+
+  ]
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{lstlisting}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Appendix B: Learning Curves
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Appendix-B:-Learning"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Appendix C: Convolutional Kernels and Feature Maps for JABnet
+\end_layout
+
+\begin_layout Standard
+In an effort to visualize at least part of the features learned by the models,
+ this appendix shows the values of the weights used for the convolutional
+ layers of the JABnet model, as well as the resulting feature maps after
+ each convolution and pooling operation.
+\end_layout
+
+\begin_layout Standard
+For the sample feature maps, the 
+\family typewriter
+filter_to_image.py
+\family default
+ script was used, passing the following state image as a parameter to the
+ model:
+\end_layout
+
+\begin_layout Subsubsection
+Convolutional Layer 1
+\end_layout
+
+\begin_layout Subsubsection
+Convolutional Layer 2
+\end_layout
+
+\begin_layout Subsubsection
+Convolutional Layer 3
+\end_layout
+
+\end_body
+\end_document

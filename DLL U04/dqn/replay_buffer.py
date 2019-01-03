@@ -9,13 +9,14 @@ class ReplayBuffer:
     # TODO: implement a capacity for the replay buffer (FIFO, capacity: 1e5 - 1e6)
 
     # Replay buffer for experience replay. Stores transitions.
-    def __init__(self, capacity=100000):
+    def __init__(self, capacity=100000, min_fill=1000):
         self._data = namedtuple("ReplayBuffer", ["states", "actions", "next_states", "rewards", "dones"])
         self._data = self._data(states=deque(maxlen=capacity),
                                 actions=deque(maxlen=capacity),
                                 next_states=deque(maxlen=capacity),
                                 rewards=deque(maxlen=capacity),
                                 dones=deque(maxlen=capacity))
+        self._min_fill = min_fill
 
     def add_transition(self, state, action, next_state, reward, done):
         """
@@ -38,3 +39,12 @@ class ReplayBuffer:
         batch_rewards = np.array([self._data.rewards[i] for i in batch_indices])
         batch_dones = np.array([self._data.dones[i] for i in batch_indices])
         return batch_states, batch_actions, batch_next_states, batch_rewards, batch_dones
+
+    def len(self):
+        return len(self._data.dones)
+
+    def has_min_items(self):
+        if self.len() > self._min_fill:
+            return True
+        else:
+            return False
