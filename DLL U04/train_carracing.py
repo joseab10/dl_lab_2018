@@ -17,12 +17,12 @@ import argparse
 
 from schedule import Schedule
 from early_stop import EarlyStop
-from test_carracing import *
+
 
 
 
 def run_episode(env, agent, deterministic, skip_frames=0,  do_training=True, do_prefill=False,
-                rendering=False, max_timesteps=1000, history_length=0):
+                rendering=False, max_timesteps=1000, history_length=0, verbose=False):
     """
     This methods runs one episode for a gym environment. 
     deterministic == True => agent executes only greedy actions according the Q function approximator (no random actions).
@@ -55,7 +55,8 @@ def run_episode(env, agent, deterministic, skip_frames=0,  do_training=True, do_
         action_id = agent.act([state], deterministic)
         action = id_to_action(action_id)
 
-        #print('\tStep ', '{:7d}'.format(step), ' Action: ', ACTIONS[action_id]['log'])
+        if verbose:
+            print('\tStep ', '{:7d}'.format(step), ' Action: ', ACTIONS[action_id]['log'])
 
         # Hint: frame skipping might help you to get better results.
         reward = 0
@@ -200,6 +201,8 @@ def prefill_buffer(env, agent, rendering = False, max_timesteps = 1000, history_
 
 if __name__ == "__main__":
 
+    from test_carracing import test_model
+
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--his_len', action='store',      default=4,
@@ -254,7 +257,6 @@ if __name__ == "__main__":
     img_width = 96
     img_height = 96
     num_actions = 5
-    hidden      = 20
 
     # Learning Rate
     lr          = args.lr
@@ -339,6 +341,8 @@ if __name__ == "__main__":
     Q_Target = CNNTargetNetwork(img_width, img_height, hist_len + 1, num_actions, lr, tau,
                                 conv_layers = conv_layers, fc_layers = fc_layers)
 
+    # Start with epsilon=1 for the buffering, so that all actions are random and in the specified probabilities
+    # instead of randomly depending on the initialized parameters
     agent = DQNAgent(Q, Q_Target, num_actions,
                      discount_factor=discount_factor, batch_size=batch_size,
                      epsilon=1, act_probabilities=act_probabilities,
@@ -354,6 +358,7 @@ if __name__ == "__main__":
     # Buffer Filling
     print("*** Prefilling Buffer ***")
     prefill_buffer(env, agent, rendering=rendering, history_length=hist_len)
+    # Now after buffering, set epsilon to the desired initial value
     agent.epsilon = epsilon0
 
     # Training
@@ -366,4 +371,4 @@ if __name__ == "__main__":
 
     # Testing
     print("\n\n*** Testing Agent ***")
-    test_model(model_dir, name_suffix, hist_len=hist_len, conv_layers=conv_layers, fc_layers=fc_layers, n_test_episodes=1)
+    test_model(model_dir, name_suffix, hist_len=hist_len, conv_layers=conv_layers, fc_layers=fc_layers, n_test_episodes=15, verbose=False)

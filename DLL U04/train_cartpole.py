@@ -177,8 +177,8 @@ if __name__ == "__main__":
     epsilon_0        = 0.9
     min_epsilon      = 0.05
     decay_episodes   = 400
-    decay_function   = 'constant'
-    cosine_annealing = False
+    decay_function   = 'exponential'
+    cosine_annealing = True
     annealing_cycles = 10
 
     num_episodes    = 4000
