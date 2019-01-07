@@ -27,6 +27,8 @@
 
 \usepackage{halloweenmath}
 
+\usepackage{url}
+
 %--------------------------------------------------------------------------------
 % Layout
 %--------------------------------------------------------------------------------
@@ -140,7 +142,16 @@ theorems-sec
 \index_command default
 \paperfontsize default
 \spacing single
-\use_hyperref false
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder true
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle false
 \papersize default
 \use_geometry false
 \use_package amsmath 1
@@ -475,11 +486,27 @@ The Double-Q Learning Algorithm was achieved by letting the Q network select
  the best action for each given state, and then use those predicted indices
  to estimate the value of the quality function using the TargetQ network,
  therefore making the learning more robust against noise thanks to a decoupling
- of the predictions.
+ of the predictions
+\begin_inset CommandInset citation
+LatexCommand cite
+key "DBLP:journals/corr/HasseltGS15"
+literal "false"
+
+\end_inset
+
+.
  This in contrast to the original DQN algorithm, in which both the action
  and the Q function for that given action at a certain state are predicted
  by the TargetQ network by maximizing and, much likely, overshooting the
- Q–Function.
+ Q–Function
+\begin_inset CommandInset citation
+LatexCommand cite
+key "DBLP:journals/corr/HasseltGS15,DBLP:journals/corr/MnihKSGAWR13"
+literal "false"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -489,7 +516,7 @@ Given that the difference in code was minimal, the Double-Q Learning algorithm
 \family typewriter
 double-q
 \family default
- to select between them.
+ to toggle between them.
 \end_layout
 
 \begin_layout Section
@@ -540,7 +567,15 @@ In order to better learn the subtle nuisances of each environment, a tradeoff
  between exploration and exploitation must be made, such that the agent
  tries different policies that may lead to increased rewards, instead of
  just burning a certain policy into the model's parameters which could lead
- to smaller rewards in the long run.
+ to smaller rewards in the long run
+\begin_inset CommandInset citation
+LatexCommand cite
+key "sutton2014introduction"
+literal "false"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -548,10 +583,48 @@ For that purpose, given that we used an
 \begin_inset Formula $\epsilon$
 \end_inset
 
--Greedy algorithm, a schedule class was programmed such that the may agent
+-Greedy algorithm, a schedule class was programmed such that the agent may
  explore more at the first training episodes, while at the same time settling
  with a more deterministic approach after a certain number of training iteration
 s.
+ The following sections show how the different decay rates were implemented,
+ and Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Supported-Decay-Functions."
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ shows the plots for sample decay rates with 
+\begin_inset Formula $y_{0}=0.9$
+\end_inset
+
+, 
+\begin_inset Formula $y_{1}=0.5$
+\end_inset
+
+, 
+\begin_inset Formula $t=100$
+\end_inset
+
+ and 
+\begin_inset Formula $c=5$
+\end_inset
+
+, obtained with the help of the 
+\family typewriter
+schedule_test.py
+\family default
+ script.
+ The value of 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+ was added to the training analytics and thus can also be checked in the
+ Tensorboard Scalar interface.
 \end_layout
 
 \begin_layout Subsubsection
@@ -806,40 +879,6 @@ where
 \end_layout
 
 \begin_layout Standard
-Figure 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Supported-Decay-Functions."
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
- shows the plots for sample decay rates with 
-\begin_inset Formula $y_{0}=0.9$
-\end_inset
-
-, 
-\begin_inset Formula $y_{1}=0.5$
-\end_inset
-
-, 
-\begin_inset Formula $t=100$
-\end_inset
-
- and 
-\begin_inset Formula $c=5$
-\end_inset
-
-, obtained with the help of the 
-\family typewriter
-schedule_test.py
-\family default
- script.
-\end_layout
-
-\begin_layout Standard
 \begin_inset Float figure
 wide false
 sideways false
@@ -1026,7 +1065,15 @@ After a couple of training sessions, both in the CartPole and the CarRacing
  of the training reward became negative after a certain period of stagnation.
  That way, if the agent starts performing worse than previous iterations
  in which it couldn't improve more, then the model would be saved before
- it started to decline, and the training would stop.
+ it started to decline, and the training would stop
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Goodfellow:2016:DL:3086952"
+literal "false"
+
+\end_inset
+
+.
  If, on the contrary, the agent started to perform better after a period
  of stagnation, then the early stop countdown would reset back to zero.
  This was achieved by the implementation of the EarlyStop Class in the code.
@@ -3626,7 +3673,7 @@ status collapsed
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Initial Training Learning Curves ( episodes).
+Initial Training Learning Curves (650 episodes).
 \end_layout
 
 \end_inset
@@ -3644,7 +3691,7 @@ Initial Training Learning Curves ( episodes).
 placement H
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
@@ -3948,7 +3995,7 @@ Experimental Learning Curves using
 placement H
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
@@ -4924,9 +4971,16 @@ Discussion
 \end_layout
 
 \begin_layout Standard
-Due to the highly cumulative non-deterministic nature of the algorithm,
- mostly because of the random weight initialization, the randomness in choosing
- whether to explore or to go with predicted actions, and the stochastic
+Due to the highly cumulative non-deterministic nature of the algorithm
+\begin_inset CommandInset citation
+LatexCommand cite
+key "DBLP:journals/corr/HasseltGS15,Anschel2017AveragedDQNVR"
+literal "false"
+
+\end_inset
+
+, mostly because of the random weight initialization, the randomness in
+ choosing whether to explore or to go with predicted actions, and the stochastic
  nature of exploration itself, no two training sessions behaved similar
  to each other.
  By running the same training session with exactly the same hyperparameters,
@@ -4968,10 +5022,38 @@ Although overall we are happy with the results we also believe that, in
 \begin_inset Formula $\tau$
 \end_inset
 
-) could have been done in order to have a more consistent and less noisy
- result instead of such jagged learning curves which are probably due to
- overshoots on the gradient descent, or a wild cat and mouse chase between
- the Q and TargetQ networks.
+) could have been done before embarking in a quest for experimentation,
+ in order to have a more consistent and less noisy result instead of such
+ jagged learning curves which are probably due to overshoots on the gradient
+ descent, or a wild cat and mouse chase between the Q and TargetQ networks.
+\begin_inset CommandInset citation
+LatexCommand nocite
+key "deepQN_tensorflow"
+literal "false"
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand nocite
+key "dqn-atari"
+literal "false"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+btprint "btPrintCited"
+bibfiles "ref"
+options "plain"
+
+\end_inset
+
+
 \end_layout
 
 \end_body
