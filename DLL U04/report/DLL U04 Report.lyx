@@ -371,8 +371,9 @@ headheight}{12pt}
 \begin_layout Abstract
 The purpose of this report is to present the reasoning behind the design
  choices for solving the OpenAI Gym Cart Pole and Car Racing Environments
- using a deep reinforcement learning agent, using the algorithms of Deep-Q-Netwo
-rk (DQN), Double-DQN to estimate the Quality Function, and 
+ using a deep reinforcement learning agent, by implementing the algorithms
+ of Deep-Q-Network (DQN), Double-Q to estimate the Quality Function, and
+ 
 \begin_inset Formula $\epsilon$
 \end_inset
 
@@ -445,19 +446,64 @@ Agents
 \end_layout
 
 \begin_layout Subsection
-DQN
+Models
+\end_layout
+
+\begin_layout Standard
+For all of the experiments in the cartpole environment, a simple MLP network
+ was used, with 20 hidden units in each of the two layers.
+\end_layout
+
+\begin_layout Standard
+On the other hand, for the more complex carracing environment, the first
+ agent used a convolutional network with 3 convolutional layers and 3 large
+ hidden, fully connected layers.
+ In order to speed up the training time for the experiments with 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+-Decay and Double-Q learning, the network's complexity was dropped to just
+ 2 convolutional layers and 1 fully connected one.
 \end_layout
 
 \begin_layout Subsection
-Double-DQN
+DQN and Double-Q Learning
+\end_layout
+
+\begin_layout Standard
+The Double-Q Learning Algorithm was achieved by letting the Q network select
+ the best action for each given state, and then use those predicted indices
+ to estimate the value of the quality function using the TargetQ network,
+ therefore making the learning more robust against noise thanks to a decoupling
+ of the predictions.
+ This in contrast to the original DQN algorithm, in which both the action
+ and the Q function for that given action at a certain state are predicted
+ by the TargetQ network by maximizing and, much likely, overshooting the
+ Q–Function.
+\end_layout
+
+\begin_layout Standard
+Given that the difference in code was minimal, the Double-Q Learning algorithm
+ was implemented in the same class as that of DQN, using the boolean flag
+ 
+\family typewriter
+double-q
+\family default
+ to select between them.
 \end_layout
 
 \begin_layout Section
 Training
 \end_layout
 
+\begin_layout Standard
+During the training sessions, a couple of different techniques, covered
+ in this section, were implemented with the purpose of improving the learning
+ rate and the final results.
+\end_layout
+
 \begin_layout Subsection
-Buffer Prefilling
+Buffer Pre-filling
 \end_layout
 
 \begin_layout Standard
@@ -481,7 +527,7 @@ Given that at the start of the training, the buffer is empty, if trained
  It is also not very recommended to fill the buffer too much, as the rewards
  for such states would most likely very low, and if there are too many of
  such states in the buffer, depending on the maximum size of the buffer,
- it may take a very long time before they get replaced by states with beter
+ it may take a very long time before they get replaced by states with better
  reward values.
 \end_layout
 
@@ -797,7 +843,7 @@ schedule_test.py
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
@@ -973,14 +1019,16 @@ Early Stopping
 
 \begin_layout Standard
 After a couple of training sessions, both in the CartPole and the CarRacing
- enviroments, we quickly realized that the agent can overtrain in such a
- way that it drops all of it's learned performance as if it were training
+ environments, we quickly realized that the agent can overtrain in such
+ a way that it drops all of it's learned performance as if it were training
  from scratch again.
- For that reason, we implemented Early stopping by checking if the derivative
+ For that reason, Early stopping was implemented by checking if the derivative
  of the training reward became negative after a certain period of stagnation.
  That way, if the agent starts performing worse than previous iterations
  in which it couldn't improve more, then the model would be saved before
  it started to decline, and the training would stop.
+ If, on the contrary, the agent started to perform better after a period
+ of stagnation, then the early stop countdown would reset back to zero.
  This was achieved by the implementation of the EarlyStop Class in the code.
 \end_layout
 
@@ -989,16 +1037,385 @@ Results
 \end_layout
 
 \begin_layout Standard
-In an effort to make the experiments more comparable, the both the model's
- architecture and the hyperparameters shown in the following table were
- kept constant during all training sessions:
+Initially, the agents were trained without much experimentation to check
+ that the code and design choices actually worked.
+ In this first tests, the results obtained were extremely good, but the
+ agents had a tendency to overtrain, and started loosing rewards after having
+ reached a local maximum.
+ Thankfully, a backup of the carracing agent was made (/models/carracing/early
+ stop/carracing_3c3l_s400_rw800) at the point where it was at the very peak
+ performance delivering an astonishing result (reward>800 at 400 training
+ episodes), as can be appreciated in the following table.
 \end_layout
 
 \begin_layout Standard
 \begin_inset Float table
+placement H
 wide false
 sideways false
-status open
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="6" columns="5">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell multirow="3" alignment="center" valignment="middle" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Env
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Training
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Testing
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multirow="3" alignment="center" valignment="middle" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+No.
+ of
+\end_layout
+
+\end_inset
+</cell>
+<cell multirow="3" alignment="center" valignment="middle" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Training 
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reward
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+(over 15 episodes)
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Episodes
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Time
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Mean
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\sigma$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+CartPole
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+651
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+00:15:11
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+947.666
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+171.628
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+CarRacing
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10k
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+9d 04:58:54
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+874.872
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+41.302
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Initial Results.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The initial experiment was left to train for a very long time, in the hopes
+ of it converging to a perfect score every episode, but during this session,
+ its performance started dropping and never  recovered.
+ For that purpose, the experimentation using 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+-Decay, Double-Q Learning and, especially, early stopping was implemented
+ to try to minimize this effects.
+ 
+\end_layout
+
+\begin_layout Standard
+In an effort to make the experiments more comparable, both the model's architect
+ure and the hyperparameters shown in the following table were kept constant
+ during all training sessions:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement H
+wide false
+sideways false
+status collapsed
 
 \begin_layout Plain Layout
 \align center
@@ -1451,10 +1868,26 @@ noprefix "false"
 \end_layout
 
 \begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{landscape}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 \begin_inset Float table
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
@@ -1479,7 +1912,7 @@ status open
 \begin_layout Plain Layout
 
 \series bold
-Environment
+Env
 \end_layout
 
 \end_inset
@@ -1506,6 +1939,8 @@ Environment
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 DQN
 \end_layout
 
@@ -1542,6 +1977,8 @@ DQN
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Double Q-Learning
 \end_layout
 
@@ -1721,7 +2158,10 @@ Testing
 \begin_inset Text
 
 \begin_layout Plain Layout
-Number of
+
+\series bold
+No.
+ of
 \end_layout
 
 \end_inset
@@ -1730,7 +2170,11 @@ Number of
 \begin_inset Text
 
 \begin_layout Plain Layout
-Training 
+
+\series bold
+Training
+\series default
+ 
 \end_layout
 
 \end_inset
@@ -1739,6 +2183,8 @@ Training
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Reward
 \end_layout
 
@@ -1757,7 +2203,10 @@ Reward
 \begin_inset Text
 
 \begin_layout Plain Layout
-Number of
+
+\series bold
+No.
+ of
 \end_layout
 
 \end_inset
@@ -1766,6 +2215,8 @@ Number of
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Training 
 \end_layout
 
@@ -1775,6 +2226,8 @@ Training
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 Reward
 \end_layout
 
@@ -1844,6 +2297,8 @@ Cosine
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 (over 15 episodes)
 \end_layout
 
@@ -1880,6 +2335,8 @@ Cosine
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 (over 15 episodes)
 \end_layout
 
@@ -2000,8 +2457,6 @@ Time
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\series bold
 Mean
 \end_layout
 
@@ -2023,7 +2478,7 @@ Mean
 </cell>
 </row>
 <row>
-<cell multirow="3" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell multirow="3" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" rotate="90" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2077,6 +2532,8 @@ Constant
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 1002.0
 \end_layout
 
@@ -2086,6 +2543,8 @@ Constant
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 0.0
 \end_layout
 
@@ -2181,6 +2640,8 @@ Linear
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 1002.0
 \end_layout
 
@@ -2190,6 +2651,8 @@ Linear
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 0.0
 \end_layout
 
@@ -2321,6 +2784,8 @@ Exponential
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 1002.0
 \end_layout
 
@@ -2330,6 +2795,8 @@ Exponential
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
 0.0
 \end_layout
 
@@ -2545,7 +3012,7 @@ Exponential
 </cell>
 </row>
 <row>
-<cell multirow="3" alignment="center" valignment="middle" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell multirow="3" alignment="center" valignment="middle" topline="true" bottomline="true" leftline="true" rightline="true" rotate="90" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2581,7 +3048,7 @@ Constant
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+299
 \end_layout
 
 \end_inset
@@ -2590,7 +3057,7 @@ Constant
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+05:42:46
 \end_layout
 
 \end_inset
@@ -2599,7 +3066,7 @@ Constant
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+334.396
 \end_layout
 
 \end_inset
@@ -2608,7 +3075,7 @@ Constant
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+150.460
 \end_layout
 
 \end_inset
@@ -2617,7 +3084,7 @@ Constant
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+281
 \end_layout
 
 \end_inset
@@ -2626,7 +3093,7 @@ Constant
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+5:36:26
 \end_layout
 
 \end_inset
@@ -2635,7 +3102,7 @@ Constant
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+424.248
 \end_layout
 
 \end_inset
@@ -2644,7 +3111,7 @@ Constant
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+145.881
 \end_layout
 
 \end_inset
@@ -2721,7 +3188,7 @@ Linear
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+303
 \end_layout
 
 \end_inset
@@ -2730,7 +3197,7 @@ Linear
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+05:49:14
 \end_layout
 
 \end_inset
@@ -2739,7 +3206,7 @@ Linear
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+552.772
 \end_layout
 
 \end_inset
@@ -2748,7 +3215,7 @@ Linear
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+319.903
 \end_layout
 
 \end_inset
@@ -2789,7 +3256,7 @@ Exponential
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+302
 \end_layout
 
 \end_inset
@@ -2798,7 +3265,7 @@ Exponential
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+05:52:01
 \end_layout
 
 \end_inset
@@ -2807,7 +3274,7 @@ Exponential
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+-82.639
 \end_layout
 
 \end_inset
@@ -2816,7 +3283,7 @@ Exponential
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+8.742
 \end_layout
 
 \end_inset
@@ -2929,7 +3396,16 @@ Linear
 \begin_inset Text
 
 \begin_layout Plain Layout
+300
+\end_layout
 
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+05:43:28
 \end_layout
 
 \end_inset
@@ -2939,15 +3415,8 @@ Linear
 
 \begin_layout Plain Layout
 
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
+\series bold
+652.773
 \end_layout
 
 \end_inset
@@ -2956,7 +3425,7 @@ Linear
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+254.303
 \end_layout
 
 \end_inset
@@ -3033,7 +3502,7 @@ Exponential
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+297
 \end_layout
 
 \end_inset
@@ -3042,7 +3511,7 @@ Exponential
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+05:59:33
 \end_layout
 
 \end_inset
@@ -3051,7 +3520,7 @@ Exponential
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+383.484
 \end_layout
 
 \end_inset
@@ -3060,7 +3529,7 @@ Exponential
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+89.433
 \end_layout
 
 \end_inset
@@ -3077,7 +3546,7 @@ Exponential
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Exercise Results.
+Experimentation Results.
 \begin_inset CommandInset label
 LatexCommand label
 name "tab:Exercise-Results."
@@ -3097,17 +3566,6 @@ name "tab:Exercise-Results."
 
 \end_layout
 
-\begin_layout Section
-Discussion
-\end_layout
-
-\begin_layout Standard
-\begin_inset Newpage pagebreak
-\end_inset
-
-
-\end_layout
-
 \begin_layout Standard
 \begin_inset ERT
 status open
@@ -3116,44 +3574,7 @@ status open
 
 
 \backslash
-setcounter{subsection}{0}
-\end_layout
-
-\begin_layout Plain Layout
-
-%
-\backslash
-def
-\backslash
-thesubsection{
-\backslash
-arabic{section}}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-def
-\backslash
-thesubsection{
-\backslash
-Alph{subsection}}
-\end_layout
-
-\begin_layout Plain Layout
-
-%
-\backslash
-def
-\backslash
-thesubsubsection{
-\backslash
-arabic{section}.
-\backslash
-arabic{subsection}.(
-\backslash
-alph{subsubsection})}
+end{landscape}
 \end_layout
 
 \end_inset
@@ -3161,12 +3582,1396 @@ alph{subsubsection})}
 
 \end_layout
 
-\begin_layout Section*
-Appendices
+\begin_layout Subsection
+Training Curves
 \end_layout
 
-\begin_layout Subsection
-Appendix A: 
+\begin_layout Standard
+Except for the first experiment on each environment, all of the learning
+ curves were smoothed out by averaging the results with those of previous
+ episodes in order to reduce the amount of noise in the plots and more clearly
+ see the trends instead of trying to find the actual curves amidst colorful
+ pieces of abstract art.
+ For the training reward curves, values for 100 episodes were averaged together,
+ while for the validation data, given that it was evaluated every 10 training
+ episodes, they were averaged with the previous 10 episodes to be comparable
+ to the training curves.
+ The raw curves were also captured and can be seen in the Tensorboard interface.
+\end_layout
+
+\begin_layout Subsubsection
+CartPole
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/00_cartpole.png
+	lyxscale 25
+	width 50col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Initial Training Learning Curves ( episodes).
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Box Frameless
+position "c"
+hor_pos "c"
+has_inner_box 1
+inner_pos "c"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/01_cartpole_train.png
+	lyxscale 25
+	width 50col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Training Rewards
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/02_cartpole_valid.png
+	lyxscale 25
+	width 50col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Validation Rewards
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="2">
+<features tabularvalignment="middle">
+<column alignment="right" valignment="top">
+<column alignment="left" valignment="top">
+<row>
+<cell alignment="right" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/legend/gray.png
+	lyxscale 10
+	width 2mm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+Constant
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/legend/teal.png
+	lyxscale 10
+	width 2mm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+Linear
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/legend/red.png
+	lyxscale 10
+	width 2mm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+Exponential
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/legend/orange.png
+	lyxscale 10
+	width 2mm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+Linear with Cosine Annealing
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/legend/blue.png
+	lyxscale 10
+	width 2mm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+Exponential with Cosine Annealing
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Legend.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Experimental Learning Curves using 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+-Decay and DQN.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Box Frameless
+position "c"
+hor_pos "c"
+has_inner_box 1
+inner_pos "c"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/03_cartpole_ddqn_train.png
+	lyxscale 25
+	width 50col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Training Rewards
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/04_cartpole_ddqn_valid.png
+	lyxscale 25
+	width 50col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Validation Rewards
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="2">
+<features tabularvalignment="middle">
+<column alignment="right" valignment="top">
+<column alignment="left" valignment="top">
+<row>
+<cell alignment="right" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/legend/teal.png
+	lyxscale 10
+	width 2mm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+Constant
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/legend/gray.png
+	lyxscale 10
+	width 2mm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+Linear
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/legend/orange.png
+	lyxscale 10
+	width 2mm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+Exponential
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/legend/magenta.png
+	lyxscale 10
+	width 2mm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+Linear with Cosine Annealing
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/legend/blue.png
+	lyxscale 10
+	width 2mm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+Exponential with Cosine Annealing
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Legend.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Experimental Learning Curves using 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+-Decay and Double-Q Learning.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+CarRacing
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/00_carracing_10k.png
+	lyxscale 25
+	width 50col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Training Rewards
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Initial Training Learning Curves (10k episodes).
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Box Frameless
+position "c"
+hor_pos "c"
+has_inner_box 1
+inner_pos "c"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/05_carracing_train.png
+	lyxscale 25
+	width 50col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Training Rewards
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/06_carracing_valid.png
+	lyxscale 25
+	width 50col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Validation Rewards
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="2">
+<features tabularvalignment="middle">
+<column alignment="right" valignment="top">
+<column alignment="left" valignment="top">
+<row>
+<cell alignment="right" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/legend/magenta.png
+	lyxscale 10
+	width 2mm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+Constant
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/legend/teal.png
+	lyxscale 10
+	width 2mm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+Linear
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/legend/orange.png
+	lyxscale 10
+	width 2mm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+Exponential
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/legend/cian.png
+	lyxscale 10
+	width 2mm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+Linear with Cosine Annealing
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/legend/blue.png
+	lyxscale 10
+	width 2mm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+Exponential with Cosine Annealing
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Legend.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Experimental Learning Curves using 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+-Decay and DQN.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Box Frameless
+position "c"
+hor_pos "c"
+has_inner_box 1
+inner_pos "c"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/07_carracing_ddqn_train.png
+	lyxscale 25
+	width 50col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Training Rewards
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/08_carracing_ddqn_valid.png
+	lyxscale 25
+	width 50col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Validation Rewards
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="2">
+<features tabularvalignment="middle">
+<column alignment="right" valignment="top">
+<column alignment="left" valignment="top">
+<row>
+<cell alignment="right" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/legend/teal.png
+	lyxscale 10
+	width 2mm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+Constant
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/legend/red.png
+	lyxscale 10
+	width 2mm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+Linear
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/legend/orange.png
+	lyxscale 10
+	width 2mm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+Exponential
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/legend/blue.png
+	lyxscale 10
+	width 2mm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+Linear with Cosine Annealing
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="right" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/legend/magenta.png
+	lyxscale 10
+	width 2mm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size tiny
+Exponential with Cosine Annealing
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Legend.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Experimental Learning Curves using 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+-Decay and Double-Q Learning.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Discussion
+\end_layout
+
+\begin_layout Standard
+Due to the highly cumulative non-deterministic nature of the algorithm,
+ mostly because of the random weight initialization, the randomness in choosing
+ whether to explore or to go with predicted actions, and the stochastic
+ nature of exploration itself, no two training sessions behaved similar
+ to each other.
+ By running the same training session with exactly the same hyperparameters,
+ the results might have gone well, or after having reached a certain reward
+ at some point in time, suddenly drop down to negative rewards.
+ This behavior was experienced in both environments, making it very difficult
+ to observe patterns.
+\end_layout
+
+\begin_layout Standard
+Having said that, even though it is difficult to draw many precise conclusions,
+ during most of the training session it could be observed that an exponential
+ decay rate for 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+ had a tendency for having a performance worse than the other approaches,
+ and that the cosine annealing either not made much of a difference in the
+ final outcomes or it's oscillations actually rippled through the entire
+ training session, making it converge in a less stable way, therefore taking
+ longer to achieve the same result as in the cases were cosine annealing
+ was not used.
+\end_layout
+
+\begin_layout Standard
+Finally, due to the simple nature of the CartPole environment, agents were
+ able to achieve super-human capacity for the task in a relatively short
+ period of time.
+ The same thing can not be said about the CarRacing environment given that
+ it is far more complex.
+ We believe that this was the result of using a rather conservative policy
+ for the early stopping strategy.
+\end_layout
+
+\begin_layout Standard
+Although overall we are happy with the results we also believe that, in
+ retrospective, some more tuning of either the learning rate or the value
+ for the TargetQ update weight (
+\begin_inset Formula $\tau$
+\end_inset
+
+) could have been done in order to have a more consistent and less noisy
+ result instead of such jagged learning curves which are probably due to
+ overshoots on the gradient descent, or a wild cat and mouse chase between
+ the Q and TargetQ networks.
 \end_layout
 
 \end_body

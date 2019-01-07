@@ -5,7 +5,7 @@ from dqn.replay_buffer import ReplayBuffer
 class DQNAgent:
 
     def __init__(self, Q, Q_target, num_actions, discount_factor=0.99, batch_size=64, epsilon=0.05,
-                 act_probabilities = None, double_dqn = False, buffer_capacity = 100000,
+                 act_probabilities = None, double_q = False, buffer_capacity = 100000,
                  prefill_bs_percentage=5):
         """
          Q-Learning agent for off-policy TD control using Function Approximation.
@@ -43,7 +43,7 @@ class DQNAgent:
         else:
             self.act_probabilities = act_probabilities
 
-        self.double_dqn = double_dqn
+        self.double_dqn = double_q
 
 
     def train(self, state, action, next_state, reward, terminal):

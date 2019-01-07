@@ -346,7 +346,7 @@ if __name__ == "__main__":
     agent = DQNAgent(Q, Q_Target, num_actions,
                      discount_factor=discount_factor, batch_size=batch_size,
                      epsilon=1, act_probabilities=act_probabilities,
-                     double_dqn=double_dqn, buffer_capacity=buffer_capacity, prefill_bs_percentage=10)
+                     double_q=double_dqn, buffer_capacity=buffer_capacity, prefill_bs_percentage=10)
 
     # Exploration-vs-Exploitation Parameter (Epsilon) Schedule
     epsilon_schedule = Schedule(epsilon0, min_epsilon, decay_episodes, decay_function=decay_function,

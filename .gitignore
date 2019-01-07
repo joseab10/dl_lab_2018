@@ -29,6 +29,4 @@ DLL U04/exercise4.pdf
 DLL U04/.idea
 DLL U04/__pycache__
 DLL U04/dqn/__pycache__
-DLL U04/tensorboard/
-DLL U04/models/
 DLL U04/video/
